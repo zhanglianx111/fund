@@ -193,7 +193,7 @@ def main(argv):
 	
 	# 4 循环处理每个基金
 	for fund in all_funds_list:
-		print 'process fund:\t' + fund[0].encode('gb18030') + '\t' + fund[2].encode('gb18030')
+		print 'process fund:\t' + fund[0].encode('gb18030') + '\t' + fund[2].encode('utf-8')
 		strfundcode = fund[0]
 		# 获取净值
 		jingzhimin = get_jingzhi(strfundcode, strsdate)
