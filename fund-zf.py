@@ -54,7 +54,7 @@ def main():
 	
 	
 	
-	# 1、 获取近 1 3 6 增长率top50
+	# 1、 获取近 1 3 6 12个月的增长率top50
 	
 	month_num = 1
 	month_list = [1, 3, 6, 12]
@@ -109,7 +109,7 @@ def main():
 			#print str(len(rank_list)) + '\n'	
 			# 如果是第1个月 直接append
 			if 1 == month_num:
-				fund_list= []
+				fund_list = []
 				
 				fund_type = get_type(rank_list[0], all_fund)
 				
@@ -217,7 +217,7 @@ def test():
 if __name__ == "__main__":
 	reload(sys)
 	#sys.setdefaultencoding('utf-8')
-	sys.setdefaultencoding('GBK')
+	sys.setdefaultencoding('utf-8')
 	
 	#test()
 	main()

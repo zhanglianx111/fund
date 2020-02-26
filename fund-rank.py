@@ -192,8 +192,9 @@ def main(argv):
 	print 'funds sum:' + str(len(all_funds_list))
 	
 	# 4 循环处理每个基金
+	indexnum = 1
 	for fund in all_funds_list:
-		print 'process fund:\t' + fund[0].encode('gb18030') + '\t' + fund[2].encode('utf-8')
+		print 'process fund:\t' + str(indexnum).encode('utf-8') + '\t' + fund[0].encode('utf-8') + '\t' + fund[2].encode('utf-8')
 		strfundcode = fund[0]
 		# 获取净值
 		jingzhimin = get_jingzhi(strfundcode, strsdate)
@@ -229,6 +230,7 @@ def main(argv):
 		fund.append(jingzhidif)
 		fund.append(jingzhirise)
 		
+		indexnum = indexnum + 1
 		# 是否需要控制速度
 		#time.sleep(1)
 				
@@ -246,9 +248,9 @@ def main(argv):
 	# 打印
 	for index in range(len(all_funds_list)):
 		#print all_funds_list[index]
-		strcontent = str(index+1) + '\t' + all_funds_list[index][0].encode('gb18030') + '\t' + all_funds_list[index][2].encode('gb18030') + \
-		'\t\t' + all_funds_list[index][3].encode('gb18030') + '\t\t' + all_funds_list[index][5].encode('gb18030') + '\t\t' + \
-		all_funds_list[index][6].encode('gb18030') + '\t\t' + str(all_funds_list[index][7]) + '\t' + str(all_funds_list[index][8]) + '%\n'
+		strcontent = str(index+1) + '\t' + all_funds_list[index][0].encode('utf-8') + '\t' + all_funds_list[index][2].encode('utf-8') + \
+		'\t\t' + all_funds_list[index][3].encode('utf-8') + '\t\t' + all_funds_list[index][5].encode('utf-8') + '\t\t' + \
+		all_funds_list[index][6].encode('utf-8') + '\t\t' + str(all_funds_list[index][7]) + '\t' + str(all_funds_list[index][8]) + '%\n'
 		print strcontent
 		fileobject.write(strcontent)
 		
