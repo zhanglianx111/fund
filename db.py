@@ -2,6 +2,7 @@
 # -*- coding:utf-8 -*-
 import pymysql
 import sys
+import datetime
 
 HOST = '127.0.0.1'
 PORT = 3306
@@ -25,7 +26,6 @@ SELLSTATUS = 'SellStatus' # 赎回状态
 RANKTODAY = 'RankToday' # 今日排名
 
 
-
 def batch_insert(table_name, datas):
 	conn = pymysql.connect(HOST, USER, PASSWD, DB)
 
@@ -37,56 +37,87 @@ def batch_insert(table_name, datas):
 		TYPE, \
 		FULLPINYIN) value(%s, %s, %s, %s, %s) on duplicate key update FUNDCODE=values(FUNDCODE)"
 		
-		#sql = "update fundslist set "
-
-		#insert into test_tbl (id,dr) values (1,'2'),(2,'3'),...(x,'y') on duplicate key update dr=values(dr);
 
 	if table_name == TABLE_FUNDSTODAY:
-		sql = "insert into fundstoday(FUNDCODE, \
+		sql = "insert into fundstoday( \
+		FUNDCODE, \
 		DATE, \
 		PRICETODAY, \
 		RANGETODAY, \
 		BUYSTATUS, \
 		SELLSTATUS, \
-		RANKTODAY) value(%s, %s, %s, %s, %s, %s, %s)"
+		RANKTODAY) value(%s, %s, %s, %s, %s, %s, %s) on duplicate key update FUNDCODE=values(FUNDCODE)"
 
-	#cursor = conn1.cursor()
-	# 创建表
-	#cursor.execute("CREATE TABLE IF NOT EXISTS Writers(Id INT PRIMARY KEY AUTO_INCREMENT,Name VARCHAR(25))")
-	conn.cursor().execute("create table if not exists fundslist( \
-		FundCode VARCHAR(30) PRIMARY KEY, \
-		ShortName VARCHAR(30), \
-		FullName VARCHAR(100), \
-		Type VARCHAR(30), \
-		FullPinYin VARCHAR(255))ENGINE=InnoDB DEFAULT CHARSET=gbk")
-
-
-
-	conn.cursor().execute("create table if not exists fundstoday( \
-		FundCode VARCHAR(30) PRIMARY KEY, \
-		Date DATE, \
-		PriceToday FLOAT, \
-		RangeToday FLOAT, \
-		BuyStatus VARCHAR(30), \
-		SellStatus VARCHAR(30), \
-		RankToday INT)")
 
 	with conn:
 		cur = conn.cursor()
-		#sql = "insert into %s(Name) value(%s)"
+
+		# 创建表
+		# table fundslist
+		sql_table_fundslist = "show tables like 'fundslist'"
+		if cur.execute(sql_table_fundslist) == 0:
+			cur.execute("create table if not exists fundslist( \
+				FundCode VARCHAR(30) PRIMARY KEY, \
+				ShortName VARCHAR(30), \
+				FullName VARCHAR(100), \
+				Type VARCHAR(30), \
+				FullPinYin VARCHAR(100))ENGINE=InnoDB DEFAULT CHARSET=gbk")
+
+		# table fundstoday
+		sql_table_fundstoday = "show tables like 'fundstoday'"
+		if cur.execute(sql_table_fundstoday) == 0:
+			cur.execute("create table if not exists fundstoday( \
+				FundCode VARCHAR(30) PRIMARY KEY, \
+				Date VARCHAR(30), \
+				PriceToday FLOAT, \
+				RangeToday VARCHAR(30), \
+				BuyStatus VARCHAR(30), \
+				SellStatus VARCHAR(30), \
+				RankToday INT)")
 		try:
 			cur.executemany(sql, datas)
 			conn.commit()
+			print '%s: insert date into table[%s] count: %d successfully!' % ( \
+				datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d %H:%M:%S'), table_name, len(datas))
 
 		except Exception as err:
 			print(err)
 
 
+def get_funds_list():
+	conn = pymysql.connect(HOST, USER, PASSWD, DB)
+	sql = "select * from fundslist"
+	with conn:
+		cur = conn.cursor()
+		try:
+			count = cur.execute(sql)
+			allrows = cur.fetchall()
+
+			fcode_list = []
+			for i in range(count):
+				if str(allrows[i][3]) == '货币型' or \
+				str(allrows[i][3]) == '理财型' or \
+				str(allrows[i][3]) == '定开债券' or \
+				str(allrows[i][3]) == '保本型' or \
+				str(allrows[i][3]) == '固定收益':
+					continue
+				fcode_list.append(allrows[i][0])
+				
+
+		except Exception as err:
+			print(err)	
+
+	return fcode_list
+
+
 if __name__ ==  "__main__":
 	t = TALBE_FUNDSLIST
 	# for test
-	datas = [('q1', 'w1', 's1', 'r1', 't1'), ('q2', 'w2', 's2', 'r2', 't2')]
-	batch_insert(t, datas)
+	#datas = [('q1', 'w1', 's1', 'r1', 't1'), ('q2', 'w2', 's2', 'r2', 't2')]
+	datas = [('000001', '2020-02-26', 1.197, '-3.78%', '代理费', '是否', 0)]
+	#batch_insert(TABLE_FUNDSTODAY, datas)
+	flist = get_funds_list()	
+
 
 
 

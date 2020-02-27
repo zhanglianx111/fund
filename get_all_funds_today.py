@@ -7,7 +7,11 @@ import datetime
 import urllib2
 import re
 
-def get_jingzhi(strfundcode, strdate):
+empty_entry = ('0000-00-00', '0.0000', '0.0000', '0.00%', '', '')
+
+# get a fund's informations
+def get_fund_price(strfundcode, strdate):
+	print 'fundcode', strfundcode
 	try:
 		url = 'http://fund.eastmoney.com/f10/F10DataApi.aspx?type=lsjz&code=' + \
 		      strfundcode + '&page=1&per=20&sdate=' + strdate + '&edate=' + strdate
@@ -31,26 +35,54 @@ def get_jingzhi(strfundcode, strdate):
 
 	tr_re = re.compile(r'<tr>(.*?)</tr>')
 	item_re = re.compile(r'''<td>(\d{4}-\d{2}-\d{2})</td><td.*?>(.*?)</td><td.*?>(.*?)</td><td.*?>(.*?)</td><td.*?>(.*?)</td><td.*?>(.*?)</td><td.*?></td>''', re.X)
-
+	entry = ()
 	for line in tr_re.findall(json_fund_value):
 		match = item_re.match(line)
 		if match:
 			entry = match.groups()
-			print entry
+
+	if len(entry) == 0:
+		entry = empty_entry
 
 	return entry
 
+def getYesterday(): 
+    yesterday = datetime.date.today() + datetime.timedelta(-1)
+    strsdate = datetime.datetime.strftime(yesterday, '%Y-%m-%d')
+    return strsdate
+
+def convert_str(price):
+	if price == '':
+		return float(0.0)
+	return float(price)
 
 
+def main():
+	yesterday = getYesterday()
+	# get all fund code from db
+	all_fundcodes = db.get_funds_list()
+
+	# get al fund price informations
+	l = []
+	for fc in all_fundcodes:
+		e = get_fund_price(fc, yesterday)
+		print e
+		t = (fc, e[0], convert_str(e[1]), e[3], e[4], e[5], int(0))
+		l.append(t)
+
+	# save into db
+	db.batch_insert(db.TABLE_FUNDSTODAY, l)
+
+# 此脚本为了获取单日基金情况，执行的时间为第二天的凌晨3：00，所以使用昨天的时间
 if __name__ == "__main__":	
 	reload(sys)
 	sys.setdefaultencoding('utf-8')
 	
-
-	strsdate = '2020-02-25'
-	sdatetime = datetime.datetime.strptime(strsdate, '%Y-%m-%d')
-	strsdate = datetime.datetime.strftime(sdatetime, '%Y-%m-%d')
+	main()
 
 
-	get_jingzhi('007817', strsdate)
-	#main(sys.argv)
+
+
+
+
+
