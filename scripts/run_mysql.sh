@@ -1,8 +1,8 @@
 #!/bin/bash
-MYSQL_IMAGE="mysql:8.0"
+MYSQL_IMAGE="mysql:5.7"
 MYSQL_NAME="mysql_fund"
 MYSQL_PASSWORD="pw"
-MYSQL_DATA_DIR=""
+MYSQL_DATA_DIR="/var/lib/mysql"
 
 # check mysql data directory
 ## for mac
@@ -19,7 +19,7 @@ fi
 info=`docker ps -a | grep ${MYSQL_NAME}`
 # mysql container not exist
 if [ "X${info}" == "X" ];then
-	docker run -v ${DATA_DIR}:/var/lib/mysql --name ${MYSQL_NAME} -p 3306:3306 -p 33060:33060 -e MYSQL_ROOT_PASSWORD=${MYSQL_PASSWORD} -d ${MYSQL_IMAGE}
+	docker run -v ${DATA_DIR}:${MYSQL_DATA_DIR} --name ${MYSQL_NAME} -p 3306:3306 -p 33060:33060 -e MYSQL_ROOT_PASSWORD=${MYSQL_PASSWORD} -d ${MYSQL_IMAGE}
 else
 	# get running status for mysql container
 	statusUP=`docker ps --filter status=running | grep ${MYSQL_NAME}`
