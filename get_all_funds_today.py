@@ -7,7 +7,7 @@ import datetime
 import urllib2
 import re
 
-empty_entry = ('0000-00-00', '0.0000', '0.0000', '0.00%', '', '')
+empty_entry = ('0000-00-00', '0.0000', '0.0000', '0.00%', '开放申购', '开放赎回')
 
 # get a fund's informations
 def get_fund_price(strfundcode, strdate):
@@ -67,7 +67,7 @@ def main():
 	for fc in all_fundcodes:
 		e = get_fund_price(fc, yesterday)
 		print e
-		t = (fc, e[0], convert_str(e[1]), e[3], e[4], e[5], int(0))
+		t = (fc, yesterday, convert_str(e[1]), e[3], e[4], e[5], int(0))
 		l.append(t)
 
 	# save into db
