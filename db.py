@@ -3,6 +3,7 @@
 import pymysql
 import sys
 import datetime
+import string
 
 HOST = '127.0.0.1'
 PORT = 3306
@@ -82,6 +83,7 @@ def batch_insert(table_name, datas):
 
 		except Exception as err:
 			print(err)
+			conn.rollback()
 
 
 def get_funds_list():
@@ -102,7 +104,6 @@ def get_funds_list():
 				str(allrows[i][3]) == '固定收益':
 					continue
 				fcode_list.append(allrows[i][0])
-				
 
 		except Exception as err:
 			print(err)	
@@ -110,13 +111,51 @@ def get_funds_list():
 	return fcode_list
 
 
+def get_funds_today():
+	conn = pymysql.connect(HOST, USER, PASSWD, DB)
+	sql = "select * from fundstoday"
+	with conn:
+		cur = conn.cursor()
+		try:
+			count = cur.execute(sql)
+			allrows = cur.fetchall()
+
+			today = []
+			for i in range(count):
+				rise = allrows[i][3]
+				rise = rise[:rise.index('%')]
+				t = (string.atof(rise), allrows[i][0])
+				today.append(t)
+
+		except Exception as err:
+			print(err)	
+
+
+	return today
+
+def update_fundstoday_rank(ranklist):
+	conn = pymysql.connect(HOST, USER, PASSWD, DB)
+	sql = "update fundstoday set RankToday = %s where FundCode = %s"
+	with conn:
+		cur = conn.cursor()
+		try:
+			for r in ranklist:
+				cur.execute(sql,(r[0], r[1]))
+
+			conn.commit()
+
+		except Exception as err:
+			print(err)
+			conn.rollback()
+
 if __name__ ==  "__main__":
 	t = TALBE_FUNDSLIST
 	# for test
 	#datas = [('q1', 'w1', 's1', 'r1', 't1'), ('q2', 'w2', 's2', 'r2', 't2')]
 	datas = [('000001', '2020-02-26', 1.197, '-3.78%', '代理费', '是否', 0)]
 	#batch_insert(TABLE_FUNDSTODAY, datas)
-	flist = get_funds_list()	
+	#flist = get_funds_list()
+	print get_funds_today()
 
 
 

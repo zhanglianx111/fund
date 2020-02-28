@@ -1,6 +1,8 @@
 # !/usr/bin/python 
 # -*- coding: utf-8 -*-
 
+import db
+
 # 从大到小排序
 # input: [(rangetoday, 'fundcode')]
 # output: 按rangetoday排好序的数组[(rangetoday, 'fundcode')]
@@ -34,7 +36,7 @@ def QuickSort(myList,start,end):
 
 # 给排序后的数组贴上rank标签
 # input: 排行序的数组[(rangetoday, 'fundcode')]
-# output: [('fundcode', rank)]
+# output: [(rank, 'fundcode', range)]
 def get_rank(sort_list):
 	rank_list = []
 	length = len(sort_list)
@@ -51,6 +53,7 @@ def get_rank(sort_list):
 		else:
 			t = (j, sort_list[i][1], sort_list[i][0])
 			rank_list.append(t)
+
 		i = i + 1
 
 	return rank_list
@@ -58,8 +61,13 @@ def get_rank(sort_list):
 
 if __name__ == '__main__':
 
-	myList = [(0.0,'000001'),(-0.32,'000002'),(1.23,'000003'),(0.3,'000004'),(-1.4,'000005'),(0.3,'000006'),(0.72,'000007'),(-2.3,'000008')]
-	print("Quick Sort: ")
-	sort_list = QuickSort(myList,0,len(myList)-1)
-	print get_rank(sort_list)
+	#myList = [('0.0','000001'),('-0.32','000002'),('1.23','000003'),('0.3','000004'),('-1.4','000005'),('0.3','000006'),('0.72','000007'),('-2.3','000008')]
+	#print("Quick Sort: ")
+	#sort_list = QuickSort(myList,0,len(myList)-1)
+	#print get_rank(sort_list)
+
+	today = db.get_funds_today()
+	sort_today = QuickSort(today, 0, len(today) -1)
+	ranklist = get_rank(sort_today)
+	db.update_fundstoday_rank(ranklist)
 
