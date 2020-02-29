@@ -1,6 +1,8 @@
 # !/usr/bin/python
 # -*- coding:utf-8 -*-
+
 import db
+
 import urllib2
 import json
 import sys

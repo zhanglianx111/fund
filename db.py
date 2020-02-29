@@ -119,15 +119,17 @@ def get_funds_today():
 		try:
 			count = cur.execute(sql)
 			allrows = cur.fetchall()
-
+			print len(allrows)
+			print count
 			today = []
-			for i in range(count):
-				rise = allrows[i][3]
+			for r in allrows:
+				rise = r[3]
 				rise = rise[:rise.index('%')]
-				t = (string.atof(rise), allrows[i][0])
+				t = (string.atof(rise), r[0])
 				today.append(t)
 
 		except Exception as err:
+			print '1111'
 			print(err)	
 
 
@@ -155,7 +157,7 @@ if __name__ ==  "__main__":
 	datas = [('000001', '2020-02-26', 1.197, '-3.78%', '代理费', '是否', 0)]
 	#batch_insert(TABLE_FUNDSTODAY, datas)
 	#flist = get_funds_list()
-	print get_funds_today()
+	get_funds_today()
 
 
 

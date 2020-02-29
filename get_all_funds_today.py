@@ -11,7 +11,6 @@ empty_entry = ('0000-00-00', '0.0000', '0.0000', '0.00%', '开放申购', '开�
 
 # get a fund's informations
 def get_fund_price(strfundcode, strdate):
-	print 'fundcode', strfundcode
 	try:
 		url = 'http://fund.eastmoney.com/f10/F10DataApi.aspx?type=lsjz&code=' + \
 		      strfundcode + '&page=1&per=20&sdate=' + strdate + '&edate=' + strdate
@@ -44,6 +43,9 @@ def get_fund_price(strfundcode, strdate):
 	if len(entry) == 0:
 		entry = empty_entry
 
+	if entry[3] == '':
+		entry = entry[:3] + ('0.00%',) + entry[4:]
+	print strfundcode, entry
 	return entry
 
 def getYesterday(): 
@@ -66,7 +68,6 @@ def main():
 	l = []
 	for fc in all_fundcodes:
 		e = get_fund_price(fc, yesterday)
-		print e
 		t = (fc, yesterday, convert_str(e[1]), e[3], e[4], e[5], int(0))
 		l.append(t)
 
@@ -77,7 +78,7 @@ def main():
 if __name__ == "__main__":	
 	reload(sys)
 	sys.setdefaultencoding('utf-8')
-	
+	#print get_fund_price('000041', '2020-02-24')
 	main()
 
 

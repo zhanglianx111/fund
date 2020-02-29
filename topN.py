@@ -34,40 +34,77 @@ def QuickSort(myList,start,end):
 
     return myList
 
+# 连续相等的长度
+def eq(sub_sort_list):
+	i = 0
+	length = len(sub_sort_list)
+
+	while i < length - 1:
+		if  sub_sort_list[i][0] == sub_sort_list[i+1][0]:
+			i = i + 1
+		else:
+			break
+
+	return i + 1
+
+
 # 给排序后的数组贴上rank标签
 # input: 排行序的数组[(rangetoday, 'fundcode')]
 # output: [(rank, 'fundcode', range)]
-def get_rank(sort_list):
+def ranking(sort_list):
 	rank_list = []
 	length = len(sort_list)
+	
+	i = 0 # i 记录sort_list中的位置
+	j = 1 # j 记录rank位置
+	try:
+		while i < length - 1:
+			if sort_list[i][0] == sort_list[i+1][0]:
+				sub_length = eq(sort_list[i:])
+				for sub_index in range(sub_length):
+					t = (j, sort_list[i+sub_index][1], sort_list[i+sub_index][0])
+					rank_list.append(t)
 
-	# i 记录sort_list中的位置
-	# j 记录rank位置
-	i = 0
-	j = 1
-	while i < length - 1:
-		if sort_list[i][0] > sort_list[i+1][0]:
-			t = (j, sort_list[i][1], sort_list[i][0])
+				i = i + sub_length
+
+				if i == length - 1:
+					break 
+			else:
+				t = (j, sort_list[i][1], sort_list[i][0])
+				rank_list.append(t)
+				i = i + 1
+
 			j = j + 1
-			rank_list.append(t)
-		else:
-			t = (j, sort_list[i][1], sort_list[i][0])
+
+		# last one
+		if i == length - 1:	
+			t = (j+1, sort_list[i][1], sort_list[i][0])
 			rank_list.append(t)
 
-		i = i + 1
+	except StandardError, e:
+		print 'error: ',e	
 
 	return rank_list
 
 
 if __name__ == '__main__':
 
-	#myList = [('0.0','000001'),('-0.32','000002'),('1.23','000003'),('0.3','000004'),('-1.4','000005'),('0.3','000006'),('0.72','000007'),('-2.3','000008')]
+	#myList = [(0.0,'000001'),(-0.32,'000002'),(1.23,'000003'),(0.3,'000004'),(1.23,'000005'),(-2.3,'000006'),(0.72,'000007'), \
+	#(-2.3,'000008'),(1.23,"000009"),(-2.3,'000010')]
 	#print("Quick Sort: ")
 	#sort_list = QuickSort(myList,0,len(myList)-1)
-	#print get_rank(sort_list)
+	#print sort_list
+	#print ranking(sort_list)
+	
 
+	# ==============
 	today = db.get_funds_today()
 	sort_today = QuickSort(today, 0, len(today) -1)
-	ranklist = get_rank(sort_today)
+	#for i in range(len(sort_today)):
+	#	if sort_today[i][1] == '006679':
+	#		print 'flag', i
+
+
+	ranklist = ranking(sort_today)
 	db.update_fundstoday_rank(ranklist)
 

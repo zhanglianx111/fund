@@ -1,0 +1,11 @@
+# mysql
+[database]
+host = "172.0.0.1"
+port = "3306"
+user = "root"
+password = "pw"
+db = "funds"
+charset = "utf8"
+
+[log]
+level = 10 # NOTSET:0 DEBUG:10 INFO:20 WARNING:30 ERROR:40 CRITICAL:50
