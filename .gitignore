@@ -24,7 +24,10 @@ var/
 .installed.cfg
 *.egg
 
+# zhanglianx111
 mysql_data/
+funds.log
+
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
