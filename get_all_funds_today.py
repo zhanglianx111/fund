@@ -40,18 +40,19 @@ def get_fund_price(strfundcode, strdate):
 		if match:
 			entry = match.groups()
 
+	print 'code: ', strfundcode
+	print 'origin entry: ', (entry)
 	if len(entry) == 0:
 		entry = empty_entry
 
 	if entry[3] == '':
 		entry = entry[:3] + ('0.00%',) + entry[4:]
-	print strfundcode, entry
 	return entry
 
 def getYesterday(): 
-    yesterday = datetime.date.today() + datetime.timedelta(-1)
-    strsdate = datetime.datetime.strftime(yesterday, '%Y-%m-%d')
-    return strsdate
+	yesterday = datetime.date.today() + datetime.timedelta(-1)
+	strsdate = datetime.datetime.strftime(yesterday, '%Y-%m-%d')
+	return strsdate
 
 def convert_str(price):
 	if price == '':
@@ -69,6 +70,7 @@ def main():
 	for fc in all_fundcodes:
 		e = get_fund_price(fc, yesterday)
 		t = (fc, yesterday, convert_str(e[1]), e[3], e[4], e[5], int(0))
+		print 't: ', t
 		l.append(t)
 
 	# save into db

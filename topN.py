@@ -3,6 +3,8 @@
 
 import db
 
+import datetime
+
 # 从大到小排序
 # input: [(rangetoday, 'fundcode')]
 # output: 按rangetoday排好序的数组[(rangetoday, 'fundcode')]
@@ -95,16 +97,16 @@ if __name__ == '__main__':
 	#sort_list = QuickSort(myList,0,len(myList)-1)
 	#print sort_list
 	#print ranking(sort_list)
+
 	
-
 	# ==============
-	today = db.get_funds_today()
+	t = datetime.date.today()  
+	date_today = datetime.datetime.strftime(t, '%Y-%m-%d')	
+	print date_today
+
+	today = db.get_funds_today(date_today)
 	sort_today = QuickSort(today, 0, len(today) -1)
-	#for i in range(len(sort_today)):
-	#	if sort_today[i][1] == '006679':
-	#		print 'flag', i
-
-
 	ranklist = ranking(sort_today)
 	db.update_fundstoday_rank(ranklist)
+	
 

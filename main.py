@@ -24,9 +24,8 @@ logger.addHandler(handler)
 logger.addHandler(console)
 
 
-logger.info('Main Info')
-#logger.debug('Main Debug')
-#logger.error('Main Error')
-
 if __name__ == '__main__':
 	rank_avg.run()
+
+
+	
