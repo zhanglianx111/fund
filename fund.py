@@ -1,16 +1,18 @@
 # !/usr/bin/python
 # -*- coding:utf-8 -*-
 
-import toml
-import logging
+
 import rank_avg
 import get_all_funds_today
 import get_all_funds
 import topN
-import version
+#import version
 
+import toml
+import logging
 import argparse
 import datetime
+from logging.handlers import RotatingFileHandler
 
 config = toml.load('config.toml')
 
@@ -18,16 +20,25 @@ config = toml.load('config.toml')
 logger = logging.getLogger("main")
 logger.setLevel(level = config['log']['level'])
 
-handler = logging.FileHandler("log.txt")
+'''
+handler = logging.FileHandler("funds.log")
 handler.setLevel(config['log']['level'])
 formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(name)s:%(lineno)d - %(message)s')
 handler.setFormatter(formatter)
+'''
+
+# 日志回滚handler
+rHandler = RotatingFileHandler("funds.log",maxBytes = 1*1024*1024,backupCount = 3)
+rHandler.setLevel(config['log']['level'])
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(name)s:%(lineno)d - %(message)s')
+rHandler.setFormatter(formatter)
+
 
 console = logging.StreamHandler()
 console.setLevel(config['log']['level'])
 console.setFormatter(formatter)
 
-logger.addHandler(handler)
+logger.addHandler(rHandler)
 logger.addHandler(console)
 
 # 给某一天的所有基金排名
@@ -54,7 +65,8 @@ def update_list():
 
 # print version information
 def version():
-	version.main()
+	logger.info('ccc')
+	print 'version: v1.0.1'
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
@@ -81,7 +93,7 @@ if __name__ == '__main__':
 
 
 	args = parser.parse_args()
-	logger.info(args)
+	logger.debug(args)
 	(name, functor) = args.action
 	
 	if name in ['topn']:
