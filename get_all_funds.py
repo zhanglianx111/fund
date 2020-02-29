@@ -6,6 +6,9 @@ import db
 import urllib2
 import json
 import sys
+import logging
+
+logger = logging.getLogger('main.get_all_funds')
 
 def main():
 	response_all_funds = urllib2.urlopen('http://fund.eastmoney.com/js/fundcode_search.js')

@@ -6,6 +6,9 @@ import sys
 import datetime
 import urllib2
 import re
+import logging
+
+logger = logging.getLogger('main.get_all_funds_today')
 
 empty_entry = ('0000-00-00', '0.0000', '0.0000', '0.00%', '开放申购', '开放赎回')
 
@@ -40,8 +43,6 @@ def get_fund_price(strfundcode, strdate):
 		if match:
 			entry = match.groups()
 
-	print 'code: ', strfundcode
-	print 'origin entry: ', (entry)
 	if len(entry) == 0:
 		entry = empty_entry
 
@@ -60,17 +61,20 @@ def convert_str(price):
 	return float(price)
 
 
-def main():
-	yesterday = getYesterday()
+def main(date):
+	logger.info(date)
+
+	#yesterday = getYesterday()
+	yesterday = date
 	# get all fund code from db
 	all_fundcodes = db.get_funds_list()
 
 	# get al fund price informations
+	# TODO 多线程下载基金情况
 	l = []
 	for fc in all_fundcodes:
 		e = get_fund_price(fc, yesterday)
 		t = (fc, yesterday, convert_str(e[1]), e[3], e[4], e[5], int(0))
-		print 't: ', t
 		l.append(t)
 
 	# save into db

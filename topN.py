@@ -4,6 +4,11 @@
 import db
 
 import datetime
+import logging
+import sys
+
+logger = logging.getLogger("main.topN")
+
 
 # 从大到小排序
 # input: [(rangetoday, 'fundcode')]
@@ -84,10 +89,24 @@ def ranking(sort_list):
 			rank_list.append(t)
 
 	except StandardError, e:
-		print 'error: ',e	
+		logger.error("error: %s", e)
 
 	return rank_list
 
+
+def main(date_today):
+	'''
+	t = datetime.date.today()  
+	date_today = datetime.datetime.strftime(t, '%Y-%m-%d')	
+	logger.info("today: %s", date_today)
+	sys.exit()
+	'''
+
+	today = db.get_funds_today(date_today)
+	sort_today = QuickSort(today, 0, len(today) -1)
+	ranklist = ranking(sort_today)
+	db.update_fundstoday_rank(ranklist, date_today)
+	logger.info('rank complitly.')
 
 if __name__ == '__main__':
 
@@ -100,13 +119,5 @@ if __name__ == '__main__':
 
 	
 	# ==============
-	t = datetime.date.today()  
-	date_today = datetime.datetime.strftime(t, '%Y-%m-%d')	
-	print date_today
-
-	today = db.get_funds_today(date_today)
-	sort_today = QuickSort(today, 0, len(today) -1)
-	ranklist = ranking(sort_today)
-	db.update_fundstoday_rank(ranklist)
-	
+	main()
 

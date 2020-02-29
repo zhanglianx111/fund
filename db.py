@@ -4,6 +4,7 @@ import pymysql
 import sys
 import datetime
 import string
+import logging
 
 HOST = '127.0.0.1'
 PORT = 3306
@@ -26,9 +27,10 @@ BUYSTATUS = 'BuyStatus' # 申购状态
 SELLSTATUS = 'SellStatus' # 赎回状态
 RANKTODAY = 'RankToday' # 今日排名
 
+logger = logging.getLogger('main.db')
 
 def batch_insert(table_name, datas):
-	print datas
+	logger.info(datas)
 	conn = pymysql.connect(HOST, USER, PASSWD, DB)
 
 	if table_name == TALBE_FUNDSLIST:
@@ -94,11 +96,11 @@ def batch_insert(table_name, datas):
 		try:
 			cur.executemany(sql, datas)
 			conn.commit()
-			print '%s: insert date into table[%s] count: %d successfully for %s!' % ( \
+			logger.info('%s: insert date into table[%s] count: %d successfully for %s!', \
 				datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d %H:%M:%S'), table_name, len(datas))
 
 		except Exception as err:
-			print(err)
+			logger.error(err)
 			conn.rollback()
 
 
@@ -127,8 +129,7 @@ def get_funds_list():
 					break
 				'''
 		except Exception as err:
-			print '111'
-			print __name__, err	
+			logger.error(err)
 
 	return fcode_list
 
@@ -141,8 +142,7 @@ def get_funds_today(date_today):
 		try:
 			count = cur.execute(sql, date_today)
 			allrows = cur.fetchall()
-			print len(allrows)
-			print count
+			logger.info('get records count: %s on date: %s from table: %s', count, date_today, TALBE_FUNDSLIST)
 			today = []
 			for r in allrows:
 				rise = r[3]
@@ -151,25 +151,23 @@ def get_funds_today(date_today):
 				today.append(t)
 
 		except Exception as err:
-			print '1111'
-			print(err)	
-
+			logger.error(err)	
 
 	return today
 
-def update_fundstoday_rank(ranklist):
+def update_fundstoday_rank(ranklist, date):
 	conn = pymysql.connect(HOST, USER, PASSWD, DB)
-	sql = "update fundstoday set RankToday = %s where FundCode = %s"
+	sql = "update fundstoday set RankToday = %s where FundCode = %s and Date = %s"
 	with conn:
 		cur = conn.cursor()
 		try:
 			for r in ranklist:
-				cur.execute(sql,(r[0], r[1]))
+				cur.execute(sql,(r[0], r[1], date))
 
 			conn.commit()
 
 		except Exception as err:
-			print(err)
+			logger.error(err)
 			conn.rollback()
 
 if __name__ ==  "__main__":
