@@ -94,10 +94,11 @@ def batch_insert(table_name, datas):
 				#PRIMARY KEY(FundCode, Date)")
 		
 		try:
-			cur.executemany(sql, datas)
-			conn.commit()
-			logger.info('%s: insert date into table[%s] count: %d successfully for %s!', \
-				datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d %H:%M:%S'), table_name, len(datas))
+			for d in datas:
+				cur.executemany(sql, d)
+				conn.commit()
+				logger.info('%s: insert date into table[%s] count: %d successfully for %s!', \
+					datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d %H:%M:%S'), table_name, len(d))
 
 		except Exception as err:
 			logger.error(err)
@@ -142,7 +143,7 @@ def get_funds_today(date_today):
 		try:
 			count = cur.execute(sql, date_today)
 			allrows = cur.fetchall()
-			logger.info('get records count: %s on date: %s from table: %s', count, date_today, TALBE_FUNDSLIST)
+			logger.info('get records count: %s on date: %s from table: %s', count, date_today, TABLE_FUNDSTODAY)
 			today = []
 			for r in allrows:
 				rise = r[3]
@@ -169,6 +170,24 @@ def update_fundstoday_rank(ranklist, date):
 		except Exception as err:
 			logger.error(err)
 			conn.rollback()
+
+# 获取某天前n个涨幅最大的基金
+def get_topn(n, date):
+	conn = pymysql.connect(HOST, USER, PASSWD, DB)
+	sql = "select * from fundstoday where Date = %s order by RankToday limit 0,%s"
+
+	with conn:
+		cur = conn.cursor()
+		try:
+			cur.execute(sql, (date, int(n)))
+			records = cur.fetchall()
+
+
+
+		except Exception as err:
+			logger.error(err)
+
+	return records
 
 if __name__ ==  "__main__":
 	t = TALBE_FUNDSLIST

@@ -12,6 +12,7 @@ import toml
 import logging
 import argparse
 import datetime
+import sys
 from logging.handlers import RotatingFileHandler
 
 config = toml.load('config.toml')
@@ -44,13 +45,24 @@ logger.addHandler(console)
 # 给某一天的所有基金排名
 def topn(number, days):
 	logger.debug("topN n: %s, days: %s", number, days)
-	logger.info("start to top funds at date: %s.", days)
-	topN.main(days)
+	if number == None:
+		logger.info('sort all funds at date: %s', days)
+	else:
+		logger.info("start to sort the first %s funds at date: %s.", number, days)
+		need_print = True
+
+	result = topN.main(number, days)
+
+	if need_print:
+		print '基金代码' + '\t' + '日期' + '\t\t' + '净值' + '\t\t' + '涨幅' + '\t\t' + '排名' 
+
+		for r in result:
+			print r[0] + '\t\t' + r[1] + '\t' + str(r[2]) + '\t\t' + r[3] + '\t\t' + str(r[6])
+
 
 # 获取当天的基金情况
 def fetchall(date):
-	print date
-	logger.info('date: %s', date)
+	logger.info('fetch the fund net value of the date: %s', date)
 	get_all_funds_today.main(date)
 
 # 计算最近n天的排名平均值
@@ -65,7 +77,7 @@ def update_list():
 
 # print version information
 def version():
-	logger.info('ccc')
+	logger.info('ccca')
 	print 'version: v1.0.1'
 
 if __name__ == '__main__':
@@ -75,7 +87,8 @@ if __name__ == '__main__':
 	# sort all funds on someday
 	parser_topn = subparsers.add_parser('topn', help='get top N of all funds nearly some days')
 	parser_topn.set_defaults(action=('topn', topn))
-	parser_topn.add_argument('--number', '-n', action="store", help="first N", required=False)
+	parser_topn.add_argument('--number', '-n', action="store", help="get the first n record, if number is empty, sort all. \
+		n >= 1", required=False)
 	parser_topn.add_argument('--days', '-d', action="store", help="days to top", required=True)
 
 	# get all funds info 

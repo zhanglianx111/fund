@@ -6,6 +6,7 @@ import db
 import datetime
 import logging
 import sys
+import time
 
 logger = logging.getLogger("main.topN")
 
@@ -94,19 +95,34 @@ def ranking(sort_list):
 	return rank_list
 
 
-def main(date_today):
+def get_first_n(n, date):
+	return db.get_topn(n, date)
+
+
+def main(number, date_today):
 	'''
 	t = datetime.date.today()  
 	date_today = datetime.datetime.strftime(t, '%Y-%m-%d')	
 	logger.info("today: %s", date_today)
 	sys.exit()
 	'''
+	topn_records = []
+	start_time = time.time()
+	if number == None:
+		today = db.get_funds_today(date_today)
+		sort_today = QuickSort(today, 0, len(today) -1)
+		ranklist = ranking(sort_today)
+		db.update_fundstoday_rank(ranklist, date_today)
+		logger.info('rank all funds complitly.')
+	else:
+		logger.info('get the first %s record', number)
+		need_return = True
+		topn_records = get_first_n(number, date_today)
 
-	today = db.get_funds_today(date_today)
-	sort_today = QuickSort(today, 0, len(today) -1)
-	ranklist = ranking(sort_today)
-	db.update_fundstoday_rank(ranklist, date_today)
-	logger.info('rank complitly.')
+	end_time = time.time()
+	logger.info('spent time to sort funds: %s minites', (end_time - start_time) / 60 + 1)
+
+	return topn_records
 
 if __name__ == '__main__':
 
