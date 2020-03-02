@@ -41,7 +41,7 @@ def get_fund_price(strfundcode, strdate):
 	try:
 		url = 'http://fund.eastmoney.com/f10/F10DataApi.aspx?type=lsjz&code=' + \
 		      strfundcode + '&page=1&per=20&sdate=' + strdate + '&edate=' + strdate
-		response = urllib2.urlopen(url)
+		response = urllib2.urlopen(url, timeout=10)
 	except urllib2.HTTPError, e:
 		logger.error(e)
 		urllib_error_tag = True
