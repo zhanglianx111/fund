@@ -5,14 +5,23 @@ MYSQL_PASSWORD="pw"
 MYSQL_DATA_DIR="/var/lib/mysql"
 
 # check mysql data directory
+os=`uname`
 ## for mac
-DATA_DIR="/Users/zhanglianxiang/go/src/github.com/zhanglianx111/fund/mysql_data"
-ls ${DATA_DIR}
-if [ $? -ne 0 ];then
-	mkdir -p ${DATA_DIR}
+if [ $os == "Darwin" ];then
+	DATA_DIR="/Users/zhanglianxiang/go/src/github.com/zhanglianx111/fund/mysql_data"
+	ls ${DATA_DIR}
+	if [ $? -ne 0 ];then
+		mkdir -p ${DATA_DIR}
+	fi
 fi
-## for linux
 
+## for linux
+if [ $os == "Linux" ];then
+	DATA_DIR="/mysql_data"
+	if [ -d ${DATA_DIR} ];then
+		mkdir -p ${DATA_DIR}
+	fi
+fi
 
 
 # check to exist mysql container
