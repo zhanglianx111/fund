@@ -188,6 +188,26 @@ def get_topn(n, date):
 
 	return records
 
+# 获取date日涨幅>0或<0的基金数
+def get_greater_zero(flag, date):
+	conn = pymysql.connect(HOST, USER, PASSWD, DB)
+
+	if flag == '1':
+		sql = "select * from fundstoday where Date = %s and RangeToday > %s"
+	else:
+		sql = "select * from fundstoday where Date = %s and RangeToday < %s"
+
+	with conn:
+		cur = conn.cursor()
+		try:
+			count = cur.execute(sql, (date,'0.00%'))
+
+		except Exception as err:
+			logger.error(err)
+			return -1
+
+		return count
+
 if __name__ ==  "__main__":
 	t = TALBE_FUNDSLIST
 

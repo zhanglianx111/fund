@@ -78,8 +78,12 @@ def update_list():
 
 # print version information
 def version():
-	logger.info('ccca')
+	logger.info('version')
 	print 'version: v1.0.1'
+
+def range_for_date(flag, date):
+	count = topN.range_greater_zero(flag, date)
+	print count
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
@@ -103,6 +107,12 @@ if __name__ == '__main__':
 	parser_update_funds_list = subparsers.add_parser('update_list', help='update funds list')
 	parser_update_funds_list.set_defaults(action=('update_list', update_list))
 
+	# 
+	parser_range = subparsers.add_parser("range", help='range > 0 for range < 0')
+	parser_range.set_defaults(action=('range', range_for_date))
+	parser_range.add_argument('--date', '-d', action='store', help="date to get range", required=True)
+	parser_range.add_argument('--flag', '-f', action='store', help="greater than zero or lesser than zero for range", required=True)
+
 	# version
 	parser_version = subparsers.add_parser('version', help='print version information')
 	parser_version.set_defaults(action=('version', version))
@@ -111,7 +121,7 @@ if __name__ == '__main__':
 	args = parser.parse_args()
 	logger.debug(args)
 	(name, functor) = args.action
-	
+
 	if name in ['topn']:
 		functor(args.number, args.days)
 
@@ -123,6 +133,9 @@ if __name__ == '__main__':
 
 	if name in ['version']:
 		functor()
+
+	if name in ['range']:
+		functor(args.flag, args.date)
 
 	'''
 	parser = argparse.ArgumentParser(description="used for test")

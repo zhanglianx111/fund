@@ -99,6 +99,10 @@ def get_first_n(n, date):
 	return db.get_topn(n, date)
 
 
+def range_greater_zero(flag, date):
+	return db.get_greater_zero(flag, date)
+
+
 def main(number, date_today):
 	'''
 	t = datetime.date.today()  
@@ -108,13 +112,13 @@ def main(number, date_today):
 	'''
 	topn_records = []
 	start_time = time.time()
-	if number == None:
+	if number == None:  # 所有基金排名
 		today = db.get_funds_today(date_today)
 		sort_today = QuickSort(today, 0, len(today) -1)
 		ranklist = ranking(sort_today)
 		db.update_fundstoday_rank(ranklist, date_today)
 		logger.info('rank all funds complitly.')
-	else:
+	else: # 查找涨幅前n个基金
 		logger.info('get the first %s record', number)
 		need_return = True
 		topn_records = get_first_n(number, date_today)
@@ -135,5 +139,6 @@ if __name__ == '__main__':
 
 	
 	# ==============
-	main()
+	#main()
+	print range_greater_zero(1, '2020-03-02')
 
