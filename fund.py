@@ -43,6 +43,7 @@ logger.addHandler(rHandler)
 logger.addHandler(console)
 
 # 给某一天的所有基金排名
+need_print = False
 def topn(number, days):
 	logger.debug("topN n: %s, days: %s", number, days)
 	if number == None:
@@ -82,13 +83,15 @@ def version():
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
-	subparsers = parser.add_subparsers()
+	#parser.add_argument('--debug', '-d')
 
+
+	subparsers = parser.add_subparsers()
 	# sort all funds on someday
 	parser_topn = subparsers.add_parser('topn', help='get top N of all funds nearly some days')
 	parser_topn.set_defaults(action=('topn', topn))
-	parser_topn.add_argument('--number', '-n', action="store", help="get the first n record, if number is empty, sort all. \
-		n >= 1", required=False)
+	parser_topn.add_argument('--number', '-n', action="store", help="get the first n(n >= 1) record, if number is empty, sort all." \
+		, required=False)
 	parser_topn.add_argument('--days', '-d', action="store", help="days to top", required=True)
 
 	# get all funds info 
