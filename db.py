@@ -128,11 +128,6 @@ def get_funds_list():
 					continue
 				fcode_list.append(allrows[i][0])
 
-				'''
-				# for test
-				if i == 50:
-					break
-				'''
 		except Exception as err:
 			logger.error(err)
 
@@ -178,8 +173,8 @@ def update_fundstoday_rank(ranklist, date):
 # 获取某天前n个涨幅最大的基金
 def get_topn(n, date):
 	conn = pymysql.connect(HOST, USER, PASSWD, DB)
-	sql = "select * from fundstoday where Date = %s order by RankToday limit 0,%s"
-
+	#sql = "select * from fundstoday where Date = %s order by RankToday limit 0,%s"
+	sql = "select fundslist.FullName, fundstoday.* from fundstoday left join `fundslist` on `fundstoday`.FundCode = `fundslist`.FundCode where Date = %s order by RankToday limit 0,%s"
 	with conn:
 		cur = conn.cursor()
 		try:

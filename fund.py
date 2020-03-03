@@ -53,13 +53,13 @@ def topn(number, days):
 		need_print = True
 
 	result = topN.main(number, days)
-
+	
 	if need_print:
-		print '基金代码' + '\t' + '日期' + '\t\t' + '净值' + '\t\t' + '涨幅' + '\t\t' + '排名' 
+		print '基金名称' + '\t\t' + '基金代码' + '\t' + '日期' + '\t\t' + '净值' + '\t\t' + '涨幅' + '\t\t' + '排名' 
 
 		for r in result:
-			print r[0] + '\t\t' + r[1] + '\t' + str(r[2]) + '\t\t' + r[3] + '\t\t' + str(r[6])
-
+			print r[0] + '\t\t' + r[1] + '\t\t' + r[2] + '\t' + str(r[3]) + '\t\t' + r[4] + '\t\t' + str(r[7])
+	
 
 # 获取当天的基金情况
 def fetchall(date):
