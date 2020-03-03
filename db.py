@@ -30,7 +30,7 @@ RANKTODAY = 'RankToday' # 今日排名
 logger = logging.getLogger('main.db')
 
 def batch_insert(table_name, datas):
-	logger.info(datas)
+	logger.debug(datas)
 	conn = pymysql.connect(HOST, USER, PASSWD, DB)
 
 	if table_name == TALBE_FUNDSLIST:
@@ -94,11 +94,11 @@ def batch_insert(table_name, datas):
 				#PRIMARY KEY(FundCode, Date)")
 		
 		try:
-			for d in datas:
-				cur.executemany(sql, d)
-				conn.commit()
-				logger.info('%s: insert date into table[%s] count: %d successfully for %s!', \
-					datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d %H:%M:%S'), table_name, len(d))
+			#for d in datas:
+			cur.executemany(sql, datas)
+			conn.commit()
+			logger.info('insert date into table[%s] count: %d successfully!', \
+						table_name, len(datas))
 
 		except Exception as err:
 			logger.error(err)

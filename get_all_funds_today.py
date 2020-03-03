@@ -2,6 +2,8 @@
 # -*- coding:utf-8 -*-
 
 import db
+import mail
+
 import sys
 import datetime
 import urllib2
@@ -41,7 +43,7 @@ def get_fund_price(strfundcode, strdate):
 	try:
 		url = 'http://fund.eastmoney.com/f10/F10DataApi.aspx?type=lsjz&code=' + \
 		      strfundcode + '&page=1&per=20&sdate=' + strdate + '&edate=' + strdate
-		response = urllib2.urlopen(url, timeout=10)
+		response = urllib2.urlopen(url, timeout=120)
 	except urllib2.HTTPError, e:
 		logger.error(e)
 		urllib_error_tag = True
@@ -89,6 +91,10 @@ def fetch(sub_funds_list, date):
 
 	for fcode in sub_funds_list:
 		e = get_fund_price(fcode, date)
+		if e == -1:
+			logger.warning("fetch fund code: %s failed", fcode)
+			continue
+
 		t = (fcode, date, convert_str(e[1]), e[3], e[4], e[5], int(0))
 		list_funds_info.append(t)
 
