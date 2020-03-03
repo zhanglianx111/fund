@@ -120,7 +120,11 @@ def get_funds_list():
 				str(allrows[i][3]) == '理财型' or \
 				str(allrows[i][3]) == '定开债券' or \
 				str(allrows[i][3]) == '保本型' or \
-				str(allrows[i][3]) == '固定收益':
+				str(allrows[i][3]) == '固定收益' or \
+				str(allrows[i][3]) == '分级杠杆' or \
+				str(allrows[i][3]) == 'ETF-场内' or \
+				str(allrows[i][3]) == '货币型' or \
+				str(allrows[i][3]) == '其他创新':
 					continue
 				fcode_list.append(allrows[i][0])
 
