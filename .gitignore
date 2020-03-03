@@ -28,6 +28,8 @@ var/
 mysql_data/
 funds.log*
 config.toml
+test.py
+thread*
 
 
 # PyInstaller
