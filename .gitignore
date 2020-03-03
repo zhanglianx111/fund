@@ -26,7 +26,8 @@ var/
 
 # zhanglianx111
 mysql_data/
-funds.log
+funds.log*
+config.toml
 
 
 # PyInstaller
