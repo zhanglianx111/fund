@@ -12,8 +12,12 @@ USER = 'root'
 PASSWD = 'pw'
 DB = 'funds'
 CHARSET = 'utf8'
-TALBE_FUNDSLIST = 'fundslist' # 基金列表
-TABLE_FUNDSTODAY = 'fundstoday' # 每日基金情况
+
+TALBE_FUNDSLIST = 'fundslist' # 基金总列表
+TABLE_FUNDSTODAY = 'fundstoday' # 每日基金总表
+TABLE_HYDIRD = 'funds_hybird' # 混合型每日总表
+TABLE_STOCK = 'funds_stock' # 股票型每日总表
+TABLE_BOND = 'funds_bond' # 债券型每日总表
 
 FUNDCODE = 'FundCode' # 基金代码
 SHORTNAME = 'ShortName' # 基金名简拼
@@ -63,13 +67,44 @@ def batch_insert(table_name, datas):
 		SELLSTATUS, \
 		RANKTODAY) value(%s, %s, %s, %s, %s, %s, %s)"
 
+	if table_name == TABLE_HYDIRD:
+		sql = "insert into funds_hybird( \
+		FUNDCODE, \
+		DATE, \
+		PRICETODAY, \
+		RANGETODAY, \
+		BUYSTATUS, \
+		SELLSTATUS, \
+		RANKTODAY) value(%s, %s, %s, %s, %s, %s, %s)"
+
+	if table_name == TABLE_STOCK:
+		sql = "insert into funds_stock( \
+		FUNDCODE, \
+		DATE, \
+		PRICETODAY, \
+		RANGETODAY, \
+		BUYSTATUS, \
+		SELLSTATUS, \
+		RANKTODAY) value(%s, %s, %s, %s, %s, %s, %s)"
+
+	if table_name == TABLE_BOND:
+		sql = "insert into funds_bond( \
+		FUNDCODE, \
+		DATE, \
+		PRICETODAY, \
+		RANGETODAY, \
+		BUYSTATUS, \
+		SELLSTATUS, \
+		RANKTODAY) value(%s, %s, %s, %s, %s, %s, %s)"
+	
+	
 
 	with conn:
 		cur = conn.cursor()
 
 		# 创建表
 		# table fundslist
-		sql_table_fundslist = "show tables like 'fundslist'"
+		sql_table_fundslist = "show tables like 'funds_list'"
 		if cur.execute(sql_table_fundslist) == 0:
 			print 'table: fundslist is not exist, create it'
 			cur.execute("create table if not exists fundslist( \
@@ -80,7 +115,7 @@ def batch_insert(table_name, datas):
 				FullPinYin VARCHAR(100))ENGINE=InnoDB DEFAULT CHARSET=gbk")
 		
 		# table fundstoday
-		sql_table_fundstoday = "show tables like 'fundstoday'"
+		sql_table_fundstoday = "show tables like 'funds_today'"
 		if cur.execute(sql_table_fundstoday) == 0:
 			print 'table: fundstoday is not exist, create it'
 			cur.execute("create table if not exists fundstoday( \
@@ -93,6 +128,42 @@ def batch_insert(table_name, datas):
 				RankToday INT)")
 				#PRIMARY KEY(FundCode, Date)")
 		
+		sql_table_funds_hybird = "show tables like 'funds_hybird'"
+		if cur.execute(sql_table_funds_hybird) == 0:
+			print 'table: funds_hybird is not exist, create it'
+			cur.execute("create table if not exists funds_hybird( \
+				FundCode VARCHAR(30), \
+				Date VARCHAR(30), \
+				PriceToday FLOAT, \
+				RangeToday VARCHAR(30), \
+				BuyStatus VARCHAR(30), \
+				SellStatus VARCHAR(30), \
+				RankToday INT)")
+
+		sql_table_funds_stock = "show tables like 'funds_stock'"
+		if cur.execute(sql_table_funds_stock) == 0:
+			print 'table: funds_stock is not exist, create it'
+			cur.execute("create table if not exists funds_stock( \
+				FundCode VARCHAR(30), \
+				Date VARCHAR(30), \
+				PriceToday FLOAT, \
+				RangeToday VARCHAR(30), \
+				BuyStatus VARCHAR(30), \
+				SellStatus VARCHAR(30), \
+				RankToday INT)")
+
+		sql_table_funds_bond = "show tables like 'funds_bond'"
+		if cur.execute(sql_table_funds_bond) == 0:
+			print 'table: funds_bond is not exist, create it'
+			cur.execute("create table if not exists funds_bond( \
+				FundCode VARCHAR(30), \
+				Date VARCHAR(30), \
+				PriceToday FLOAT, \
+				RangeToday VARCHAR(30), \
+				BuyStatus VARCHAR(30), \
+				SellStatus VARCHAR(30), \
+				RankToday INT)")
+
 		try:
 			#for d in datas:
 			cur.executemany(sql, datas)
@@ -208,12 +279,16 @@ def get_greater_zero(flag, date):
 
 		return count
 
+
+
+
 if __name__ ==  "__main__":
 	t = TALBE_FUNDSLIST
 
 	# for test
 	#datas = [('q1', 'w1', 's1', 'r1', 't1'), ('q2', 'w2', 's2', 'r2', 't2')]
-	#datas = [('000001', '2020-02-26', 1.197, '-3.78%', '代理费', '是否', 0)]
+	datas = [('000001', '2020-02-26', 1.197, '-3.78%', '代理费', '是否', 0)]
+	t = TABLE_BOND
 	#batch_insert(TABLE_FUNDSTODAY, datas)
 	#flist = get_funds_list()
 	#get_funds_today()
