@@ -18,14 +18,16 @@ elif [ $os == "Darwin" ];then
 fi
 
 python fund.py fetchall -d ${yestoday}
-if [ $? -eq 0 ];then
-	echo "fetch all funds failed for " + ${yestoday}
+if [ $? -ne 0 ];then
+	echo "error code:" $?
+	echo "fetch all funds failed for" ${yestoday}
 	exit 1
 fi
 
 python fund.py topn -d ${yestoday}
-if [ $? -eq 0 ];then
-	echo "sour all funds failed for "+ ${yestoday}
+if [ $? -ne 0 ];then
+	echo "error code:" $?
+	echo "sort all funds failed for" ${yestoday}
 	exit 2
 fi
 exit 0
