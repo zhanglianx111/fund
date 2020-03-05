@@ -19,6 +19,7 @@ TABLE_HYDIRD = 'funds_hybird' # 混合型每日总表
 TABLE_STOCK = 'funds_stock' # 股票型每日总表
 TABLE_BOND = 'funds_bond' # 债券型每日总表
 TABLE_FEEDER = 'funds_feeder' # 联接基金
+TABLE_TIERED_LEVERAGED = 'funds_tiered_leveraged'  # 分级杠杆基金
 
 FUNDCODE = 'FundCode' # 基金代码
 SHORTNAME = 'ShortName' # 基金名简拼
@@ -108,7 +109,17 @@ def batch_insert(table_name, datas):
 		SELLSTATUS, \
 		RANKTODAY) value(%s, %s, %s, %s, %s, %s, %s)"
 	
+	if table_name == TABLE_TIERED_LEVERAGED:
+		sql = "insert into funds_tiered_leveraged( \
+		FUNDCODE, \
+		DATE, \
+		PRICETODAY, \
+		RANGETODAY, \
+		BUYSTATUS, \
+		SELLSTATUS, \
+		RANKTODAY) value(%s, %s, %s, %s, %s, %s, %s)"
 	
+		
 
 	with conn:
 		cur = conn.cursor()
@@ -187,6 +198,18 @@ def batch_insert(table_name, datas):
 				SellStatus VARCHAR(30), \
 				RankToday INT)")
 
+		sql_table_funds_tiered_leveraged = "show tables like 'funds_tiered_leveraged'"
+		if cur.execute(sql_table_funds_tiered_leveraged) == 0:
+			print 'table: funds_tiered_leveraged is not exist, create it'
+			cur.execute("create table if not exists funds_tiered_leveraged( \
+				FundCode VARCHAR(30), \
+				Date VARCHAR(30), \
+				PriceToday FLOAT, \
+				RangeToday VARCHAR(30), \
+				BuyStatus VARCHAR(30), \
+				SellStatus VARCHAR(30), \
+				RankToday INT)")
+
 		try:
 			#for d in datas:
 			cur.executemany(sql, datas)
@@ -202,7 +225,11 @@ def batch_insert(table_name, datas):
 def batch_insert_by_type(date):
 	conn = pymysql.connect(HOST, USER, PASSWD, DB)
 
-	type_list = [('股票型', TABLE_STOCK), ('混合型', TABLE_HYDIRD), ('债券型', TABLE_BOND), ('联接基金', TABLE_FEEDER)]
+	type_list = [('股票型', TABLE_STOCK), \
+				 ('混合型', TABLE_HYDIRD), \
+				 ('债券型', TABLE_BOND), \
+				 ('联接基金', TABLE_FEEDER), \
+				 ('分级杠杆', TABLE_TIERED_LEVERAGED)]
 	with conn:
 		cur = conn.cursor()
 
