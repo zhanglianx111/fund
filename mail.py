@@ -10,6 +10,7 @@ import get_all_funds_today
 
 import smtplib
 import logging
+import toml
 from email.header import Header
 from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
@@ -17,23 +18,20 @@ from email.mime.multipart import MIMEMultipart
 
 logger = logging.getLogger('main.mail')
 
-def to_send_message():
-    return 'hello world'
-
-def send_email():
+def send_email(message):
     config = toml.load('config.toml')
 
-    sender_mail = config['mail']['sender_address'] # 发送者邮箱地址
-    sender_pass = config['mail']['sneder_password'] #
+    sender = config['mail']['sender'] # 发送者邮箱地址
+    sender_pass = config['mail']['sender_password'] #
 
     # 自己发给自己
-    receiver = sender_address
+    receiver = sender
 
     # 设置总的邮件体对象，对象类型为mixed
     msg_root = MIMEMultipart('mixed')
 
     # 邮件添加的头尾信息等
-    msg_root['From'] = config['mail']['sender_address']
+    msg_root['From'] = config['mail']['sender']
     msg_root['To'] = receiver
 
     # 邮件的主题，显示在接收邮件的预览页面，以日期为邮件主题
@@ -41,7 +39,7 @@ def send_email():
     msg_root['subject'] = Header(subject, 'utf-8')
 
     # 构造文本内容
-    text_info = to_send_message()
+    text_info = message
     text_sub = MIMEText(text_info, 'plain', 'utf-8')
     msg_root.attach(text_sub)
 
@@ -87,17 +85,20 @@ def send_email():
         
         s = smtplib.SMTP()
         s.connect(config['mail']['server'])
-        s.login(sender_mail, sender_pass)
-        s.sendmail(sender_mail, receiver, msg_root.as_string())
+        s.login(sender, sender_pass)
+        s.sendmail(sender, receiver, msg_root.as_string())
         s.quit()
 
     except Exception as e:
         logger.error('sendemail failed, the reason: %s', e)
+        #print e
 
 
 if __name__ == '__main__':
     # 可以是一个列表，支持多个邮件地址同时发送，测试改成自己的邮箱地址
-    send_email()
+    content = '你好' + '\t' + 'age' + '\t' + 'male' + '\n' + '张三' + '\t' + '18' + '\t' + '男'
+    print content
+    #send_email(content)
 
 
 
