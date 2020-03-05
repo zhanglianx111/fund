@@ -91,8 +91,8 @@ def fetch(sub_funds_list, date):
 
 	for fcode in sub_funds_list:
 		e = get_fund_price(fcode, date)
-		if e == -1:
-			logger.warning("fetch fund code: %s failed", fcode)
+		if e == '-1':
+			logger.warn("fetch fund code: %s failed", fcode)
 			continue
 
 		t = (fcode, date, convert_str(e[1]), e[3], e[4], e[5], int(0))
@@ -150,6 +150,9 @@ def main(date):
 	# save into db
 	db.batch_insert(db.TABLE_FUNDSTODAY, list_result[0])
 
+	# to send message
+	message = "fetch funds at %s successfully!" % (yesterday)
+	mail.send_email(message)
 # 此脚本为了获取单日基金情况，执行的时间为第二天的凌晨3：00，所以使用昨天的时间
 if __name__ == "__main__":	
 	reload(sys)
