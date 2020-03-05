@@ -126,6 +126,9 @@ def main(number, date_today):
 	end_time = time.time()
 	logger.info('spent time to sort funds: %s minites', (end_time - start_time) / 60 + 1)
 
+	# 在给总表排序后，按基金类型存入各自的表中
+	db.batch_insert_by_type(date_today)
+
 	return topn_records
 
 if __name__ == '__main__':

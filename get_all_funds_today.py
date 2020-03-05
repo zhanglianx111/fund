@@ -150,9 +150,13 @@ def main(date):
 	# save into db
 	db.batch_insert(db.TABLE_FUNDSTODAY, list_result[0])
 
+	#db.batch_insert_by_type(date)
+
 	# to send message
 	message = "fetch funds at %s successfully!" % (yesterday)
 	mail.send_email(message)
+
+
 # 此脚本为了获取单日基金情况，执行的时间为第二天的凌晨3：00，所以使用昨天的时间
 if __name__ == "__main__":	
 	reload(sys)

@@ -18,6 +18,7 @@ TABLE_FUNDSTODAY = 'fundstoday' # 每日基金总表
 TABLE_HYDIRD = 'funds_hybird' # 混合型每日总表
 TABLE_STOCK = 'funds_stock' # 股票型每日总表
 TABLE_BOND = 'funds_bond' # 债券型每日总表
+TABLE_FEEDER = 'funds_feeder' # 联接基金
 
 FUNDCODE = 'FundCode' # 基金代码
 SHORTNAME = 'ShortName' # 基金名简拼
@@ -97,6 +98,16 @@ def batch_insert(table_name, datas):
 		SELLSTATUS, \
 		RANKTODAY) value(%s, %s, %s, %s, %s, %s, %s)"
 	
+	if table_name == TABLE_FEEDER:
+		sql = "insert into funds_feeder( \
+		FUNDCODE, \
+		DATE, \
+		PRICETODAY, \
+		RANGETODAY, \
+		BUYSTATUS, \
+		SELLSTATUS, \
+		RANKTODAY) value(%s, %s, %s, %s, %s, %s, %s)"
+	
 	
 
 	with conn:
@@ -164,6 +175,18 @@ def batch_insert(table_name, datas):
 				SellStatus VARCHAR(30), \
 				RankToday INT)")
 
+		sql_table_funds_feeder = "show tables like 'funds_feeder'"
+		if cur.execute(sql_table_funds_feeder) == 0:
+			print 'table: funds_feeder is not exist, create it'
+			cur.execute("create table if not exists funds_feeder( \
+				FundCode VARCHAR(30), \
+				Date VARCHAR(30), \
+				PriceToday FLOAT, \
+				RangeToday VARCHAR(30), \
+				BuyStatus VARCHAR(30), \
+				SellStatus VARCHAR(30), \
+				RankToday INT)")
+
 		try:
 			#for d in datas:
 			cur.executemany(sql, datas)
@@ -174,6 +197,25 @@ def batch_insert(table_name, datas):
 		except Exception as err:
 			logger.error(err)
 			conn.rollback()
+
+# 按基金类型存入不同的表
+def batch_insert_by_type(date):
+	conn = pymysql.connect(HOST, USER, PASSWD, DB)
+
+	type_list = [('股票型', TABLE_STOCK), ('混合型', TABLE_HYDIRD), ('债券型', TABLE_BOND), ('联接基金', TABLE_FEEDER)]
+	with conn:
+		cur = conn.cursor()
+
+		for t in type_list:
+			sql = "select fundstoday.* from fundstoday left join `fundslist` on `fundstoday`.FundCode = `fundslist`.FundCode \
+					where `fundslist`.Type = %s and `fundstoday`.Date = %s"
+			try:
+				cur.execute(sql, (t[0], date))
+				rows = cur.fetchall()
+				batch_insert(t[1], rows)
+			
+			except Exception as err:
+				print err
 
 
 def get_funds_list():
@@ -283,20 +325,20 @@ def get_greater_zero(flag, date):
 
 
 if __name__ ==  "__main__":
-	t = TALBE_FUNDSLIST
+	print __name__
+	#t = TALBE_FUNDSLIST
 
 	# for test
 	#datas = [('q1', 'w1', 's1', 'r1', 't1'), ('q2', 'w2', 's2', 'r2', 't2')]
-	datas = [('000001', '2020-02-26', 1.197, '-3.78%', '代理费', '是否', 0)]
-	t = TABLE_BOND
+	#datas = [('000001', '2020-02-26', 1.197, '-3.78%', '代理费', '是否', 0)]
 	#batch_insert(TABLE_FUNDSTODAY, datas)
 	#flist = get_funds_list()
 	#get_funds_today()
 
 	#######################
-	batch_insert(t, datas)
+	#batch_insert(t, datas)
 
-
+	batch_insert_by_type('2020-03-03')
 
 
 
