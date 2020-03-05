@@ -43,9 +43,10 @@ logger.addHandler(rHandler)
 logger.addHandler(console)
 
 # 给某一天的所有基金排名
-need_print = False
+
 def topn(number, days):
 	logger.debug("topN n: %s, days: %s", number, days)
+	need_print = False
 	if number == None:
 		logger.info('sort all funds at date: %s', days)
 	else:
@@ -55,10 +56,10 @@ def topn(number, days):
 	result = topN.main(number, days)
 	
 	if need_print:
-		print '基金名称' + '\t\t' + '基金代码' + '\t' + '日期' + '\t\t' + '净值' + '\t\t' + '涨幅' + '\t\t' + '排名' 
+		print '基金名称' + '\t\t\t' + '基金代码' + '\t' + '日期' + '\t\t' + '净值' + '\t\t' + '涨幅' + '\t\t' + '排名' 
 
 		for r in result:
-			print r[0] + '\t\t' + r[1] + '\t\t' + r[2] + '\t' + str(r[3]) + '\t\t' + r[4] + '\t\t' + str(r[7])
+			print r[0] + '\t\t\t' + r[1] + '\t\t' + r[2] + '\t' + str(r[3]) + '\t\t' + r[4] + '\t\t' + str(r[7])
 	
 
 # 获取当天的基金情况
