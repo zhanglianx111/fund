@@ -70,7 +70,10 @@ def create_tables():
 							RangeToday VARCHAR(30), \
 							BuyStatus VARCHAR(30), \
 							SellStatus VARCHAR(30), \
-							RankToday INT)"
+							RankToday INT, \
+							PRIMARY KEY(FundCode, Date))ENGINE=InnoDB DEFAULT CHARSET=gbk"
+
+	#sql_two_key = "alter table %s add primary key(FundCode, Date)"
 
 	with conn:
 		cur = conn.cursor()
@@ -98,7 +101,7 @@ def batch_insert(table_name, datas):
 		SHORTNAME, \
 		FULLNAME, \
 		TYPE, \
-		FULLPINYIN) value(%s, %s, %s, %s, %s) on duplicate key update FUNDCODE=values(FUNDCODE)"
+		FULLPINYIN) value('%s', '%s', '%s', '%s', '%s') on duplicate key update FUNDCODE=values(FUNDCODE)"
 	else:	
 		sql = "insert into %s( \
 			FUNDCODE, \
@@ -107,25 +110,22 @@ def batch_insert(table_name, datas):
 			RANGETODAY, \
 			BUYSTATUS, \
 			SELLSTATUS, \
-			RANKTODAY) value(%s, %s, %s, %s, %s, %s, %s)"
-
-	'''
-	if table_name == TABLE_FUNDSTODAY:
-		sql = "insert into fundstoday( \
-		FUNDCODE, \
-		DATE, \
-		PRICETODAY, \
-		RANGETODAY, \
-		BUYSTATUS, \
-		SELLSTATUS, \
-		RANKTODAY) value(%s, %s, %s, %s, %s, %s, %s) on duplicate key update FUNDCODE=values(FUNDCODE) && DATE=values(DATE)"
-	'''
-	
+			RANKTODAY) value('%s', '%s', '%s', '%s', '%s', '%s', '%s') on duplicate key update FUNDCODE=values(FUNDCODE), DATE=values(DATE)"
 
 	with conn:
 		cur = conn.cursor()
 		try:
-			cur.executemany(sql, (table_name, datas))
+			if len(datas[0]) == 5:		
+				for d in datas:
+					sql_insert = sql % (table_name, d[0], d[1], d[2], d[3], d[4])
+					cur.execute(sql_insert)
+			else:
+				print "test"
+				for d in datas:
+					print d
+					sql_insert = sql % (table_name, d[0], d[1], d[2], d[3], d[4], d[5], d[6])
+					cur.execute(sql_insert)				
+
 			conn.commit()
 			logger.info('insert date into table[%s] count: %d successfully!', \
 						table_name, len(datas))
@@ -160,7 +160,7 @@ def batch_insert_by_type(date):
 
 def get_funds_list():
 	conn = pymysql.connect(HOST, USER, PASSWD, DB)
-	sql = "select * from fundslist"
+	sql = "select * from funds_list"
 	with conn:
 		cur = conn.cursor()
 		try:
@@ -176,7 +176,6 @@ def get_funds_list():
 				str(allrows[i][3]) == '固定收益' or \
 				str(allrows[i][3]) == '分级杠杆' or \
 				str(allrows[i][3]) == 'ETF-场内' or \
-				str(allrows[i][3]) == '货币型' or \
 				str(allrows[i][3]) == '其他创新':
 					continue
 				fcode_list.append(allrows[i][0])
@@ -283,9 +282,9 @@ if __name__ ==  "__main__":
 	#t = TALBE_FUNDSLIST
 
 	# for test
-	datas = [('q1', 'w1', 's1', 'r1', 't1'), ('q2', 'w2', 's2', 'r2', 't2')]
-	#datas = [('000001', '2020-02-26', 1.197, '-3.78%', '代理费', '是否', 0)]
-	#batch_insert(TABLE_FUNDSTODAY, datas)
+	#datas = [('q1', 'w1', 's1', 'r1', 't1'), ('q2', 'w2', 's2', 'r2', 't2')]
+	datas = [('000001', '2020-02-26', 1.197, '-3.78%', '开放申购', '开放赎回', 0), ('000002', '2020-02-26', -1.197, '-1.72%', '开放申购', '开放赎回', 0)]
+	batch_insert(TABLE_FUNDSTODAY, datas)
 	#flist = get_funds_list()
 	#get_funds_today()
 
@@ -294,7 +293,7 @@ if __name__ ==  "__main__":
 
 	#batch_insert_by_type('2020-03-03')
 	#create_database()
-	create_tables()
+	#create_tables()
 	#batch_insert(TALBE_FUNDSLIST, )
 
 
