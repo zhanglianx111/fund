@@ -5,16 +5,20 @@ import sys
 import datetime
 import string
 import logging
+import toml
 
-HOST = '127.0.0.1'
-PORT = 3306
-USER = 'root'
-PASSWD = 'pw'
-DB = 'funds'
-CHARSET = 'utf8'
 
-TALBE_FUNDSLIST = 'fundslist' # 基金总列表
-TABLE_FUNDSTODAY = 'fundstoday' # 每日基金总表
+config = toml.load('config.toml')
+
+HOST = config['database']['host']
+PORT = config['database']['port']
+USER = config['database']['user']
+PASSWD = config['database']['password']
+DB = config['database']['db']
+CHARSET = config['database']['charset']
+
+TALBE_FUNDSLIST = 'funds_list' # 基金总列表
+TABLE_FUNDSTODAY = 'funds_today' # 每日基金总表
 TABLE_HYDIRD = 'funds_hybird' # 混合型每日总表
 TABLE_STOCK = 'funds_stock' # 股票型每日总表
 TABLE_BOND = 'funds_bond' # 债券型每日总表
@@ -33,20 +37,78 @@ BUYSTATUS = 'BuyStatus' # 申购状态
 SELLSTATUS = 'SellStatus' # 赎回状态
 RANKTODAY = 'RankToday' # 今日排名
 
+TABLES_LIST = [TALBE_FUNDSLIST, TABLE_FUNDSTODAY, TABLE_STOCK, TABLE_HYDIRD, TABLE_BOND, TABLE_FEEDER, TABLE_TIERED_LEVERAGED]
+
 logger = logging.getLogger('main.db')
+
+
+def create_database():
+	print HOST, PORT
+	conn = pymysql.connect(host=HOST, port=PORT, user=USER, password=PASSWD)
+	with conn:
+		sql = "create database %s" % DB
+		cur = conn.cursor()
+		cur.execute(sql)
+
+
+def create_tables():
+	conn = pymysql.connect(host=HOST, port=PORT, user=USER, password=PASSWD, database=DB)
+
+	sql_show_table = "show tables like %s"
+
+	sql_create_table_fundslist = "create table if not exists %s( \
+			FundCode VARCHAR(30) PRIMARY KEY, \
+			ShortName VARCHAR(30), \
+			FullName VARCHAR(100), \
+			Type VARCHAR(30), \
+			FullPinYin VARCHAR(100))ENGINE=InnoDB DEFAULT CHARSET=gbk"
+
+	sql_create_table = "create table if not exists %s( \
+							FundCode VARCHAR(30), \
+							Date VARCHAR(30), \
+							PriceToday FLOAT, \
+							RangeToday VARCHAR(30), \
+							BuyStatus VARCHAR(30), \
+							SellStatus VARCHAR(30), \
+							RankToday INT)"
+
+	with conn:
+		cur = conn.cursor()
+		try:
+			for t in TABLES_LIST:
+				if t == TALBE_FUNDSLIST:
+					sql = sql_create_table_fundslist % t
+				else:
+					sql = sql_create_table % t
+
+				if cur.execute(sql_show_table, t) == 0:
+					cur.execute(sql)
+
+		except Exception as err:
+			print err
+
 
 def batch_insert(table_name, datas):
 	logger.debug(datas)
-	conn = pymysql.connect(HOST, USER, PASSWD, DB)
+	conn = pymysql.connect(host=HOST, port=PORT, user=USER, password=PASSWD, database=DB)
 
 	if table_name == TALBE_FUNDSLIST:
-		sql = "insert into fundslist( \
+		sql = "insert into %s( \
 		FUNDCODE, \
 		SHORTNAME, \
 		FULLNAME, \
 		TYPE, \
 		FULLPINYIN) value(%s, %s, %s, %s, %s) on duplicate key update FUNDCODE=values(FUNDCODE)"
-		
+	else:	
+		sql = "insert into %s( \
+			FUNDCODE, \
+			DATE, \
+			PRICETODAY, \
+			RANGETODAY, \
+			BUYSTATUS, \
+			SELLSTATUS, \
+			RANKTODAY) value(%s, %s, %s, %s, %s, %s, %s)"
+
 	'''
 	if table_name == TABLE_FUNDSTODAY:
 		sql = "insert into fundstoday( \
@@ -58,161 +120,12 @@ def batch_insert(table_name, datas):
 		SELLSTATUS, \
 		RANKTODAY) value(%s, %s, %s, %s, %s, %s, %s) on duplicate key update FUNDCODE=values(FUNDCODE) && DATE=values(DATE)"
 	'''
-
-	if table_name == TABLE_FUNDSTODAY:
-		sql = "insert into fundstoday( \
-		FUNDCODE, \
-		DATE, \
-		PRICETODAY, \
-		RANGETODAY, \
-		BUYSTATUS, \
-		SELLSTATUS, \
-		RANKTODAY) value(%s, %s, %s, %s, %s, %s, %s)"
-
-	if table_name == TABLE_HYDIRD:
-		sql = "insert into funds_hybird( \
-		FUNDCODE, \
-		DATE, \
-		PRICETODAY, \
-		RANGETODAY, \
-		BUYSTATUS, \
-		SELLSTATUS, \
-		RANKTODAY) value(%s, %s, %s, %s, %s, %s, %s)"
-
-	if table_name == TABLE_STOCK:
-		sql = "insert into funds_stock( \
-		FUNDCODE, \
-		DATE, \
-		PRICETODAY, \
-		RANGETODAY, \
-		BUYSTATUS, \
-		SELLSTATUS, \
-		RANKTODAY) value(%s, %s, %s, %s, %s, %s, %s)"
-
-	if table_name == TABLE_BOND:
-		sql = "insert into funds_bond( \
-		FUNDCODE, \
-		DATE, \
-		PRICETODAY, \
-		RANGETODAY, \
-		BUYSTATUS, \
-		SELLSTATUS, \
-		RANKTODAY) value(%s, %s, %s, %s, %s, %s, %s)"
 	
-	if table_name == TABLE_FEEDER:
-		sql = "insert into funds_feeder( \
-		FUNDCODE, \
-		DATE, \
-		PRICETODAY, \
-		RANGETODAY, \
-		BUYSTATUS, \
-		SELLSTATUS, \
-		RANKTODAY) value(%s, %s, %s, %s, %s, %s, %s)"
-	
-	if table_name == TABLE_TIERED_LEVERAGED:
-		sql = "insert into funds_tiered_leveraged( \
-		FUNDCODE, \
-		DATE, \
-		PRICETODAY, \
-		RANGETODAY, \
-		BUYSTATUS, \
-		SELLSTATUS, \
-		RANKTODAY) value(%s, %s, %s, %s, %s, %s, %s)"
-	
-		
 
 	with conn:
 		cur = conn.cursor()
-
-		# 创建表
-		# table fundslist
-		sql_table_fundslist = "show tables like 'fundslist'"
-		if cur.execute(sql_table_fundslist) == 0:
-			print 'table: fundslist is not exist, create it'
-			cur.execute("create table if not exists fundslist( \
-				FundCode VARCHAR(30) PRIMARY KEY, \
-				ShortName VARCHAR(30), \
-				FullName VARCHAR(100), \
-				Type VARCHAR(30), \
-				FullPinYin VARCHAR(100))ENGINE=InnoDB DEFAULT CHARSET=gbk")
-		
-		# table fundstoday
-		sql_table_fundstoday = "show tables like 'fundstoday'"
-		if cur.execute(sql_table_fundstoday) == 0:
-			print 'table: fundstoday is not exist, create it'
-			cur.execute("create table if not exists fundstoday( \
-				FundCode VARCHAR(30), \
-				Date VARCHAR(30), \
-				PriceToday FLOAT, \
-				RangeToday VARCHAR(30), \
-				BuyStatus VARCHAR(30), \
-				SellStatus VARCHAR(30), \
-				RankToday INT)")
-				#PRIMARY KEY(FundCode, Date)")
-		
-		sql_table_funds_hybird = "show tables like 'funds_hybird'"
-		if cur.execute(sql_table_funds_hybird) == 0:
-			print 'table: funds_hybird is not exist, create it'
-			cur.execute("create table if not exists funds_hybird( \
-				FundCode VARCHAR(30), \
-				Date VARCHAR(30), \
-				PriceToday FLOAT, \
-				RangeToday VARCHAR(30), \
-				BuyStatus VARCHAR(30), \
-				SellStatus VARCHAR(30), \
-				RankToday INT)")
-
-		sql_table_funds_stock = "show tables like 'funds_stock'"
-		if cur.execute(sql_table_funds_stock) == 0:
-			print 'table: funds_stock is not exist, create it'
-			cur.execute("create table if not exists funds_stock( \
-				FundCode VARCHAR(30), \
-				Date VARCHAR(30), \
-				PriceToday FLOAT, \
-				RangeToday VARCHAR(30), \
-				BuyStatus VARCHAR(30), \
-				SellStatus VARCHAR(30), \
-				RankToday INT)")
-
-		sql_table_funds_bond = "show tables like 'funds_bond'"
-		if cur.execute(sql_table_funds_bond) == 0:
-			print 'table: funds_bond is not exist, create it'
-			cur.execute("create table if not exists funds_bond( \
-				FundCode VARCHAR(30), \
-				Date VARCHAR(30), \
-				PriceToday FLOAT, \
-				RangeToday VARCHAR(30), \
-				BuyStatus VARCHAR(30), \
-				SellStatus VARCHAR(30), \
-				RankToday INT)")
-
-		sql_table_funds_feeder = "show tables like 'funds_feeder'"
-		if cur.execute(sql_table_funds_feeder) == 0:
-			print 'table: funds_feeder is not exist, create it'
-			cur.execute("create table if not exists funds_feeder( \
-				FundCode VARCHAR(30), \
-				Date VARCHAR(30), \
-				PriceToday FLOAT, \
-				RangeToday VARCHAR(30), \
-				BuyStatus VARCHAR(30), \
-				SellStatus VARCHAR(30), \
-				RankToday INT)")
-
-		sql_table_funds_tiered_leveraged = "show tables like 'funds_tiered_leveraged'"
-		if cur.execute(sql_table_funds_tiered_leveraged) == 0:
-			print 'table: funds_tiered_leveraged is not exist, create it'
-			cur.execute("create table if not exists funds_tiered_leveraged( \
-				FundCode VARCHAR(30), \
-				Date VARCHAR(30), \
-				PriceToday FLOAT, \
-				RangeToday VARCHAR(30), \
-				BuyStatus VARCHAR(30), \
-				SellStatus VARCHAR(30), \
-				RankToday INT)")
-
 		try:
-			#for d in datas:
-			cur.executemany(sql, datas)
+			cur.executemany(sql, (table_name, datas))
 			conn.commit()
 			logger.info('insert date into table[%s] count: %d successfully!', \
 						table_name, len(datas))
@@ -370,7 +283,7 @@ if __name__ ==  "__main__":
 	#t = TALBE_FUNDSLIST
 
 	# for test
-	#datas = [('q1', 'w1', 's1', 'r1', 't1'), ('q2', 'w2', 's2', 'r2', 't2')]
+	datas = [('q1', 'w1', 's1', 'r1', 't1'), ('q2', 'w2', 's2', 'r2', 't2')]
 	#datas = [('000001', '2020-02-26', 1.197, '-3.78%', '代理费', '是否', 0)]
 	#batch_insert(TABLE_FUNDSTODAY, datas)
 	#flist = get_funds_list()
@@ -379,7 +292,10 @@ if __name__ ==  "__main__":
 	#######################
 	#batch_insert(t, datas)
 
-	batch_insert_by_type('2020-03-03')
+	#batch_insert_by_type('2020-03-03')
+	#create_database()
+	create_tables()
+	#batch_insert(TALBE_FUNDSLIST, )
 
 
 

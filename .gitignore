@@ -26,6 +26,7 @@ var/
 
 # zhanglianx111
 mysql_data/
+mysql_data_dev/
 funds.log*
 config.toml
 test.py
