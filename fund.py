@@ -86,6 +86,12 @@ def range_for_date(flag, date):
 	count = topN.range_greater_zero(flag, date)
 	print count
 
+# 获取某日某类型前count个基金
+def get(fund_type, date, count):
+	print fund_type, date, count
+	topN.get(fund_type, date, count)
+
+
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
 	#parser.add_argument('--debug', '-d')
@@ -114,6 +120,14 @@ if __name__ == '__main__':
 	parser_range.add_argument('--date', '-d', action='store', help="date to get range", required=True)
 	parser_range.add_argument('--flag', '-f', action='store', help="greater than zero or lesser than zero for range", required=True)
 
+	#获取某日某类型前count个基金
+	parser_get = subparsers.add_parser("get", help="获取某日某类型前count个基金")
+	parser_get.set_defaults(action=('get', get))
+	parser_get.add_argument('--type', '-t', action='store', help="type of the fund. \
+																	1: stock; 2:hybird; 3: bond; 4: feeder", required=True)
+	parser_get.add_argument('--date', '-d', action='store', help="date to get", required=True)
+	parser_get.add_argument('--count', '-cnt', action='store', help="count of the fund for type", required=True)
+
 	# version
 	parser_version = subparsers.add_parser('version', help='print version information')
 	parser_version.set_defaults(action=('version', version))
@@ -137,6 +151,9 @@ if __name__ == '__main__':
 
 	if name in ['range']:
 		functor(args.flag, args.date)
+
+	if name in ['get']:
+		functor(args.type, args.date, args.count)
 
 	'''
 	parser = argparse.ArgumentParser(description="used for test")

@@ -126,7 +126,7 @@ def batch_insert(table_name, datas):
 
 		# 创建表
 		# table fundslist
-		sql_table_fundslist = "show tables like 'funds_list'"
+		sql_table_fundslist = "show tables like 'fundslist'"
 		if cur.execute(sql_table_fundslist) == 0:
 			print 'table: fundslist is not exist, create it'
 			cur.execute("create table if not exists fundslist( \
@@ -137,7 +137,7 @@ def batch_insert(table_name, datas):
 				FullPinYin VARCHAR(100))ENGINE=InnoDB DEFAULT CHARSET=gbk")
 		
 		# table fundstoday
-		sql_table_fundstoday = "show tables like 'funds_today'"
+		sql_table_fundstoday = "show tables like 'fundstoday'"
 		if cur.execute(sql_table_fundstoday) == 0:
 			print 'table: fundstoday is not exist, create it'
 			cur.execute("create table if not exists fundstoday( \
@@ -349,6 +349,20 @@ def get_greater_zero(flag, date):
 		return count
 
 
+def get_topn_by_type(fund_type, date, count):
+	conn = pymysql.connect(HOST, USER, PASSWD, DB)
+
+	print fund_type, date, count
+
+	sql = "select fundslist.FullName, `%s`.* from `%s` left join `fundslist` on `%s`.FundCode = `fundslist`.FundCode where Date = %s order by RankToday limit 0, %s"
+
+	with conn:
+		cur = conn.cursor()
+		sql_table = "show tables like '%s'" % TABLE_STOCK
+		print cur.execute(sql_table)
+		cur.execute(sql, (TABLE_BOND, TABLE_BOND, TABLE_BOND, date, int(count)))
+		result = cur.fetchall()
+		print result
 
 
 if __name__ ==  "__main__":
