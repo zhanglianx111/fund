@@ -172,7 +172,6 @@ def get_funds_list():
 				str(allrows[i][3]) == '定开债券' or \
 				str(allrows[i][3]) == '保本型' or \
 				str(allrows[i][3]) == '固定收益' or \
-				str(allrows[i][3]) == '分级杠杆' or \
 				str(allrows[i][3]) == 'ETF-场内' or \
 				str(allrows[i][3]) == '其他创新':
 					continue
@@ -186,7 +185,7 @@ def get_funds_list():
 
 def get_funds_today(date_today):
 	conn = pymysql.connect(HOST, USER, PASSWD, DB)
-	sql = "select * from fundstoday where Date = %s"
+	sql = "select * from funds_today where Date = %s"
 	with conn:
 		cur = conn.cursor()
 		try:
@@ -207,7 +206,7 @@ def get_funds_today(date_today):
 
 def update_fundstoday_rank(ranklist, date):
 	conn = pymysql.connect(HOST, USER, PASSWD, DB)
-	sql = "update fundstoday set RankToday = %s where FundCode = %s and Date = %s"
+	sql = "update funds_today set RankToday = %s where FundCode = %s and Date = %s"
 	with conn:
 		cur = conn.cursor()
 		try:
@@ -223,8 +222,8 @@ def update_fundstoday_rank(ranklist, date):
 # 获取某天前n个涨幅最大的基金
 def get_topn(n, date):
 	conn = pymysql.connect(HOST, USER, PASSWD, DB)
-	#sql = "select * from fundstoday where Date = %s order by RankToday limit 0,%s"
-	sql = "select fundslist.FullName, fundstoday.* from fundstoday left join `fundslist` on `fundstoday`.FundCode = `fundslist`.FundCode where Date = %s order by RankToday limit 0,%s"
+	#sql = "select * from funds_today where Date = %s order by RankToday limit 0,%s"
+	sql = "select funds_list.FullName, funds_today.* from funds_today left join `funds_list` on `funds_today`.FundCode = `funds_list`.FundCode where Date = %s order by RankToday limit 0,%s"
 	with conn:
 		cur = conn.cursor()
 		try:
@@ -243,9 +242,9 @@ def get_greater_zero(flag, date):
 	conn = pymysql.connect(HOST, USER, PASSWD, DB)
 
 	if flag == '1':
-		sql = "select * from fundstoday where Date = %s and RangeToday > %s"
+		sql = "select * from funds_today where Date = %s and RangeToday > %s"
 	else:
-		sql = "select * from fundstoday where Date = %s and RangeToday < %s"
+		sql = "select * from funds_today where Date = %s and RangeToday < %s"
 
 	with conn:
 		cur = conn.cursor()
