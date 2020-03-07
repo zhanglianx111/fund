@@ -18,7 +18,7 @@ from email.mime.multipart import MIMEMultipart
 
 logger = logging.getLogger('main.mail')
 
-def send_email(message):
+def send_email(message, date):
     config = toml.load('config.toml')
 
     sender = config['mail']['sender'] # 发送者邮箱地址
@@ -35,7 +35,8 @@ def send_email(message):
     msg_root['To'] = receiver
 
     # 邮件的主题，显示在接收邮件的预览页面，以日期为邮件主题
-    subject = get_all_funds_today.getYesterday()
+    #subject = get_all_funds_today.getYesterday()
+    subject = date
     msg_root['subject'] = Header(subject, 'utf-8')
 
     # 构造文本内容

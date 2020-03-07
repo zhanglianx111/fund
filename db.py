@@ -120,9 +120,7 @@ def batch_insert(table_name, datas):
 					sql_insert = sql % (table_name, d[0], d[1], d[2], d[3], d[4])
 					cur.execute(sql_insert)
 			else:
-				print "test"
 				for d in datas:
-					print d
 					sql_insert = sql % (table_name, d[0], d[1], d[2], d[3], d[4], d[5], d[6])
 					cur.execute(sql_insert)				
 
@@ -147,8 +145,8 @@ def batch_insert_by_type(date):
 		cur = conn.cursor()
 
 		for t in type_list:
-			sql = "select fundstoday.* from fundstoday left join `fundslist` on `fundstoday`.FundCode = `fundslist`.FundCode \
-					where `fundslist`.Type = %s and `fundstoday`.Date = %s"
+			sql = "select funds_today.* from funds_today left join `funds_list` on `funds_today`.FundCode = `funds_list`.FundCode \
+					where `funds_list`.Type = %s and `funds_today`.Date = %s"
 			try:
 				cur.execute(sql, (t[0], date))
 				rows = cur.fetchall()
@@ -283,18 +281,15 @@ if __name__ ==  "__main__":
 
 	# for test
 	#datas = [('q1', 'w1', 's1', 'r1', 't1'), ('q2', 'w2', 's2', 'r2', 't2')]
-	datas = [('000001', '2020-02-26', 1.197, '-3.78%', '开放申购', '开放赎回', 0), ('000002', '2020-02-26', -1.197, '-1.72%', '开放申购', '开放赎回', 0)]
-	batch_insert(TABLE_FUNDSTODAY, datas)
+	#datas = [('000001', '2020-02-26', 1.197, '-3.78%', '开放申购', '开放赎回', 0), ('000002', '2020-02-26', -1.197, '-1.72%', '开放申购', '开放赎回', 0)]
+	#batch_insert(TABLE_FUNDSTODAY, datas)
 	#flist = get_funds_list()
 	#get_funds_today()
 
 	#######################
 	#batch_insert(t, datas)
 
-	#batch_insert_by_type('2020-03-03')
-	#create_database()
-	#create_tables()
-	#batch_insert(TALBE_FUNDSLIST, )
+	#batch_insert_by_type('2020-03-05')
 
 
 

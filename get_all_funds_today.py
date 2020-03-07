@@ -18,6 +18,10 @@ empty_entry = ('0000-00-00', '0.0000', '0.0000', '0.00%', '开放申购', '开�
 
 # 每个线程获取500基金情况
 NUMBER_PER_THREADING = 500
+SLEEP_TIME = 0.01
+TIMEOUT = 120
+DOMAIN ='fund.eastmoney.com'
+
 
 
 class MyThread(threading.Thread):
@@ -43,7 +47,7 @@ def get_fund_price(strfundcode, strdate):
 	try:
 		url = 'http://fund.eastmoney.com/f10/F10DataApi.aspx?type=lsjz&code=' + \
 		      strfundcode + '&page=1&per=20&sdate=' + strdate + '&edate=' + strdate
-		response = urllib2.urlopen(url, timeout=120)
+		response = urllib2.urlopen(url, timeout=TIMEOUT)
 	except urllib2.HTTPError, e:
 		logger.error(e)
 		urllib_error_tag = True
@@ -97,8 +101,19 @@ def fetch(sub_funds_list, date):
 
 		t = (fcode, date, convert_str(e[1]), e[3], e[4], e[5], int(0))
 		list_funds_info.append(t)
+		time.sleep(SLEEP_TIME)
 
 	return list_funds_info
+
+# fund.eastmoney的ip地址
+def get_domain_ip():
+	ip_list = []
+	A = dns.resolver.query(DOMAIN, 'A')
+	for i in A.response.answer[2:]:
+		for j in i.items:
+			ip_list.append(j.to_text())
+
+	return ip_list
 
 def main(date):
 	start_time = time.time()
@@ -150,22 +165,23 @@ def main(date):
 	# save into db
 	db.batch_insert(db.TABLE_FUNDSTODAY, list_result[0])
 
-	#db.batch_insert_by_type(date)
+	db.batch_insert_by_type(date)
 
 	# to send message
 	message = "fetch funds at %s successfully!" % (yesterday)
-	mail.send_email(message)
+	mail.send_email(message, yesterday)
 
 
 # 此脚本为了获取单日基金情况，执行的时间为第二天的凌晨3：00，所以使用昨天的时间
 if __name__ == "__main__":	
 	reload(sys)
 	sys.setdefaultencoding('utf-8')
-	#print get_fund_price('000041', '2020-02-24')
+	'''
 	start_time = time.time()
 	main('2020-02-24')
 	end_time = time.time()
 	print end_time - start_time
+	'''
 
 
 
