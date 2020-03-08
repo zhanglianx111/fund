@@ -11,6 +11,9 @@ import get_all_funds_today
 import smtplib
 import logging
 import toml
+from prettytable import PrettyTable
+
+
 from email.header import Header
 from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
@@ -92,14 +95,21 @@ def send_email(message, date):
 
     except Exception as e:
         logger.error('sendemail failed, the reason: %s', e)
-        #print e
 
 
 if __name__ == '__main__':
     # 可以是一个列表，支持多个邮件地址同时发送，测试改成自己的邮箱地址
-    content = '你好' + '\t' + 'age' + '\t' + 'male' + '\n' + '张三' + '\t' + '18' + '\t' + '男'
-    print content
-    #send_email(content)
+    #content = '你好' + '\t' + 'age' + '\t' + 'male' + '\n' + '张三' + '\t' + '18' + '\t' + '男'
+    #content = "hello \n funds: %s count: %s at: %s" % ('stock', 233, '2020-01-01')
+    #send_email(content, '2020-01-01')
+
+    x= PrettyTable(["姓名", "年龄", "籍贯"])
+    x.add_row(["张三",32,"北京"])
+    x.add_row(["李四",45,"天津"])
+    x.add_row(["王五",28,"河北"])
+    m = str(x)
+    print m
+    send_email(m, '表格')
 
 
 

@@ -6,14 +6,17 @@ import rank_avg
 import get_all_funds_today
 import get_all_funds
 import topN
-#import version
+import mail
 
 import toml
 import logging
 import argparse
 import datetime
 import sys
+import time
+
 from logging.handlers import RotatingFileHandler
+from db import TABLES_LIST
 
 config = toml.load('config.toml')
 
@@ -42,22 +45,16 @@ console.setFormatter(formatter)
 logger.addHandler(rHandler)
 logger.addHandler(console)
 
-# 给某一天的所有基金类型排名
+# 给某一天的基金类型排名
 def topn(date):
 	logger.debug("sort at: %s", date)
 	result = topN.main(date)
-	'''
-	if need_print:
-		print '基金名称' + '\t\t\t' + '基金代码' + '\t' + '日期' + '\t\t' + '净值' + '\t\t' + '涨幅' + '\t\t' + '排名' 
-
-		for r in result:
-			print r[0] + '\t\t\t' + r[1] + '\t\t' + r[2] + '\t' + str(r[3]) + '\t\t' + r[4] + '\t\t' + str(r[7])
-	'''
 
 # 获取当天的基金情况
 def fetchall(date):
 	logger.info('fetch the fund net value of the date: %s', date)
-	get_all_funds_today.main(date)
+	ret = get_all_funds_today.main(date)
+	return ret
 
 # 计算最近n天的排名平均值
 def average():
@@ -80,14 +77,42 @@ def range_for_date(flag, date):
 
 # 获取某日某类型前count个基金
 def get(fund_type, date, count):
-	print fund_type, date, count
-	topN.get(fund_type, date, count)
+	if int(fund_type) < 1 or int(fund_type) > 6:
+		print "fund type error. 1 <= type <=6"
+		sys.exit(1)
+	ret = topN.get(fund_type, date, count)
+
+	print(ret)
+	return ret
+
+
+def routine(date):
+	day = time.strftime("%w",time.localtime())
+	if day == '0' or day == '1':
+		logger.info('today is %s, have a rest!', time.strftime("%A",time.localtime()))
+		sys.exit(1)
+
+	message = ""
+	# 获取当日的基金情况
+	fetchall_ret = fetchall(date)
+	message = message + fetchall_ret + "\n"
+
+	# 排名
+	topn(date)
+
+	# 获取排名
+	count = 50
+	for i in range(6):
+		ret = get(i + 1, date, count)
+		message =  message + TABLES_LIST[i+1] + '\n'
+		message = message + str(ret) + '\n'
+
+	# send email
+	mail.send_email(message, date)
 
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
-	#parser.add_argument('--debug', '-d')
-
 
 	subparsers = parser.add_subparsers()
 	# sort all funds on someday
@@ -111,12 +136,19 @@ if __name__ == '__main__':
 	parser_range.add_argument('--flag', '-f', action='store', help="greater than zero or lesser than zero for range", required=True)
 
 	#获取某日某类型前count个基金
-	parser_get = subparsers.add_parser("get", help="获取某日某类型前count个基金")
+	parser_get = subparsers.add_parser("get", help="获取某日或一段时间的某类型前count个基金")
 	parser_get.set_defaults(action=('get', get))
 	parser_get.add_argument('--type', '-t', action='store', help="type of the fund. \
-																	1: stock; 2:hybird; 3: bond; 4: feeder", required=True)
+		TABLES_LIST = [TALBE_FUNDSLIST, TABLE_FUNDSTODAY, TABLE_STOCK, TABLE_HYDIRD, TABLE_BOND, TABLE_FEEDER, TABLE_TIERED_LEVERAGED] \
+		1: fundstoday 2: stock; 3:hybird; 4: bond; 5: feeder; 6: tieread_leveraaged", required=True)
 	parser_get.add_argument('--date', '-d', action='store', help="date to get", required=True)
 	parser_get.add_argument('--count', '-cnt', action='store', help="count of the fund for type", required=True)
+
+	
+	# 每天执行一次
+	parser_routine = subparsers.add_parser('routine', help="每天例行执行")
+	parser_routine.set_defaults(action=('routine', routine))
+	parser_routine.add_argument('--date', '-d', action='store', help="routine every day", required=True)
 
 	# version
 	parser_version = subparsers.add_parser('version', help='print version information')
@@ -144,6 +176,10 @@ if __name__ == '__main__':
 
 	if name in ['get']:
 		functor(args.type, args.date, args.count)
+
+	if name in ['routine']:
+		functor(args.date)
+
 
 	'''
 	parser = argparse.ArgumentParser(description="used for test")

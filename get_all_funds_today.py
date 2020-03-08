@@ -46,7 +46,7 @@ class MyThread(threading.Thread):
 def get_fund_price(strfundcode, strdate):
 	try:
 		url = 'http://fund.eastmoney.com/f10/F10DataApi.aspx?type=lsjz&code=' + \
-		      strfundcode + '&page=1&per=20&sdate=' + strdate + '&edate=' + strdate
+		      strfundcode + '&page=1&per=1&sdate=' + strdate + '&edate=' + strdate
 		response = urllib2.urlopen(url, timeout=TIMEOUT)
 	except urllib2.HTTPError, e:
 		logger.error(e)
@@ -168,8 +168,8 @@ def main(date):
 	db.batch_insert_by_type(date)
 
 	# to send message
-	message = "fetch funds at %s successfully!" % (yesterday)
-	mail.send_email(message, yesterday)
+	message = "fetch funds at %s successfully! 总共：%s 个基金" % (yesterday, len(list_result[0]))
+	return message
 
 
 # 此脚本为了获取单日基金情况，执行的时间为第二天的凌晨3：00，所以使用昨天的时间

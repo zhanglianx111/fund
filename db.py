@@ -261,19 +261,19 @@ def get_greater_zero(flag, date):
 
 def get_topn_by_type(fund_type, date, count):
 	conn = pymysql.connect(HOST, USER, PASSWD, DB)
+	table = TABLES_LIST[int(fund_type)]
 
-	print fund_type, date, count
-
-	sql = "select fundslist.FullName, `%s`.* from `%s` left join `fundslist` on `%s`.FundCode = `fundslist`.FundCode where Date = %s order by RankToday limit 0, %s"
+	sql = "select funds_list.FullName, %s.* from %s left join funds_list on %s.FundCode = funds_list.FundCode where Date = '%s' order by RankToday limit 0, %s" % \
+			(table, table, table, date, int(count))
 
 	with conn:
 		cur = conn.cursor()
-		sql_table = "show tables like '%s'" % TABLE_STOCK
-		print cur.execute(sql_table)
-		cur.execute(sql, (TABLE_BOND, TABLE_BOND, TABLE_BOND, date, int(count)))
+		#sql_table = "show tables like '%s'" % TABLE_STOCK
+		#print cur.execute(sql_table)
+		cur.execute(sql)
 		result = cur.fetchall()
-		print result
 
+	return result
 
 if __name__ ==  "__main__":
 	print __name__

@@ -7,6 +7,7 @@ import datetime
 import logging
 import sys
 import time
+from prettytable import PrettyTable
 
 logger = logging.getLogger("main.topN")
 
@@ -127,10 +128,12 @@ def main(date_today):
 
 
 def get(fund_type, date, count):
-	print fund_type, date, count
-	db.get_topn_by_type(fund_type, date, count)
+	ret = db.get_topn_by_type(fund_type, date, count)
 
-
+	x= PrettyTable(["基金名称", "基金代码", "日期", "净值", "涨幅", "排名"])
+	for f in ret:
+		x.add_row([f[0], f[1], f[2], f[3], f[4], f[7]])
+	return x
 
 if __name__ == '__main__':
 
