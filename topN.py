@@ -103,35 +103,27 @@ def range_greater_zero(flag, date):
 	return db.get_greater_zero(flag, date)
 
 
-def main(number, date_today):
+def main(date_today):
 	'''
 	t = datetime.date.today()  
 	date_today = datetime.datetime.strftime(t, '%Y-%m-%d')	
 	logger.info("today: %s", date_today)
 	sys.exit()
 	'''
-	topn_records = []
+
 	start_time = time.time()
-	if number == None:  # 所有基金排名
-		today = db.get_funds_today(date_today)
+
+	for t in db.TABLES_LIST[1:]:
+		today = db.get_funds_today(date_today, t)
 		sort_today = QuickSort(today, 0, len(today) -1)
 		ranklist = ranking(sort_today)
-		db.update_fundstoday_rank(ranklist, date_today)
-		# 在给总表排序后，按基金类型存入各自的表中
-		db.batch_insert_by_type(date_today)
-		logger.info('rank all funds complitly.')
-		
-	else: # 查找涨幅前n个基金
-		logger.info('get the first %s record', number)
-		need_return = True
-		topn_records = get_first_n(number, date_today)
+		db.update_rank(ranklist, date_today, t)
+
+		logger.info('rank funds of table[%s] complitly.', t)
 
 	end_time = time.time()
+
 	logger.info('spent time to sort funds: %s minites', (end_time - start_time) / 60 + 1)
-
-
-
-	return topn_records
 
 
 def get(fund_type, date, count):

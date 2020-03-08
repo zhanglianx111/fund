@@ -42,25 +42,17 @@ console.setFormatter(formatter)
 logger.addHandler(rHandler)
 logger.addHandler(console)
 
-# 给某一天的所有基金排名
-
-def topn(number, days):
-	logger.debug("topN n: %s, days: %s", number, days)
-	need_print = False
-	if number == None:
-		logger.info('sort all funds at date: %s', days)
-	else:
-		logger.info("start to sort the first %s funds at date: %s.", number, days)
-		need_print = True
-
-	result = topN.main(number, days)
-	
+# 给某一天的所有基金类型排名
+def topn(date):
+	logger.debug("sort at: %s", date)
+	result = topN.main(date)
+	'''
 	if need_print:
 		print '基金名称' + '\t\t\t' + '基金代码' + '\t' + '日期' + '\t\t' + '净值' + '\t\t' + '涨幅' + '\t\t' + '排名' 
 
 		for r in result:
 			print r[0] + '\t\t\t' + r[1] + '\t\t' + r[2] + '\t' + str(r[3]) + '\t\t' + r[4] + '\t\t' + str(r[7])
-	
+	'''
 
 # 获取当天的基金情况
 def fetchall(date):
@@ -101,9 +93,7 @@ if __name__ == '__main__':
 	# sort all funds on someday
 	parser_topn = subparsers.add_parser('topn', help='get top N of all funds nearly some days')
 	parser_topn.set_defaults(action=('topn', topn))
-	parser_topn.add_argument('--number', '-n', action="store", help="get the first n(n >= 1) record, if number is empty, sort all." \
-		, required=False)
-	parser_topn.add_argument('--days', '-d', action="store", help="days to top", required=True)
+	parser_topn.add_argument('--date', '-d', action="store", help="date for sorting", required=True)
 
 	# get all funds info 
 	parser_fetchall = subparsers.add_parser('fetchall', help='get all funds one day from fund.easymoney.com')
@@ -138,7 +128,7 @@ if __name__ == '__main__':
 	(name, functor) = args.action
 
 	if name in ['topn']:
-		functor(args.number, args.days)
+		functor(args.date)
 
 	if name in ['fetchall']:
 		functor(args.date)

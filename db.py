@@ -183,15 +183,16 @@ def get_funds_list():
 	return fcode_list
 
 
-def get_funds_today(date_today):
+def get_funds_today(date_today, table_name):
 	conn = pymysql.connect(HOST, USER, PASSWD, DB)
-	sql = "select * from funds_today where Date = %s"
+	sql = "select * from %s where Date = '%s'" % (table_name, date_today)
+
 	with conn:
 		cur = conn.cursor()
 		try:
-			count = cur.execute(sql, date_today)
+			count = cur.execute(sql)
 			allrows = cur.fetchall()
-			logger.info('get records count: %s on date: %s from table: %s', count, date_today, TABLE_FUNDSTODAY)
+			logger.info('get records count: %s on date: %s from table: %s', count, date_today, table_name)
 			today = []
 			for r in allrows:
 				rise = r[3]
@@ -204,14 +205,14 @@ def get_funds_today(date_today):
 
 	return today
 
-def update_fundstoday_rank(ranklist, date):
+def update_rank(ranklist, date, table_name):
 	conn = pymysql.connect(HOST, USER, PASSWD, DB)
-	sql = "update funds_today set RankToday = %s where FundCode = %s and Date = %s"
+	sql = "update %s set RankToday = %s where FundCode = %s and Date = '%s'" 
 	with conn:
 		cur = conn.cursor()
 		try:
 			for r in ranklist:
-				cur.execute(sql,(r[0], r[1], date))
+				cur.execute(sql % (table_name, r[0], r[1], date))
 
 			conn.commit()
 
