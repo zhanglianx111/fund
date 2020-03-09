@@ -11,6 +11,7 @@ from prettytable import PrettyTable
 
 logger = logging.getLogger("main.topN")
 
+sys.setrecursionlimit(1000000) #递归深度设置为一百万  
 
 # 从大到小排序
 # input: [(rangetoday, 'fundcode')]
