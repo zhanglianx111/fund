@@ -93,9 +93,18 @@ def routine(date):
 		sys.exit(1)
 
 	message = ""
+
 	# 获取当日的基金情况
 	fetchall_ret = fetchall(date)
 	message = message + fetchall_ret + "\n"
+
+	# 单日涨跌基金个数
+	# 上涨个数
+	count = range_for_date(1, date)
+	message = message + "上涨个数: " + str(count) + '\n'
+	# 下跌个数
+	count = range_for_date(-1, date)
+	message = message + "下跌个数: " + str(count) + '\n'
 
 	# 排名
 	topn(date)
@@ -106,6 +115,7 @@ def routine(date):
 		ret = get(i + 1, date, count)
 		message =  message + TABLES_LIST[i+1] + '\n'
 		message = message + str(ret) + '\n'
+
 
 	# send email
 	mail.send_email(message, date)
