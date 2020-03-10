@@ -140,10 +140,29 @@ def get_rise_by_code(fundcode, start_date, end_date):
 	table_name = db.get_table_by_fundcode(fundcode)
 	if table_name == None:
 		return None
+
 	ret = db.get_rise_by_code(fundcode, table_name, start_date, end_date)
-	t = PrettyTable(['累计涨跌幅度', '涨次数', '跌次数', '最大涨幅信息', '最大跌幅信息', '平均排名'])
-	t.add_row([ret[0], ret[1], ret[2], ret[3], ret[4], ret[5]])
-	return t
+	if ret != None:
+		'''
+		t = PrettyTable(['累计涨跌幅度', '涨次数', '跌次数', '最大涨幅信息', '最大跌幅信息', '平均排名'])
+		t.add_row([ret[0], ret[1], ret[2], ret[3], ret[4], ret[5]])
+		'''
+		return ret
+	else:
+		return None
+
+def get_rise_by_allcode(table_name, from_date, to_date):
+	rise_list = []
+	# 根据表名获取表中基金代码
+	codes = db.get_fundcode_by_table(table_name)
+	for c in codes:
+		rise_list.append(get_rise_by_code(c[0], from_date, to_date))
+
+	t_header = PrettyTable(['基金代码','累计涨跌幅度', '涨次数', '跌次数', '最大涨幅信息', '最大跌幅信息', '平均排名'])
+	for r in rise_list:
+		t_header.add_row([r[0], r[1], r[2], r[3], r[4], r[5], r[6]])
+
+	return t_header
 
 if __name__ == '__main__':
 

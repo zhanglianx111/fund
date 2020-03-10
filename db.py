@@ -284,7 +284,6 @@ def get_table_by_fundcode(fundcode):
 		cur = conn.cursor()
 		cur.execute(sql)
 		atype = cur.fetchone()
-		print atype[0]
 		ftable = atype[0]
 		if ftable == '股票型':
 			return TABLE_STOCK
@@ -299,49 +298,64 @@ def get_table_by_fundcode(fundcode):
 		else:
 			return None
 
-
-
-# 一只基金在一段时间内的数据。
-# 数据包括：日期、涨幅、排名
-# return: ['累计涨跌幅度', '涨次数', '跌次数', '最大涨幅', '最大跌幅', '平均排名']
-def get_rise_by_code(fundcode, table_name, start_date, end_date):
+def get_fundcode_by_table(table_name):
 	conn = pymysql.connect(HOST, USER, PASSWD, DB)
+	sql = "select distinct %s from %s" % (FUNDCODE, table_name)
 
-	sql = "select %s, %s, %s from %s where FundCode = '%s' and Date >= '%s' and Date <= '%s'" % (DATE, RANGETODAY, RANKTODAY, table_name, fundcode, start_date, end_date)
 	with conn:
 		cur = conn.cursor()
 		cur.execute(sql)
-		rows = cur.fetchall()
+		fcs = cur.fetchall()
 
-		range_totol = 0.0	# 累计涨幅
-		riseCount = 0		# 上涨次数
-		downCount = 0		# 下跌次数
-		range_max = ()		# 上涨最大信息
-		range_min = ()		# 下跌最大信息
-		rank_avg  = 0		# 平均排名
-		max_range = 0		# 涨幅最大 
-		min_range = 0		# 跌幅最大
-		rank_totol = 0		# rank总和
+	return fcs
 
-		for i in range(len(rows)):
-			print rows[i]
-			rng = float(str(rows[i][1]).split('%')[0])
-			if rng > 0:
-				riseCount+=1
-				if rng > max_range:
-					max_range = rng
-					range_max = rows[i]
-			if rng < 0:
-				downCount+=1				
-				if rng < min_range:
-					min_range = rng
-					range_min = rows[i]
+# 一只基金在一段时间内的数据。
+# 数据包括：日期、涨幅、排名
+# return: ('累计涨跌幅度', '涨次数', '跌次数', '最大涨幅', '最大跌幅', '平均排名')
+def get_rise_by_code(fundcode, table_name, start_date, end_date):
+	conn = pymysql.connect(HOST, USER, PASSWD, DB)
+	 
+	sql = "select %s, %s, %s from %s where FundCode = '%s' and Date >= '%s' and Date <= '%s'" % (DATE, RANGETODAY, RANKTODAY, table_name, fundcode, start_date, end_date)
+	with conn:
+		try:
+			cur = conn.cursor()
+			cur.execute(sql)
+			rows = cur.fetchall()
 
-			rank_totol+=rows[i][2]
+			range_totol = 0.0	# 累计涨幅
+			riseCount = 0		# 上涨次数
+			downCount = 0		# 下跌次数
+			range_max = ()		# 上涨最大信息
+			range_min = ()		# 下跌最大信息
+			rank_avg  = 0		# 平均排名
+			max_range = 0		# 涨幅最大 
+			min_range = 0		# 跌幅最大
+			rank_totol = 0		# rank总和
 
-			range_totol = range_totol + float(rng)
+			length = len(rows)
+			if length == 0:
+				return None
 
-		return [str(range_totol) + '%', riseCount, downCount, range_max, range_min, rank_totol/len(rows)]
+			for i in range(length):
+				rng = float(str(rows[i][1]).split('%')[0])
+				if rng > 0:
+					riseCount+=1
+					if rng > max_range:
+						max_range = rng
+						range_max = rows[i]
+				if rng < 0:
+					downCount+=1				
+					if rng < min_range:
+						min_range = rng
+						range_min = rows[i]
+
+				rank_totol+=rows[i][2]
+
+				range_totol = range_totol + float(rng)
+		except Exception as err:
+			print err
+
+		return (fundcode, str(range_totol) + '%', riseCount, downCount, range_max, range_min, rank_totol/length)
 
 if __name__ ==  "__main__":
 	print __name__

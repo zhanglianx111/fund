@@ -86,8 +86,13 @@ def get(fund_type, date, count):
 	return ret
 
 # 获取一只基金在一段时间内的涨跌情况
-def rise(fundcode, from_date, to_date):
+def rise_by_one(fundcode, from_date, to_date):
 	ret = topN.get_rise_by_code(fundcode, from_date, to_date)
+	print ret
+
+
+def rise_by_all(table, from_date, to_date):
+	ret = topN.get_rise_by_allcode(table, from_date, to_date)
 	print ret
 
 def routine(date):
@@ -159,12 +164,20 @@ if __name__ == '__main__':
 	parser_get.add_argument('--count', '-cnt', action='store', help="count of the fund for type", required=True)
 
 	# 获取一只基金在一段时间内的涨跌情况
-	parser_rise = subparsers.add_parser("rise", help="获取一只基金在一段时间内的涨跌情况")
-	parser_rise.set_defaults(action=('rise', rise))
+	parser_rise = subparsers.add_parser("rise_by_one", help="获取一只基金在一段时间内的涨跌情况")
+	parser_rise.set_defaults(action=('rise_by_one', rise_by_one))
 	parser_rise.add_argument('--from_date', '-fd', action='store', help="开始日期", required=True)
 	parser_rise.add_argument('--to_date', '-td', action='store', help="结束日期", required=True)
 	parser_rise.add_argument('--fundcode', '-fc', action='store', help="fund code to search", required=True)
 	
+
+	# 获取某类型基金在一段时间内的涨跌情况
+	parser_rise = subparsers.add_parser("rise_all_by_type", help="获取某类型基金在一段时间内的涨跌情况")
+	parser_rise.set_defaults(action=('rise_all_by_type', rise_by_all))
+	parser_rise.add_argument('--from_date', '-fd', action='store', help="开始日期", required=True)
+	parser_rise.add_argument('--to_date', '-td', action='store', help="结束日期", required=True)
+	parser_rise.add_argument('--table', '-t', action='store', help="table name", required=True)
+
 	# 每天执行一次
 	parser_routine = subparsers.add_parser('routine', help="每天例行执行")
 	parser_routine.set_defaults(action=('routine', routine))
@@ -200,8 +213,11 @@ if __name__ == '__main__':
 	if name in ['routine']:
 		functor(args.date)
 
-	if name in ['rise']:
+	if name in ['rise_by_one']:
 		functor(args.fundcode, args.from_date, args.to_date)
+
+	if name in ['rise_all_by_type']:
+		functor(args.table, args.from_date, args.to_date)
 
 	'''
 	parser = argparse.ArgumentParser(description="used for test")
