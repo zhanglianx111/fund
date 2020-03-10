@@ -17,25 +17,25 @@ PASSWD = config['database']['password']
 DB = config['database']['db']
 CHARSET = config['database']['charset']
 
-TALBE_FUNDSLIST = 'funds_list' # 基金总列表
-TABLE_FUNDSTODAY = 'funds_today' # 每日基金总表
-TABLE_HYDIRD = 'funds_hybird' # 混合型每日总表
-TABLE_STOCK = 'funds_stock' # 股票型每日总表
-TABLE_BOND = 'funds_bond' # 债券型每日总表
-TABLE_FEEDER = 'funds_feeder' # 联接基金
-TABLE_TIERED_LEVERAGED = 'funds_tiered_leveraged'  # 分级杠杆基金
+TALBE_FUNDSLIST = 'funds_list' 		# 基金总列表
+TABLE_FUNDSTODAY = 'funds_today' 	# 每日基金总表
+TABLE_HYDIRD = 'funds_hybird' 		# 混合型每日总表
+TABLE_STOCK = 'funds_stock' 		# 股票型每日总表
+TABLE_BOND = 'funds_bond' 			# 债券型每日总表
+TABLE_FEEDER = 'funds_feeder' 		# 联接基金
+TABLE_TIERED_LEVERAGED = 'funds_tiered_leveraged' 	# 分级杠杆基金
 
-FUNDCODE = 'FundCode' # 基金代码
-SHORTNAME = 'ShortName' # 基金名简拼
-FULLNAME = 'FullName' # 基金全名 中文
-TYPE = 'Type' # 基金类型
-FULLPINYIN = 'FullPinYin' # 基金名全拼
-DATE = 'Date' # 日期
-PRICETODAY = 'PriceToday' # 当日净值
-RANGETODAY  = 'RangeToday' # 当日涨幅
-BUYSTATUS = 'BuyStatus' # 申购状态
-SELLSTATUS = 'SellStatus' # 赎回状态
-RANKTODAY = 'RankToday' # 今日排名
+FUNDCODE = 'FundCode' 		# 基金代码
+SHORTNAME = 'ShortName' 	# 基金名简拼
+FULLNAME = 'FullName' 		# 基金全名 中文
+TYPE = 'Type' 				# 基金类型
+FULLPINYIN = 'FullPinYin' 	# 基金名全拼
+DATE = 'Date' 				# 日期
+PRICETODAY = 'PriceToday' 	# 当日净值
+RANGETODAY  = 'RangeToday' 	# 当日涨幅
+BUYSTATUS = 'BuyStatus' 	# 申购状态
+SELLSTATUS = 'SellStatus' 	# 赎回状态
+RANKTODAY = 'RankToday' 	# 今日排名
 
 TABLES_LIST = [TALBE_FUNDSLIST, TABLE_FUNDSTODAY, TABLE_STOCK, TABLE_HYDIRD, TABLE_BOND, TABLE_FEEDER, TABLE_TIERED_LEVERAGED]
 
@@ -275,6 +275,75 @@ def get_topn_by_type(fund_type, date, count):
 
 	return result
 
+# 由基金代码找到对应存储的表名
+def get_table_by_fundcode(fundcode):
+	conn = pymysql.connect(HOST, USER, PASSWD, DB)
+	sql = "select Type from funds_list where FundCode = '%s'" % fundcode
+
+	with conn:
+		cur = conn.cursor()
+		cur.execute(sql)
+		atype = cur.fetchone()
+		print atype[0]
+		ftable = atype[0]
+		if ftable == '股票型':
+			return TABLE_STOCK
+		if ftable == '混合型':
+			return TABLE_HYDIRD
+		if ftable == '联接基金':
+			return TABLE_FEEDER
+		if ftable == '债券型':
+			return TABLE_BOND
+		if ftable == '分级杠杆':
+			return TABLE_TIERED_LEVERAGED
+		else:
+			return None
+
+
+
+# 一只基金在一段时间内的数据。
+# 数据包括：日期、涨幅、排名
+# return: ['累计涨跌幅度', '涨次数', '跌次数', '最大涨幅', '最大跌幅', '平均排名']
+def get_rise_by_code(fundcode, table_name, start_date, end_date):
+	conn = pymysql.connect(HOST, USER, PASSWD, DB)
+
+	sql = "select %s, %s, %s from %s where FundCode = '%s' and Date >= '%s' and Date <= '%s'" % (DATE, RANGETODAY, RANKTODAY, table_name, fundcode, start_date, end_date)
+	with conn:
+		cur = conn.cursor()
+		cur.execute(sql)
+		rows = cur.fetchall()
+
+		range_totol = 0.0	# 累计涨幅
+		riseCount = 0		# 上涨次数
+		downCount = 0		# 下跌次数
+		range_max = ()		# 上涨最大信息
+		range_min = ()		# 下跌最大信息
+		rank_avg  = 0		# 平均排名
+		max_range = 0		# 涨幅最大 
+		min_range = 0		# 跌幅最大
+		rank_totol = 0		# rank总和
+
+		for i in range(len(rows)):
+			print rows[i]
+			rng = float(str(rows[i][1]).split('%')[0])
+			if rng > 0:
+				riseCount+=1
+				if rng > max_range:
+					max_range = rng
+					range_max = rows[i]
+			if rng < 0:
+				downCount+=1				
+				if rng < min_range:
+					min_range = rng
+					range_min = rows[i]
+
+			rank_totol+=rows[i][2]
+
+			range_totol = range_totol + float(rng)
+
+		print rank_totol
+		print [str(range_totol) + '%', riseCount, downCount, range_max, range_min, rank_totol/len(rows)]
+
 if __name__ ==  "__main__":
 	print __name__
 	#t = TALBE_FUNDSLIST
@@ -290,6 +359,7 @@ if __name__ ==  "__main__":
 	#batch_insert(t, datas)
 
 	#batch_insert_by_type('2020-03-05')
+	get_rise_by_code('000082', TABLE_STOCK, '2020-03-09', '2020-03-09')
 
 
 

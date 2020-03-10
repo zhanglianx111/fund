@@ -85,6 +85,9 @@ def get(fund_type, date, count):
 	print(ret)
 	return ret
 
+# 获取一只基金在一段时间内的涨跌情况
+def rise(fundcode, from_date, to_date):
+	topN.get_rise_by_code(fundcode, from_date, to_date)
 
 def routine(date):
 	day = time.strftime("%w",time.localtime())
@@ -154,6 +157,12 @@ if __name__ == '__main__':
 	parser_get.add_argument('--date', '-d', action='store', help="date to get", required=True)
 	parser_get.add_argument('--count', '-cnt', action='store', help="count of the fund for type", required=True)
 
+	# 获取一只基金在一段时间内的涨跌情况
+	parser_rise = subparsers.add_parser("rise", help="获取一只基金在一段时间内的涨跌情况")
+	parser_rise.set_defaults(action=('rise', rise))
+	parser_rise.add_argument('--from_date', '-fd', action='store', help="开始日期", required=True)
+	parser_rise.add_argument('--to_date', '-td', action='store', help="结束日期", required=True)
+	parser_rise.add_argument('--fundcode', '-fc', action='store', help="fund code to search", required=True)
 	
 	# 每天执行一次
 	parser_routine = subparsers.add_parser('routine', help="每天例行执行")
@@ -190,6 +199,8 @@ if __name__ == '__main__':
 	if name in ['routine']:
 		functor(args.date)
 
+	if name in ['rise']:
+		functor(args.fundcode, args.from_date, args.to_date)
 
 	'''
 	parser = argparse.ArgumentParser(description="used for test")

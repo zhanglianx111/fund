@@ -30,7 +30,8 @@ mysql_data_dev/
 funds.log*
 config.toml
 test.py
-thread*
+thread.py
+thread1.py
 
 
 # PyInstaller
