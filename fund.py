@@ -87,7 +87,8 @@ def get(fund_type, date, count):
 
 # 获取一只基金在一段时间内的涨跌情况
 def rise(fundcode, from_date, to_date):
-	topN.get_rise_by_code(fundcode, from_date, to_date)
+	ret = topN.get_rise_by_code(fundcode, from_date, to_date)
+	print ret
 
 def routine(date):
 	day = time.strftime("%w",time.localtime())

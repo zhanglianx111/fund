@@ -341,8 +341,7 @@ def get_rise_by_code(fundcode, table_name, start_date, end_date):
 
 			range_totol = range_totol + float(rng)
 
-		print rank_totol
-		print [str(range_totol) + '%', riseCount, downCount, range_max, range_min, rank_totol/len(rows)]
+		return [str(range_totol) + '%', riseCount, downCount, range_max, range_min, rank_totol/len(rows)]
 
 if __name__ ==  "__main__":
 	print __name__
