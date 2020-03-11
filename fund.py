@@ -87,6 +87,10 @@ def get(fund_type, date, count):
 
 # 获取一只基金在一段时间内的涨跌情况
 def rise_by_one(fundcode, from_date, to_date):
+	if to_date == None:
+		# 使用当天的日期
+		to_date = datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d')
+
 	ret = topN.get_rise_by_code(fundcode, from_date, to_date)
 	t = PrettyTable(['基金代码', '累计涨跌幅度', '涨次数', '跌次数', '最大涨幅信息', '最大跌幅信息', '平均排名'])
 	t.add_row([ret[0], ret[1], ret[2], ret[3], ret[4], ret[5], ret[6]])
@@ -94,6 +98,10 @@ def rise_by_one(fundcode, from_date, to_date):
 
 
 def rise_by_all(table, from_date, to_date):
+	if to_date == None:
+		# 使用当天的日期
+		to_date = datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d')
+
 	ret = topN.get_rise_by_allcode(table, from_date, to_date)
 	print ret
 
@@ -169,7 +177,7 @@ if __name__ == '__main__':
 	parser_rise = subparsers.add_parser("rise_by_one", help="获取一只基金在一段时间内的涨跌情况")
 	parser_rise.set_defaults(action=('rise_by_one', rise_by_one))
 	parser_rise.add_argument('--from_date', '-fd', action='store', help="开始日期", required=True)
-	parser_rise.add_argument('--to_date', '-td', action='store', help="结束日期", required=True)
+	parser_rise.add_argument('--to_date', '-td', action='store', help="结束日期")
 	parser_rise.add_argument('--fundcode', '-fc', action='store', help="fund code to search", required=True)
 	
 
@@ -177,7 +185,7 @@ if __name__ == '__main__':
 	parser_rise = subparsers.add_parser("rise_all_by_type", help="获取某类型基金在一段时间内的涨跌情况")
 	parser_rise.set_defaults(action=('rise_all_by_type', rise_by_all))
 	parser_rise.add_argument('--from_date', '-fd', action='store', help="开始日期", required=True)
-	parser_rise.add_argument('--to_date', '-td', action='store', help="结束日期", required=True)
+	parser_rise.add_argument('--to_date', '-td', action='store', help="结束日期")
 	parser_rise.add_argument('--table', '-t', action='store', help="table name", required=True)
 
 	# 每天执行一次
