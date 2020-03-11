@@ -7,6 +7,7 @@ import get_all_funds_today
 import get_all_funds
 import topN
 import mail
+from db import TABLES_LIST
 
 import toml
 import logging
@@ -14,9 +15,8 @@ import argparse
 import datetime
 import sys
 import time
-
+from prettytable import PrettyTable
 from logging.handlers import RotatingFileHandler
-from db import TABLES_LIST
 
 config = toml.load('config.toml')
 
@@ -88,7 +88,9 @@ def get(fund_type, date, count):
 # 获取一只基金在一段时间内的涨跌情况
 def rise_by_one(fundcode, from_date, to_date):
 	ret = topN.get_rise_by_code(fundcode, from_date, to_date)
-	print ret
+	t = PrettyTable(['基金代码', '累计涨跌幅度', '涨次数', '跌次数', '最大涨幅信息', '最大跌幅信息', '平均排名'])
+	t.add_row([ret[0], ret[1], ret[2], ret[3], ret[4], ret[5], ret[6]])
+	print t
 
 
 def rise_by_all(table, from_date, to_date):
