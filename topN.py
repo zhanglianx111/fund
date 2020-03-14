@@ -160,7 +160,8 @@ def get_rise_by_allcode(table_name, from_date, to_date):
 
 	t_header = PrettyTable(['基金代码','累计涨跌幅度', '涨次数', '跌次数', '最大涨幅信息', '最大跌幅信息', '平均排名'])
 	for r in rise_list:
-		t_header.add_row([r[0], r[1], r[2], r[3], r[4], r[5], r[6]])
+		if r != None:
+			t_header.add_row([r[0], r[1], r[2], r[3], r[4], r[5], r[6]])
 
 	return t_header
 
