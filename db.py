@@ -244,7 +244,7 @@ def get_topn(n, date):
 # 获取date日涨幅>0或<0的基金数
 def get_greater_zero(flag, date):
 	conn = pymysql.connect(HOST, USER, PASSWD, DB)
-	if flag == 1:
+	if flag == '1':
 		sql = "select * from funds_today where Date = %s and RangeToday > %s"
 	else:
 		sql = "select * from funds_today where Date = %s and RangeToday < %s"
@@ -257,7 +257,7 @@ def get_greater_zero(flag, date):
 		except Exception as err:
 			logger.error(err)
 			return -1
-			
+
 		return count
 
 

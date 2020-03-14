@@ -119,10 +119,10 @@ def routine(date):
 
 	# 单日涨跌基金个数
 	# 上涨个数
-	count = range_for_date(1, date)
+	count = range_for_date('1', date)
 	message = message + "上涨个数: " + str(count) + '\n'
 	# 下跌个数
-	count = range_for_date(-1, date)
+	count = range_for_date('-1', date)
 	message = message + "下跌个数: " + str(count) + '\n'
 
 	# 排名
