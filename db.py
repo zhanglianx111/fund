@@ -137,6 +137,7 @@ def batch_insert_by_type(date):
 	conn = pymysql.connect(HOST, USER, PASSWD, DB)
 
 	type_list = [('股票型', TABLE_STOCK), \
+				 ('股票指数', TABLE_STOCK), \
 				 ('混合型', TABLE_HYDIRD), \
 				 ('债券型', TABLE_BOND), \
 				 ('联接基金', TABLE_FEEDER), \
@@ -147,7 +148,9 @@ def batch_insert_by_type(date):
 		for t in type_list:
 			sql = "select funds_today.* from funds_today left join `funds_list` on `funds_today`.FundCode = `funds_list`.FundCode \
 					where `funds_list`.Type = %s and `funds_today`.Date = %s"
+
 			try:
+
 				cur.execute(sql, (t[0], date))
 				rows = cur.fetchall()
 				batch_insert(t[1], rows)
@@ -241,12 +244,11 @@ def get_topn(n, date):
 # 获取date日涨幅>0或<0的基金数
 def get_greater_zero(flag, date):
 	conn = pymysql.connect(HOST, USER, PASSWD, DB)
-
-	if flag == '1':
+	if flag == 1:
 		sql = "select * from funds_today where Date = %s and RangeToday > %s"
 	else:
 		sql = "select * from funds_today where Date = %s and RangeToday < %s"
-
+	
 	with conn:
 		cur = conn.cursor()
 		try:
@@ -255,7 +257,7 @@ def get_greater_zero(flag, date):
 		except Exception as err:
 			logger.error(err)
 			return -1
-
+			
 		return count
 
 
@@ -371,8 +373,8 @@ if __name__ ==  "__main__":
 	#######################
 	#batch_insert(t, datas)
 
-	#batch_insert_by_type('2020-03-05')
-	get_rise_by_code('000082', TABLE_STOCK, '2020-03-09', '2020-03-09')
+	batch_insert_by_type('2020-02-26')
+	#get_rise_by_code('000082', TABLE_STOCK, '2020-03-09', '2020-03-09')
 
 
 
