@@ -358,7 +358,7 @@ def get_rise_by_code(fundcode, table_name, start_date, end_date):
 		except Exception as err:
 			print err
 
-		return (fundcode, str(range_totol) + '%', riseCount, downCount, range_max, range_min, rank_totol/length)
+		return (fundcode, range_totol, riseCount, downCount, range_max, range_min, rank_totol/length)
 
 if __name__ ==  "__main__":
 	print __name__

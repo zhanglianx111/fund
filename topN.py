@@ -196,7 +196,7 @@ def get_rise_by_allcode(table_name, from_date, to_date):
 	for i in range(length):
 		r = sort_result[i]
 		if r != None:
-			t_header.add_row([str(i+1), r[0], r[1], r[2], r[3], r[4], r[5], r[6]])
+			t_header.add_row([str(i+1), r[0], str(r[1])+'%', r[2], r[3], r[4], r[5], r[6]])
 
 	return t_header
 
