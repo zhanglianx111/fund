@@ -193,11 +193,20 @@ def get_rise_by_allcode(table_name, from_date, to_date):
 
 	t_header = PrettyTable(['序号','基金名称', '基金代码','累计涨跌幅度', '涨次数', '跌次数', '最大涨幅信息', '最大跌幅信息', '平均排名'])
 	length = len(sort_result)
+	i = length - 1
+	'''
 	for i in range(length):
 		r = sort_result[i]
 		if r != None:
 			fname = db.get_fundname_by_code(r[0])
 			t_header.add_row([str(i+1), fname[0], r[0], str(r[1])+'%', r[2], r[3], r[4], r[5], r[6]])
+	'''
+	while i >=0:
+		r = sort_result[i]
+		if r != None:
+			fname = db.get_fundname_by_code(r[0])
+			t_header.add_row([str(i+1), fname[0], r[0], str(r[1])+'%', r[2], r[3], r[4], r[5], r[6]])	
+		i -=1	
 
 	return t_header
 
