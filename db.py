@@ -41,10 +41,12 @@ TABLES_LIST = [TALBE_FUNDSLIST, TABLE_FUNDSTODAY, TABLE_STOCK, TABLE_HYDIRD, TAB
 
 logger = logging.getLogger('main.db')
 
+conn = pymysql.connect(host=HOST, port=PORT, user=USER, password=PASSWD, db=DB)
+
 
 def create_database():
 	print HOST, PORT
-	conn = pymysql.connect(host=HOST, port=PORT, user=USER, password=PASSWD)
+	#conn = pymysql.connect(host=HOST, port=PORT, user=USER, password=PASSWD)
 	with conn:
 		sql = "create database %s" % DB
 		cur = conn.cursor()
@@ -52,7 +54,7 @@ def create_database():
 
 
 def create_tables():
-	conn = pymysql.connect(host=HOST, port=PORT, user=USER, password=PASSWD, database=DB)
+	#conn = pymysql.connect(host=HOST, port=PORT, user=USER, password=PASSWD, database=DB)
 
 	sql_show_table = "show tables like %s"
 
@@ -93,7 +95,7 @@ def create_tables():
 
 def batch_insert(table_name, datas):
 	logger.debug(datas)
-	conn = pymysql.connect(host=HOST, port=PORT, user=USER, password=PASSWD, database=DB)
+	#conn = pymysql.connect(host=HOST, port=PORT, user=USER, password=PASSWD, database=DB)
 
 	if table_name == TALBE_FUNDSLIST:
 		sql = "insert into %s( \
@@ -134,7 +136,7 @@ def batch_insert(table_name, datas):
 
 # 按基金类型存入不同的表
 def batch_insert_by_type(date):
-	conn = pymysql.connect(HOST, USER, PASSWD, DB)
+	#conn = pymysql.connect(HOST, USER, PASSWD, DB)
 
 	type_list = [('股票型', TABLE_STOCK), \
 				 ('股票指数', TABLE_STOCK), \
@@ -160,7 +162,7 @@ def batch_insert_by_type(date):
 
 
 def get_funds_list():
-	conn = pymysql.connect(HOST, USER, PASSWD, DB)
+	#conn = pymysql.connect(HOST, USER, PASSWD, DB)
 	sql = "select * from funds_list"
 	with conn:
 		cur = conn.cursor()
@@ -187,7 +189,7 @@ def get_funds_list():
 
 
 def get_funds_today(date_today, table_name):
-	conn = pymysql.connect(HOST, USER, PASSWD, DB)
+	#conn = pymysql.connect(HOST, USER, PASSWD, DB)
 	sql = "select * from %s where Date = '%s'" % (table_name, date_today)
 
 	with conn:
@@ -209,7 +211,7 @@ def get_funds_today(date_today, table_name):
 	return today
 
 def update_rank(ranklist, date, table_name):
-	conn = pymysql.connect(HOST, USER, PASSWD, DB)
+	#conn = pymysql.connect(HOST, USER, PASSWD, DB)
 	sql = "update %s set RankToday = %s where FundCode = %s and Date = '%s'" 
 	with conn:
 		cur = conn.cursor()
@@ -225,7 +227,7 @@ def update_rank(ranklist, date, table_name):
 
 # 获取某天前n个涨幅最大的基金
 def get_topn(n, date):
-	conn = pymysql.connect(HOST, USER, PASSWD, DB)
+	#conn = pymysql.connect(HOST, USER, PASSWD, DB)
 	#sql = "select * from funds_today where Date = %s order by RankToday limit 0,%s"
 	sql = "select funds_list.FullName, funds_today.* from funds_today left join `funds_list` on `funds_today`.FundCode = `funds_list`.FundCode where Date = %s order by RankToday limit 0,%s"
 	with conn:
@@ -243,7 +245,7 @@ def get_topn(n, date):
 
 # 获取date日涨幅>0或<0的基金数
 def get_greater_zero(flag, date):
-	conn = pymysql.connect(HOST, USER, PASSWD, DB)
+	#conn = pymysql.connect(HOST, USER, PASSWD, DB)
 	if flag == '1':
 		sql = "select * from funds_today where Date = %s and RangeToday > %s"
 	else:
@@ -262,7 +264,7 @@ def get_greater_zero(flag, date):
 
 
 def get_topn_by_type(fund_type, date, count):
-	conn = pymysql.connect(HOST, USER, PASSWD, DB)
+	#conn = pymysql.connect(HOST, USER, PASSWD, DB)
 	table = TABLES_LIST[int(fund_type)]
 
 	sql = "select funds_list.FullName, %s.* from %s left join funds_list on %s.FundCode = funds_list.FundCode where Date = '%s' order by RankToday limit 0, %s" % \
@@ -279,7 +281,7 @@ def get_topn_by_type(fund_type, date, count):
 
 # 由基金代码找到对应存储的表名
 def get_table_by_fundcode(fundcode):
-	conn = pymysql.connect(HOST, USER, PASSWD, DB)
+	#conn = pymysql.connect(HOST, USER, PASSWD, DB)
 	sql = "select Type from funds_list where FundCode = '%s'" % fundcode
 
 	with conn:
@@ -301,7 +303,7 @@ def get_table_by_fundcode(fundcode):
 			return None
 
 def get_fundcode_by_table(table_name):
-	conn = pymysql.connect(HOST, USER, PASSWD, DB)
+	#conn = pymysql.connect(HOST, USER, PASSWD, DB)
 	sql = "select distinct %s from %s" % (FUNDCODE, table_name)
 
 	with conn:
@@ -315,7 +317,7 @@ def get_fundcode_by_table(table_name):
 # 数据包括：日期、涨幅、排名
 # return: ('累计涨跌幅度', '涨次数', '跌次数', '最大涨幅', '最大跌幅', '平均排名')
 def get_rise_by_code(fundcode, table_name, start_date, end_date):
-	conn = pymysql.connect(HOST, USER, PASSWD, DB)
+	#conn = pymysql.connect(HOST, USER, PASSWD, DB)
 	 
 	sql = "select %s, %s, %s from %s where FundCode = '%s' and Date >= '%s' and Date <= '%s'" % (DATE, RANGETODAY, RANKTODAY, table_name, fundcode, start_date, end_date)
 	with conn:
@@ -361,7 +363,7 @@ def get_rise_by_code(fundcode, table_name, start_date, end_date):
 		return (fundcode, range_totol, riseCount, downCount, range_max, range_min, rank_totol/length)
 
 def get_fundname_by_code(fundcode):
-	conn = pymysql.connect(HOST, USER, PASSWD, DB)
+	#conn = pymysql.connect(HOST, USER, PASSWD, DB)
 	sql = "select FullName from funds_list where FundCode = %s" % fundcode	
 	with conn:
 		cur = conn.cursor()

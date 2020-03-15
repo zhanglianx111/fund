@@ -208,7 +208,7 @@ def get_rise_by_allcode(table_name, from_date, to_date):
 			t_header.add_row([str(i+1), fname[0], r[0], str(r[1])+'%', r[2], r[3], r[4], r[5], r[6]])	
 		i -=1	
 
-	return t_header
+	return (t_header, length)
 
 
 

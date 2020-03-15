@@ -103,7 +103,10 @@ def rise_by_all(table, from_date, to_date):
 		to_date = datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d')
 
 	ret = topN.get_rise_by_allcode(table, from_date, to_date)
-	print ret
+
+	# 打印表数据
+	print ret[0]
+	print '基金总数: ', ret[1]
 
 def routine(date):
 	day = time.strftime("%w",time.localtime())
