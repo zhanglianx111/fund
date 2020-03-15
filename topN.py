@@ -143,27 +143,64 @@ def get_rise_by_code(fundcode, start_date, end_date):
 
 	ret = db.get_rise_by_code(fundcode, table_name, start_date, end_date)
 	if ret != None:
-		'''
-		t = PrettyTable(['累计涨跌幅度', '涨次数', '跌次数', '最大涨幅信息', '最大跌幅信息', '平均排名'])
-		t.add_row([ret[0], ret[1], ret[2], ret[3], ret[4], ret[5]])
-		'''
 		return ret
 	else:
 		return None
+
+def QuickSort_for_allcode(myList,start,end):
+	#print myList
+	#判断low是否小于high,如果为false,直接返回
+	if start < end:
+		i,j = start,end
+		#设置基准数
+		#print myList[i]
+		base = myList[i]
+
+		while i < j:
+			#如果列表后边的数,比基准数大或相等,则前移一位直到有比基准数小的数出现
+			while (i < j) and (myList[j][1] <= base[1]):
+				j = j - 1
+
+			#如找到,则把第j个元素赋值给第个元素i,此时表中i,j个元素相等
+			myList[i] = myList[j]
+
+			#同样的方式比较前半区
+			while (i < j) and (myList[i][1] >= base[1]):
+				i = i + 1
+			myList[j] = myList[i]
+		#做完第一轮比较之后,列表被分成了两个半区,并且i=j,需要将这个数设置回base
+		myList[i] = base
+
+		#递归前后半区
+		QuickSort_for_allcode(myList, start, i - 1)
+		QuickSort_for_allcode(myList, j + 1, end)
+
+	return myList
+
+
+
 
 def get_rise_by_allcode(table_name, from_date, to_date):
 	rise_list = []
 	# 根据表名获取表中基金代码
 	codes = db.get_fundcode_by_table(table_name)
 	for c in codes:
-		rise_list.append(get_rise_by_code(c[0], from_date, to_date))
-
-	t_header = PrettyTable(['基金代码','累计涨跌幅度', '涨次数', '跌次数', '最大涨幅信息', '最大跌幅信息', '平均排名'])
-	for r in rise_list:
+		r = get_rise_by_code(c[0], from_date, to_date)
 		if r != None:
-			t_header.add_row([r[0], r[1], r[2], r[3], r[4], r[5], r[6]])
+			rise_list.append(r)
+
+	sort_result = QuickSort_for_allcode(rise_list, 0, len(rise_list) -1)
+
+	t_header = PrettyTable(['序号','基金代码','累计涨跌幅度', '涨次数', '跌次数', '最大涨幅信息', '最大跌幅信息', '平均排名'])
+	length = len(sort_result)
+	for i in range(length):
+		r = sort_result[i]
+		if r != None:
+			t_header.add_row([str(i+1), r[0], r[1], r[2], r[3], r[4], r[5], r[6]])
 
 	return t_header
+
+
 
 if __name__ == '__main__':
 

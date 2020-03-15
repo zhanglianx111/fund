@@ -324,7 +324,7 @@ def get_rise_by_code(fundcode, table_name, start_date, end_date):
 			cur.execute(sql)
 			rows = cur.fetchall()
 
-			range_totol = 0.0	# 累计涨幅
+			range_totol = float(0)	# 累计涨幅
 			riseCount = 0		# 上涨次数
 			downCount = 0		# 下跌次数
 			range_max = ()		# 上涨最大信息
@@ -337,7 +337,6 @@ def get_rise_by_code(fundcode, table_name, start_date, end_date):
 			length = len(rows)
 			if length == 0:
 				return None
-
 			for i in range(length):
 				rng = float(str(rows[i][1]).split('%')[0])
 				if rng > 0:
@@ -353,7 +352,9 @@ def get_rise_by_code(fundcode, table_name, start_date, end_date):
 
 				rank_totol+=rows[i][2]
 
-				range_totol = range_totol + float(rng)
+				range_totol += rng
+				if abs(range_totol - 0.00001) <= 0.0001:
+					range_totol = float(0.0)
 		except Exception as err:
 			print err
 
