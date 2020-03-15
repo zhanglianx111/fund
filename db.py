@@ -360,6 +360,15 @@ def get_rise_by_code(fundcode, table_name, start_date, end_date):
 
 		return (fundcode, range_totol, riseCount, downCount, range_max, range_min, rank_totol/length)
 
+def get_fundname_by_code(fundcode):
+	conn = pymysql.connect(HOST, USER, PASSWD, DB)
+	sql = "select FullName from funds_list where FundCode = %s" % fundcode	
+	with conn:
+		cur = conn.cursor()
+		cur.execute(sql)
+		name = cur.fetchone()
+		return name
+
 if __name__ ==  "__main__":
 	print __name__
 	#t = TALBE_FUNDSLIST
