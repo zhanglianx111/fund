@@ -92,9 +92,13 @@ def rise_by_one(fundcode, from_date, to_date):
 		to_date = datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d')
 
 	ret = topN.get_rise_by_code(fundcode, from_date, to_date)
-	t = PrettyTable(['基金代码', '累计涨跌幅度', '涨次数', '跌次数', '最大涨幅信息', '最大跌幅信息', '平均排名'])
-	t.add_row([ret[0], ret[1], ret[2], ret[3], ret[4], ret[5], ret[6]])
-	print t
+	if ret == None:
+		print "未找到基金"
+		sys.exit(1)
+	else:
+		t = PrettyTable(['基金代码', '累计涨跌幅度', '涨次数', '跌次数', '最大涨幅信息', '最大跌幅信息', '平均排名'])
+		t.add_row([ret[0], ret[1], ret[2], ret[3], ret[4], ret[5], ret[6]])
+		print t
 
 
 def rise_by_all(table, from_date, to_date):
