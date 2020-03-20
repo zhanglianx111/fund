@@ -117,7 +117,9 @@ def batch_insert(table_name, datas):
 	with conn:
 		cur = conn.cursor()
 		try:
-			if len(datas[0]) == 5:		
+			if len(datas[0]) == 5:
+				# clean funds_list table
+				cur.execute("delete from %s" % TALBE_FUNDSLIST)
 				for d in datas:
 					sql_insert = sql % (table_name, d[0], d[1], d[2], d[3], d[4])
 					cur.execute(sql_insert)
@@ -133,6 +135,18 @@ def batch_insert(table_name, datas):
 		except Exception as err:
 			logger.error(err)
 			conn.rollback()
+
+def get_fundslist_count():
+	sql = "select * from funds_list"
+	with conn:
+		try:
+			cur = conn.cursor()
+			count = cur.execute(sql)
+
+		except Exception as err:
+			logger.error(err)
+
+		return count
 
 # 按基金类型存入不同的表
 def batch_insert_by_type(date):

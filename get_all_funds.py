@@ -24,6 +24,13 @@ def main():
 
 	# 存入数据库
 	db.batch_insert(db.TALBE_FUNDSLIST, flist)
+	old_count = db.get_fundslist_count()
+	new_count = len(flist)
+
+	if new_count - old_count >= 0:
+		logger.info('increase %s funds' % (new_count - old_count))
+	else:
+		logger.info('reduce %s funds' % (old_count - new_count))
 
 if __name__ == "__main__":
 	main()
