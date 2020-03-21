@@ -302,6 +302,8 @@ def get_table_by_fundcode(fundcode):
 		cur = conn.cursor()
 		cur.execute(sql)
 		atype = cur.fetchone()
+		if atype == None:
+			return None
 		ftable = atype[0]
 		if ftable == '股票型':
 			return TABLE_STOCK

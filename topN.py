@@ -130,11 +130,12 @@ def main(date_today):
 
 def get(fund_type, date, count):
 	ret = db.get_topn_by_type(fund_type, date, count)
-
+	'''
 	x = PrettyTable(["基金名称", "基金代码", "日期", "净值", "涨幅", "排名"])
 	for f in ret:
 		x.add_row([f[0], f[1], f[2], f[3], f[4], f[7]])
-	return x
+	'''
+	return ret
 
 def get_rise_by_code(fundcode, start_date, end_date):
 	table_name = db.get_table_by_fundcode(fundcode)

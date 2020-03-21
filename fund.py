@@ -54,7 +54,7 @@ def topn(date):
 def fetchall(date):
 	logger.info('fetch the fund net value of the date: %s', date)
 	ret = get_all_funds_today.main(date)
-	return ret
+	print ret
 
 # 计算最近n天的排名平均值
 def average():
@@ -74,6 +74,7 @@ def version():
 def range_for_date(flag, date):
 	count = topN.range_greater_zero(flag, date)
 	print count
+	return count
 
 # 获取某日某类型前count个基金
 def get(fund_type, date, count):
@@ -82,7 +83,7 @@ def get(fund_type, date, count):
 		sys.exit(1)
 	ret = topN.get(fund_type, date, count)
 
-	print(ret)
+	#print(ret)
 	return ret
 
 # 获取一只基金在一段时间内的涨跌情况
@@ -121,30 +122,34 @@ def routine(date):
 	message = ""
 
 	# 获取当日的基金情况
-	fetchall_ret = fetchall(date)
-	message = message + fetchall_ret + "\n"
+	fetchall(date)
+	#message = message + fetchall_ret + "\n"
 
 	# 单日涨跌基金个数
 	# 上涨个数
-	count = range_for_date('1', date)
-	message = message + "上涨个数: " + str(count) + '\n'
+	count1 = range_for_date('1', date)
+	#message = message + "上涨个数: " + str(count) + '\n'
 	# 下跌个数
-	count = range_for_date('-1', date)
-	message = message + "下跌个数: " + str(count) + '\n'
+	count2 = range_for_date('-1', date)
+	#message = message + "下跌个数: " + str(count) + '\n'
 
 	# 排名
 	topn(date)
 
 	# 获取排名
 	count = 50
+	mail_datas = {}
 	for i in range(6):
 		ret = get(i + 1, date, count)
+		mail_datas[str(i+1)] = ret
+		'''
 		message =  message + TABLES_LIST[i+1] + '\n'
 		message = message + str(ret) + '\n'
+		'''
 
 
 	# send email
-	mail.send_email(message, date)
+	mail.send_email([count1, count2], mail_datas, date)
 
 
 if __name__ == '__main__':
