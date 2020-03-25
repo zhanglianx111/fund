@@ -2,12 +2,12 @@
 # -*- coding:utf-8 -*-
 
 
-import rank_avg
 import get_all_funds_today
 import get_all_funds
 import topN
 import mail
 from db import TABLES_LIST
+import db
 
 import toml
 import logging
@@ -137,16 +137,15 @@ def routine(date):
 	topn(date)
 
 	# 获取排名
-	count = 50
 	mail_datas = {}
-	for i in range(6):
-		ret = get(i + 1, date, count)
-		mail_datas[str(i+1)] = ret
-		'''
-		message =  message + TABLES_LIST[i+1] + '\n'
-		message = message + str(ret) + '\n'
-		'''
+	for i in range(len(TABLES_LIST[1:])):
+		tcount = db.get_list_count(TABLES_LIST[i+1])
+		if tcount == 0:
+			continue
+		percent20 = int(tcount * config['percent']['percent'])
 
+		ret = get(i + 1, date, percent20)
+		mail_datas[str(i+1)] = ret
 
 	# send email
 	mail.send_email([count1, count2], mail_datas, date)

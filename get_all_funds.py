@@ -24,7 +24,7 @@ def main():
 
 	# 存入数据库
 	db.batch_insert(db.TALBE_FUNDSLIST, flist)
-	old_count = db.get_fundslist_count()
+	old_count = db.get_list_count(db.TALBE_FUNDSLIST)
 	new_count = len(flist)
 
 	if new_count - old_count >= 0:

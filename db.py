@@ -136,17 +136,44 @@ def batch_insert(table_name, datas):
 			logger.error(err)
 			conn.rollback()
 
-def get_fundslist_count():
-	sql = "select * from funds_list"
+# 表内基金的个数
+def get_list_count(table_name):
+	if table_name == TALBE_FUNDSLIST:
+		sql = "select * from funds_list"
+	elif table_name == TABLE_FUNDSTODAY:
+		yestoday = datetime.datetime.strftime(datetime.date.today() + datetime.timedelta(-1), '%Y-%m-%d')
+		sql = "select * from %s where Date = '%s'" %(TABLE_FUNDSTODAY, yestoday)
+	else:
+		if table_name == TABLE_STOCK:
+			type1 = '股票型'
+			type2 = '股票指数'
+		elif table_name == TABLE_HYDIRD:
+			type1 = '混合型'
+			type2 = ''
+		elif table_name == TABLE_BOND:
+			type1 = '债券型'
+			type2 = ''
+		elif table_name == TABLE_FEEDER:
+			type1 = '联接基金'
+			type2 = ''
+		elif table_name == TABLE_TIERED_LEVERAGED:
+			type1 = '分级杠杆'
+			type2 = ''
+		else:
+			logger.error("not supported table name")
+			return 0
+
+		sql = "select * from funds_list where Type = '%s' or Type = '%s'" % (type1, type2)
+
 	with conn:
 		try:
 			cur = conn.cursor()
 			count = cur.execute(sql)
-
+			return count
 		except Exception as err:
 			logger.error(err)
 
-		return count
+
 
 # 按基金类型存入不同的表
 def batch_insert_by_type(date):
@@ -220,7 +247,7 @@ def get_funds_today(date_today, table_name):
 				today.append(t)
 
 		except Exception as err:
-			logger.error(err)	
+			logger.error(err)
 
 	return today
 
@@ -283,7 +310,7 @@ def get_topn_by_type(fund_type, date, count):
 
 	sql = "select funds_list.FullName, %s.* from %s left join funds_list on %s.FundCode = funds_list.FundCode where Date = '%s' order by RankToday limit 0, %s" % \
 			(table, table, table, date, int(count))
-
+	print fund_type, date, count
 	with conn:
 		cur = conn.cursor()
 		#sql_table = "show tables like '%s'" % TABLE_STOCK
@@ -401,8 +428,9 @@ if __name__ ==  "__main__":
 	#######################
 	#batch_insert(t, datas)
 
-	batch_insert_by_type('2020-02-26')
+	#batch_insert_by_type('2020-02-26')
 	#get_rise_by_code('000082', TABLE_STOCK, '2020-03-09', '2020-03-09')
+
 
 
 
