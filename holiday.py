@@ -1,6 +1,10 @@
 # -*- coding:utf-8 -*-
 import datetime
 import sys
+import logging
+
+logger = logging.getLogger('main.db')
+
 
 '''以下是统计2019年and2020年节假日'''
 '''节假日和周六、日不开市'''
@@ -21,19 +25,19 @@ rest_workday=[
     '2020-01-19','2020-02-01','2020-06-28','2020-09-27','2020-10-10',
 ]
 
-def is_holiday_or_weedday(current_date):
+def is_holiday_or_weekend(current_date):
     set_date = datetime.datetime.strptime(current_date,"%Y-%m-%d")
 
     #0~6代表周一~周日
     weekday=set_date.weekday()
     print weekday
     if weekday in [5, 6]:
-        print current_date, 'is weedend'
+        logger.info("%s is weekend", current_date)
         return True
 
 
     if current_date in rest_holiday:
-        print current_date, 'is holiday'
+        logger.info("%s is holiday", current_date)
         return True
 
     return False
@@ -42,13 +46,3 @@ def is_holiday_or_weedday(current_date):
 if __name__=='__main__':
     print sys.argv[1]
     is_holiday_or_weedday(sys.argv[1])
-    '''
-    try:
-        start_date='2019-01-01'
-        end_date='2021-01-01'
-        is_holiday(start_date,end_date)
-    except Exception as e:
-        import traceback
-        ex_msg = '{exception}'.format(exception=traceback.format_exc())
-        print(ex_msg,e)
-    '''
