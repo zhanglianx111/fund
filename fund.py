@@ -8,6 +8,7 @@ import topN
 import mail
 from db import TABLES_LIST
 import db
+import holiday
 
 import toml
 import logging
@@ -114,24 +115,17 @@ def rise_by_all(table, from_date, to_date):
 	print '基金总数: ', ret[1]
 
 def routine(date):
-	day = time.strftime("%w",time.localtime())
-	if day == '0' or day == '1':
-		logger.info('today is %s, have a rest!', time.strftime("%A",time.localtime()))
+	if holiday.is_holiday_or_weekend(args.date):
 		sys.exit(1)
-
-	message = ""
 
 	# 获取当日的基金情况
 	fetchall(date)
-	#message = message + fetchall_ret + "\n"
 
 	# 单日涨跌基金个数
 	# 上涨个数
 	count1 = range_for_date('1', date)
-	#message = message + "上涨个数: " + str(count) + '\n'
 	# 下跌个数
 	count2 = range_for_date('-1', date)
-	#message = message + "下跌个数: " + str(count) + '\n'
 
 	# 排名
 	topn(date)
