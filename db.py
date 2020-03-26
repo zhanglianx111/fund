@@ -331,8 +331,9 @@ def get_table_by_fundcode(fundcode):
 		atype = cur.fetchone()
 		if atype == None:
 			return None
+
 		ftable = atype[0]
-		if ftable == '股票型':
+		if ftable == '股票型' or ftable == '股票指数':
 			return TABLE_STOCK
 		if ftable == '混合型':
 			return TABLE_HYDIRD
