@@ -30,7 +30,7 @@ def is_holiday_or_weekend(current_date):
 
     #0~6代表周一~周日
     weekday=set_date.weekday()
-    print weekday
+
     if weekday in [5, 6]:
         logger.info("%s is weekend", current_date)
         return True

@@ -23,6 +23,7 @@ TABLE_HYDIRD = 'funds_hybird' 		# 混合型每日总表
 TABLE_STOCK = 'funds_stock' 		# 股票型每日总表
 TABLE_BOND = 'funds_bond' 			# 债券型每日总表
 TABLE_FEEDER = 'funds_feeder' 		# 联接基金
+TABLES_INDEX = 'funds_index'		# 股票指数基金
 TABLE_TIERED_LEVERAGED = 'funds_tiered_leveraged' 	# 分级杠杆基金
 
 FUNDCODE = 'FundCode' 		# 基金代码
@@ -37,7 +38,7 @@ BUYSTATUS = 'BuyStatus' 	# 申购状态
 SELLSTATUS = 'SellStatus' 	# 赎回状态
 RANKTODAY = 'RankToday' 	# 今日排名
 
-TABLES_LIST = [TALBE_FUNDSLIST, TABLE_FUNDSTODAY, TABLE_STOCK, TABLE_HYDIRD, TABLE_BOND, TABLE_FEEDER, TABLE_TIERED_LEVERAGED]
+TABLES_LIST = [TALBE_FUNDSLIST, TABLE_FUNDSTODAY, TABLE_STOCK, TABLES_INDEX, TABLE_HYDIRD, TABLE_BOND, TABLE_FEEDER, TABLE_TIERED_LEVERAGED]
 
 logger = logging.getLogger('main.db')
 
@@ -146,24 +147,21 @@ def get_list_count(table_name):
 	else:
 		if table_name == TABLE_STOCK:
 			type1 = '股票型'
-			type2 = '股票指数'
+		elif table_name == TABLES_INDEX:
+			type1 = '股票指数'
 		elif table_name == TABLE_HYDIRD:
 			type1 = '混合型'
-			type2 = ''
 		elif table_name == TABLE_BOND:
 			type1 = '债券型'
-			type2 = ''
 		elif table_name == TABLE_FEEDER:
 			type1 = '联接基金'
-			type2 = ''
 		elif table_name == TABLE_TIERED_LEVERAGED:
 			type1 = '分级杠杆'
-			type2 = ''
 		else:
-			logger.error("not supported table name")
+			logger.warning("not supported table name")
 			return 0
 
-		sql = "select * from funds_list where Type = '%s' or Type = '%s'" % (type1, type2)
+		sql = "select * from funds_list where Type = '%s'" % type1
 
 	with conn:
 		try:
@@ -180,7 +178,7 @@ def batch_insert_by_type(date):
 	#conn = pymysql.connect(HOST, USER, PASSWD, DB)
 
 	type_list = [('股票型', TABLE_STOCK), \
-				 ('股票指数', TABLE_STOCK), \
+				 ('股票指数', TABLES_INDEX), \
 				 ('混合型', TABLE_HYDIRD), \
 				 ('债券型', TABLE_BOND), \
 				 ('联接基金', TABLE_FEEDER), \
@@ -333,8 +331,10 @@ def get_table_by_fundcode(fundcode):
 			return None
 
 		ftable = atype[0]
-		if ftable == '股票型' or ftable == '股票指数':
+		if ftable == '股票型':
 			return TABLE_STOCK
+		if ftable == '股票指数':
+			return  TABLES_INDEX
 		if ftable == '混合型':
 			return TABLE_HYDIRD
 		if ftable == '联接基金':

@@ -149,7 +149,7 @@ def main(date):
 		t.setDaemon(True)
 		t.start()
 
-	for thrd in threads:
+	for t in threads:
 		t.join()
 		list_result.append(t.get_result())
 
