@@ -133,8 +133,9 @@ def routine(date):
 	# 获取排名
 	mail_datas = {}
 	for i in range(len(TABLES_LIST[1:])):
-		tcount = db.get_list_count(TABLES_LIST[i+1])
+		tcount = db.get_list_count(TABLES_LIST[i+1], date)
 		if tcount == 0:
+			logger.warnning(TABLES_LIST[i+1])
 			continue
 		percent20 = int(tcount * config['percent']['percent'])
 

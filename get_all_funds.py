@@ -10,7 +10,7 @@ import logging
 
 logger = logging.getLogger('main.get_all_funds')
 
-def main():
+def main(today):
 	response_all_funds = urllib2.urlopen('http://fund.eastmoney.com/js/fundcode_search.js')
 	all_funds_txt = response_all_funds.read()
 
@@ -24,7 +24,7 @@ def main():
 
 	# 存入数据库
 	db.batch_insert(db.TALBE_FUNDSLIST, flist)
-	old_count = db.get_list_count(db.TALBE_FUNDSLIST)
+	old_count = db.get_list_count(db.TALBE_FUNDSLIST, date)
 	new_count = len(flist)
 
 	if new_count - old_count >= 0:
@@ -33,4 +33,5 @@ def main():
 		logger.info('reduce %s funds' % (old_count - new_count))
 
 if __name__ == "__main__":
-	main()
+	today = datetime.datetime.strftime(datetime.date.today(), '%Y-%m-%d')
+	main(today)

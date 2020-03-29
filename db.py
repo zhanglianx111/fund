@@ -138,12 +138,12 @@ def batch_insert(table_name, datas):
 			conn.rollback()
 
 # 表内基金的个数
-def get_list_count(table_name):
+def get_list_count(table_name, date):
 	if table_name == TALBE_FUNDSLIST:
 		sql = "select * from funds_list"
 	elif table_name == TABLE_FUNDSTODAY:
-		yestoday = datetime.datetime.strftime(datetime.date.today() + datetime.timedelta(-1), '%Y-%m-%d')
-		sql = "select * from %s where Date = '%s'" %(TABLE_FUNDSTODAY, yestoday)
+		#yestoday = datetime.datetime.strftime(datetime.date.today() + datetime.timedelta(-1), '%Y-%m-%d')
+		sql = "select * from %s where Date = '%s'" %(TABLE_FUNDSTODAY, date)
 	else:
 		if table_name == TABLE_STOCK:
 			type1 = '股票型'
