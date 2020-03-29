@@ -72,7 +72,7 @@ def format_datas(counts, fund_datas):
     msg += '<span>下跌基金数: %s</span>' % counts[1]
     html_tables = msg
 
-    for i in range(6):
+    for i in range(7):
         jjmc = []
         jjdm = []
         rq = []
