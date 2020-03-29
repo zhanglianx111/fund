@@ -64,6 +64,7 @@ def send_email(funds_totol, datas, date):
 
     except Exception as e:
         logger.error('sendemail failed, the reason: %s', e)
+        return
 
     logger.info("mail sended ok at %s" % date)
 

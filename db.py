@@ -308,7 +308,7 @@ def get_topn_by_type(fund_type, date, count):
 
 	sql = "select funds_list.FullName, %s.* from %s left join funds_list on %s.FundCode = funds_list.FundCode where Date = '%s' order by RankToday limit 0, %s" % \
 			(table, table, table, date, int(count))
-	print fund_type, date, count
+
 	with conn:
 		cur = conn.cursor()
 		#sql_table = "show tables like '%s'" % TABLE_STOCK
