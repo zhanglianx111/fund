@@ -53,6 +53,7 @@ def topn(date):
 
 # 获取当天的基金情况
 def fetchall(date):
+	logger.info('========================== %s ========================', date)
 	logger.info('fetch the fund net value of the date: %s', date)
 	ret = get_all_funds_today.main(date)
 	print ret
