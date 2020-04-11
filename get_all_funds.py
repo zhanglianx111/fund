@@ -5,7 +5,7 @@ import db
 
 import urllib2
 import json
-import sys
+import datetime
 import logging
 
 logger = logging.getLogger('main.get_all_funds')
@@ -23,8 +23,9 @@ def main():
 		flist.append(tup)
 
 	# 存入数据库
+	date_lastweek = datetime.datetime.strftime(datetime.date.today(), '%Y-%m-%d')
 	db.batch_insert(db.TALBE_FUNDSLIST, flist)
-	old_count = db.get_list_count(db.TALBE_FUNDSLIST, date)
+	old_count = db.get_list_count(db.TALBE_FUNDSLIST, date_lastweek)
 	new_count = len(flist)
 
 	if new_count - old_count >= 0:
