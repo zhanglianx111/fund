@@ -105,15 +105,19 @@ def fetch(sub_funds_list, date):
 		time.sleep(SLEEP_TIME)
 
 	# try again for fundcode that are fetched failed
-	for ffailed in fundcodes_failed:
-		e = get_fund_price(ffailed, date)
-		if e == '-1':
-			logger.error("fetch fund code: %s failed again", fcode)
-			continue
+	while len(fundcodes_failed) != 0:
+		logger.info("try to fetch again, list of failed length: %s", len(fundcodes_failed))
+		for ffailed in fundcodes_failed:
+			e = get_fund_price(ffailed, date)
+			if e == '-1':
+				logger.error("fetch fund code: %s failed again", ffailed)
+				continue
+			logger.info("fetch again fund code: %s successfully", ffailed)
 
-		t = (fcode, date, convert_str(e[1]), e[3], e[4], e[5], int(0))
-		list_funds_info.append(t)
-		time.sleep(SLEEP_TIME)
+			t = (ffailed, date, convert_str(e[1]), e[3], e[4], e[5], int(0))
+			list_funds_info.append(t)
+			fundcodes_failed.remove(ffailed)
+			time.sleep(SLEEP_TIME)
 
 
 	return list_funds_info
