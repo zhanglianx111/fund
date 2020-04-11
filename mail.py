@@ -69,8 +69,8 @@ def send_email(funds_totol, datas, date):
     logger.info("mail sended ok at %s" % date)
 
 def format_datas(counts, fund_datas):
-    msg = '<span>上涨基金数: %s</span>' % counts[0] + '\n'
-    msg += '<span>下跌基金数: %s</span>' % counts[1]
+    msg = '<span>上涨基金数: %s</span>' % counts[0] + '<br>'
+    msg += '<span>下跌基金数: %s</span>' % counts[1] + '<br>'
     html_tables = msg
 
     for i in range(7):
