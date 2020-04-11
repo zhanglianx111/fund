@@ -92,16 +92,29 @@ def convert_str(price):
 
 def fetch(sub_funds_list, date):
 	list_funds_info = []
-
+	fundcodes_failed = []
 	for fcode in sub_funds_list:
 		e = get_fund_price(fcode, date)
 		if e == '-1':
 			logger.warn("fetch fund code: %s failed", fcode)
+			fundcodes_failed.append(fcode)
 			continue
 
 		t = (fcode, date, convert_str(e[1]), e[3], e[4], e[5], int(0))
 		list_funds_info.append(t)
 		time.sleep(SLEEP_TIME)
+
+	# try again for fundcode that are fetched failed
+	for ffailed in fundcodes_failed:
+		e = get_fund_price(ffailed, date)
+		if e == '-1':
+			logger.error("fetch fund code: %s failed again", fcode)
+			continue
+
+		t = (fcode, date, convert_str(e[1]), e[3], e[4], e[5], int(0))
+		list_funds_info.append(t)
+		time.sleep(SLEEP_TIME)
+
 
 	return list_funds_info
 
