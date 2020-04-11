@@ -10,7 +10,7 @@ import logging
 
 logger = logging.getLogger('main.get_all_funds')
 
-def main(today):
+def main():
 	response_all_funds = urllib2.urlopen('http://fund.eastmoney.com/js/fundcode_search.js')
 	all_funds_txt = response_all_funds.read()
 
@@ -33,5 +33,5 @@ def main(today):
 		logger.info('reduce %s funds' % (old_count - new_count))
 
 if __name__ == "__main__":
-	today = datetime.datetime.strftime(datetime.date.today(), '%Y-%m-%d')
-	main(today)
+	#today = datetime.datetime.strftime(datetime.date.today(), '%Y-%m-%d')
+	main()
