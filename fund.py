@@ -213,7 +213,9 @@ if __name__ == '__main__':
 	args = parser.parse_args()
 	logger.debug(args)
 	(name, functor) = args.action
-	args.date = format_date(args.date)
+
+	if name != 'version' and name != 'update_list':
+		args.date = format_date(args.date)
 
 	if name in ['topn']:
 		functor(args.date)
