@@ -146,6 +146,11 @@ def routine(date):
 	# send email
 	mail.send_email([count1, count2], mail_datas, date)
 
+# origin_date: %m.%d
+# format: %y-%m-%d
+def format_date(origin_date):
+	return str(datetime.datetime.now().year) + '-' + origin_date.replace('.','-')
+
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
@@ -208,6 +213,7 @@ if __name__ == '__main__':
 	args = parser.parse_args()
 	logger.debug(args)
 	(name, functor) = args.action
+	args.date = format_date(args.date)
 
 	if name in ['topn']:
 		functor(args.date)
