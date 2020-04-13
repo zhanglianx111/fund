@@ -229,9 +229,7 @@ if __name__ == '__main__':
 
 	if name != 'version' and name != 'update_list':
 		args.date = format_date(args.date)
-		print args.date
 
-	sys.exit()
 	if name in ['topn']:
 		functor(args.date)
 
