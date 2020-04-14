@@ -7,11 +7,11 @@ if [ "X$yestoday" == "X" ];then
     if [ $os == "Linux" ];then
         echo $os > test.log
         echo `date` >> test.log
-        yestoday=`date -d last-day +%Y.%m.%d`
+        yestoday=`date -d last-day +%m.%d`
     elif [ $os == "Darwin" ];then
         echo $os >> test.log
         echo `date` >> test.log
-        yestoday=`date -v-1d +"%Y.%m.%d"`
+        yestoday=`date -v-1d +"%m.%d"`
     fi
 fi
 
