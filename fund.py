@@ -149,7 +149,20 @@ def routine(date):
 # origin_date: %m.%d
 # format: %y-%m-%d
 def format_date(origin_date):
-	return str(datetime.datetime.now().year) + '-' + origin_date.replace('.','-')
+	list_date = origin_date.split('.')
+	m = int(list_date[0])
+	d = int(list_date[1])
+	if 0 < m < 10:
+		month = '0' + str(m)
+	else:
+		month = str(m)
+
+	if 0 < d < 10:
+		day = '0' + str(d)
+	else:
+		day = str(d)
+
+	return str(datetime.datetime.now().year) + '-' + month + '-' + day
 
 
 if __name__ == '__main__':
