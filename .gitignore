@@ -25,6 +25,7 @@ var/
 *.egg
 
 # zhanglianx111
+.idea/
 mysql_data/
 mysql_data_dev/
 funds.log*
