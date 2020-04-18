@@ -253,7 +253,7 @@ if __name__ == '__main__':
 
 	if name in ['rise_by_one']:
 	    args.from_date = format_date(args.from_date)
-	    args.to_date =format_date (args.to_date)
+	    args.to_date = format_date(args.to_date)
 		functor(args.fundcode, args.from_date, args.to_date)
 
 	if name in ['rise_all_by_type']:
