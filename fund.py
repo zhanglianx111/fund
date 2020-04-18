@@ -194,7 +194,7 @@ if __name__ == '__main__':
 	parser_get.set_defaults(action=('get', get))
 	parser_get.add_argument('--type', '-t', action='store', help="type of the fund. \
 		TABLES_LIST = [TALBE_FUNDSLIST, TABLE_FUNDSTODAY, TABLE_STOCK, TABLE_HYDIRD, TABLE_BOND, TABLE_FEEDER, TABLE_TIERED_LEVERAGED] \
-		1: fundstoday 2: stock; 3:hybird; 4: bond; 5: feeder; 6: tieread_leveraaged", required=True)
+		1: fundstoday 2: stock; 3:hybird; 4: bond; 5: feeder; 6: tieread_leveraaged; 7: qdii", required=True)
 	parser_get.add_argument('--date', '-d', action='store', help="date to get", required=True)
 	parser_get.add_argument('--count', '-cnt', action='store', help="count of the fund for type", required=True)
 
@@ -227,7 +227,7 @@ if __name__ == '__main__':
 	logger.debug(args)
 	(name, functor) = args.action
 
-	if name != 'version' and name != 'update_list':
+	if name != 'version' and name != 'update_list' and name != 'rise_by_one' and name != 'rise_all_by_type':
 		args.date = format_date(args.date)
 
 	if name in ['topn']:
@@ -252,9 +252,13 @@ if __name__ == '__main__':
 		functor(args.date)
 
 	if name in ['rise_by_one']:
+	    args.from_date = format_date(args.from_date)
+	    args.to_date =format_date (args.to_date)
 		functor(args.fundcode, args.from_date, args.to_date)
 
 	if name in ['rise_all_by_type']:
+        args.from_date = format_date(args.from_date)
+        args.to_date =format_date (args.to_date)
 		functor(args.table, args.from_date, args.to_date)
 
 	'''

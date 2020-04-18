@@ -35,7 +35,7 @@ TYPE_LIST = [('股票型', TABLE_STOCK), \
 				 ('债券型', TABLE_BOND), \
 				 ('联接基金', TABLE_FEEDER), \
 				 ('分级杠杆', TABLE_TIERED_LEVERAGED), \
-				 ('DQII', TABLE_QDII) \
+				 ('QDII', TABLE_QDII) \
 			]
 
 # 表字段名
@@ -198,7 +198,6 @@ def batch_insert_by_type(date):
 					where `funds_list`.Type = %s and `funds_today`.Date = %s"
 
 			try:
-
 				cur.execute(sql, (t[0], date))
 				rows = cur.fetchall()
 				batch_insert(t[1], rows)
