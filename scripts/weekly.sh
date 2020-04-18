@@ -36,10 +36,10 @@ for d in ${days_list[@]};
 do
     friday=`nextDayOfDay ${d} 5`
     monday=`date +%m.%d -d ${d}`
+    python fund.py rise_all_by_type -t ${table} -fd ${monday} -td ${friday} |grep -E ${options}
     echo "${monday} --> ${friday} --------------------------------------------------------------------------------------------------------------------------"
-    python fund.py rise_all_by_type -t ${table} -fd ${monday} -td ${friday} |grep -E ${options} 
     echo 
 done
 
+python fund.py rise_all_by_type -t ${table} -fd ${monday} -td ${today} |grep -E ${options}
 echo "${monday} --> ${today} --------------------------------------------------------------------------------------------------------------------------"
-python fund.py rise_all_by_type -t ${table} -fd ${monday} -td ${today} |grep -E ${options} 
