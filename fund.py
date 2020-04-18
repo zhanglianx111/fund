@@ -149,6 +149,9 @@ def routine(date):
 # origin_date: %m.%d
 # format: %y-%m-%d
 def format_date(origin_date):
+    if origin_date == None:
+        return None
+
 	list_date = origin_date.split('.')
 	m = int(list_date[0])
 	d = int(list_date[1])
@@ -258,7 +261,7 @@ if __name__ == '__main__':
 
 	if name in ['rise_all_by_type']:
         args.from_date = format_date(args.from_date)
-        args.to_date =format_date (args.to_date)
+        args.to_date = format_date (args.to_date)
 		functor(args.table, args.from_date, args.to_date)
 
 	'''
