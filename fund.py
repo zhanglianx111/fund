@@ -80,8 +80,8 @@ def range_for_date(flag, date):
 
 # 获取某日某类型前count个基金
 def get(fund_type, date, count):
-	if int(fund_type) < 1 or int(fund_type) > 7:
-		print "fund type error. 1 <= type <=7"
+	if int(fund_type) < 1 or int(fund_type) > len(TABLES_LIST):
+		print "fund type index error."
 		sys.exit(1)
 	ret = topN.get(fund_type, date, count)
 

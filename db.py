@@ -17,6 +17,7 @@ PASSWD = config['database']['password']
 DB = config['database']['db']
 CHARSET = config['database']['charset']
 
+# 表名
 TALBE_FUNDSLIST = 'funds_list' 		# 基金总列表
 TABLE_FUNDSTODAY = 'funds_today' 	# 每日基金总表
 TABLE_HYDIRD = 'funds_hybird' 		# 混合型每日总表
@@ -25,7 +26,19 @@ TABLE_BOND = 'funds_bond' 			# 债券型每日总表
 TABLE_FEEDER = 'funds_feeder' 		# 联接基金
 TABLES_INDEX = 'funds_index'		# 股票指数基金
 TABLE_TIERED_LEVERAGED = 'funds_tiered_leveraged' 	# 分级杠杆基金
+TABLE_QDII = 'funds_dqii'           # QDII基金
 
+# 基金类型-表名 对应列表
+TYPE_LIST = [('股票型', TABLE_STOCK), \
+				 ('股票指数', TABLES_INDEX), \
+				 ('混合型', TABLE_HYDIRD), \
+				 ('债券型', TABLE_BOND), \
+				 ('联接基金', TABLE_FEEDER), \
+				 ('分级杠杆', TABLE_TIERED_LEVERAGED), \
+				 ('DQII', TABLE_QDII) \
+			]
+
+# 表字段名
 FUNDCODE = 'FundCode' 		# 基金代码
 SHORTNAME = 'ShortName' 	# 基金名简拼
 FULLNAME = 'FullName' 		# 基金全名 中文
@@ -38,7 +51,7 @@ BUYSTATUS = 'BuyStatus' 	# 申购状态
 SELLSTATUS = 'SellStatus' 	# 赎回状态
 RANKTODAY = 'RankToday' 	# 今日排名
 
-TABLES_LIST = [TALBE_FUNDSLIST, TABLE_STOCK, TABLES_INDEX, TABLE_HYDIRD, TABLE_BOND, TABLE_FEEDER, TABLE_TIERED_LEVERAGED, TABLE_FUNDSTODAY]
+TABLES_LIST = [TALBE_FUNDSLIST, TABLE_STOCK, TABLES_INDEX, TABLE_HYDIRD, TABLE_BOND, TABLE_FEEDER, TABLE_TIERED_LEVERAGED, TABLE_QDII, TABLE_FUNDSTODAY]
 
 logger = logging.getLogger('main.db')
 
@@ -157,6 +170,8 @@ def get_list_count(table_name, date):
 			type1 = '联接基金'
 		elif table_name == TABLE_TIERED_LEVERAGED:
 			type1 = '分级杠杆'
+		elif table_name == TABLE_QDII:
+		    type1 = 'QDII'
 		else:
 			logger.warning("not supported table name")
 			return 0
@@ -175,18 +190,10 @@ def get_list_count(table_name, date):
 
 # 按基金类型存入不同的表
 def batch_insert_by_type(date):
-	#conn = pymysql.connect(HOST, USER, PASSWD, DB)
-
-	type_list = [('股票型', TABLE_STOCK), \
-				 ('股票指数', TABLES_INDEX), \
-				 ('混合型', TABLE_HYDIRD), \
-				 ('债券型', TABLE_BOND), \
-				 ('联接基金', TABLE_FEEDER), \
-				 ('分级杠杆', TABLE_TIERED_LEVERAGED)]
 	with conn:
 		cur = conn.cursor()
 
-		for t in type_list:
+		for t in TYPE_LIST:
 			sql = "select funds_today.* from funds_today left join `funds_list` on `funds_today`.FundCode = `funds_list`.FundCode \
 					where `funds_list`.Type = %s and `funds_today`.Date = %s"
 
@@ -201,7 +208,6 @@ def batch_insert_by_type(date):
 
 
 def get_funds_list():
-	#conn = pymysql.connect(HOST, USER, PASSWD, DB)
 	sql = "select * from funds_list"
 	with conn:
 		cur = conn.cursor()
