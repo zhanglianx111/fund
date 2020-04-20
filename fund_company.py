@@ -13,7 +13,7 @@ def get_fund_companies():
 	try:
 		response = urllib2.urlopen(url, timeout=10)
 
-	except urllib2.HTTPError, e:
+	except urllib2.HTTPError as e:
 		print e
 		#logger.error(e)
 
