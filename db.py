@@ -23,6 +23,7 @@ TABLE_FUNDSTODAY = 'funds_today' 	# 每日基金总表
 TABLE_HYDIRD = 'funds_hybird' 		# 混合型每日总表
 TABLE_STOCK = 'funds_stock' 		# 股票型每日总表
 TABLE_BOND = 'funds_bond' 			# 债券型每日总表
+TABLE_BOND_DINGKAI = 'funds_bond_bindkai' #定开债券
 TABLE_FEEDER = 'funds_feeder' 		# 联接基金
 TABLES_INDEX = 'funds_index'		# 股票指数基金
 TABLE_TIERED_LEVERAGED = 'funds_tiered_leveraged' 	# 分级杠杆基金
@@ -51,7 +52,7 @@ BUYSTATUS = 'BuyStatus' 	# 申购状态
 SELLSTATUS = 'SellStatus' 	# 赎回状态
 RANKTODAY = 'RankToday' 	# 今日排名
 
-TABLES_LIST = [TALBE_FUNDSLIST, TABLE_STOCK, TABLES_INDEX, TABLE_HYDIRD, TABLE_BOND, TABLE_FEEDER, TABLE_TIERED_LEVERAGED, TABLE_QDII, TABLE_FUNDSTODAY]
+TABLES_LIST = [TALBE_FUNDSLIST, TABLE_STOCK, TABLES_INDEX, TABLE_HYDIRD, TABLE_BOND, TABLE_BOND_DINGKAI, TABLE_FEEDER, TABLE_TIERED_LEVERAGED, TABLE_QDII, TABLE_FUNDSTODAY]
 
 logger = logging.getLogger('main.db')
 
@@ -172,6 +173,8 @@ def get_list_count(table_name, date):
 			type1 = '分级杠杆'
 		elif table_name == TABLE_QDII:
 		    type1 = 'QDII'
+		elif table_name == TABLE_BOND_DINGKAI:
+			type1 = '定开债券'
 		else:
 			logger.warning("not supported table name")
 			return 0
@@ -218,7 +221,6 @@ def get_funds_list():
 			for i in range(count):
 				if str(allrows[i][3]) == '货币型' or \
 				str(allrows[i][3]) == '理财型' or \
-				str(allrows[i][3]) == '定开债券' or \
 				str(allrows[i][3]) == '保本型' or \
 				str(allrows[i][3]) == '固定收益' or \
 				str(allrows[i][3]) == 'ETF-场内' or \
@@ -348,6 +350,8 @@ def get_table_by_fundcode(fundcode):
 			return TABLE_BOND
 		if ftable == '分级杠杆':
 			return TABLE_TIERED_LEVERAGED
+		if ftable == '定开债券':
+			return TABLE_BOND_DINGKAI
 		else:
 			return None
 
