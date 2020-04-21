@@ -34,6 +34,7 @@ TYPE_LIST = [('股票型', TABLE_STOCK), \
 				 ('股票指数', TABLES_INDEX), \
 				 ('混合型', TABLE_HYDIRD), \
 				 ('债券型', TABLE_BOND), \
+			 	 ('定开债券', TABLE_BOND_DINGKAI), \
 				 ('联接基金', TABLE_FEEDER), \
 				 ('分级杠杆', TABLE_TIERED_LEVERAGED), \
 				 ('QDII', TABLE_QDII) \
