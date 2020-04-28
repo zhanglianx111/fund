@@ -91,7 +91,7 @@ def ranking(sort_list):
 			t = (j+1, sort_list[i][1], sort_list[i][0])
 			rank_list.append(t)
 
-	except StandardError, e:
+	except StandardError as e:
 		logger.error("error: %s", e)
 
 	return rank_list

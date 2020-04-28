@@ -39,7 +39,7 @@ def send_email(funds_totol, datas, date):
 
     # 邮件的主题，显示在接收邮件的预览页面，以日期为邮件主题
     #subject = get_all_funds_today.getYesterday()
-    subject = "基金daily " + date
+    subject = "基金daily " + date + " " + funds_totol[0] + " " + funds_totol[1]
     msg_root['subject'] = Header(subject, 'utf-8')
 
     '''
