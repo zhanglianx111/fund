@@ -24,8 +24,8 @@ def main():
 
 	# 存入数据库
 	date_lastweek = datetime.datetime.strftime(datetime.date.today(), '%Y-%m-%d')
-	db.batch_insert(db.TALBE_FUNDSLIST, flist)
 	old_count = db.get_list_count(db.TALBE_FUNDSLIST, date_lastweek)
+	db.batch_insert(db.TALBE_FUNDSLIST, flist)
 	new_count = len(flist)
 
 	if new_count - old_count >= 0:
