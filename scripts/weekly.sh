@@ -10,7 +10,8 @@ function nextDayOfDay()
 }
 
 table=$1
-options=$2
+weeks=`expr $2 - 1`
+options=$3
 if [ "X${options}" == "X" ];then
     echo "need options for grep command"
     exit 1
@@ -29,13 +30,13 @@ else # 今天是周日
 fi
 
 today0=`date -d -${offset}days +%Y%m%d`
+days_list=()
+for i in $(seq 0 ${weeks});do
+    step=`expr -7 \* $i`
+    days_list[i]=`nextDayOfDay ${today0} ${step}`
+done
 
-monday0=`nextDayOfDay ${today0} 0`
-monday1=`nextDayOfDay ${today0} -7`
-monday2=`nextDayOfDay ${today0} -14`
-monday3=`nextDayOfDay ${today0} -21`
 # 时间由远到近
-days_list=($monday3 $monday2 $monday1 $monday0)
 
 for d in ${days_list[@]};
 do
@@ -47,6 +48,7 @@ do
     echo
 done
 
-monday=`date +%m.%d -d ${monday3}`
+friday=`date +%m.%d -d ${days_list[0]}`
+
     echo "${monday} --> ${friday} -----------------------------------------------------------------------------------------------------------------------------------------------"
 python fund.py rise_all_by_type -t ${table} -fd ${monday} -td ${friday} |grep -E ${options}
