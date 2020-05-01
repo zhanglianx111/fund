@@ -141,7 +141,7 @@ def routine(date):
     for i in range(len(TABLES_LIST[1:])):
         tcount = db.get_list_count(TABLES_LIST[i+1], date)
         if tcount == 0:
-            logger.warnning(TABLES_LIST[i+1])
+            logger.warning(TABLES_LIST[i+1])
             continue
         percent = int(tcount * config['percent']['percent'])
 
@@ -226,6 +226,8 @@ if __name__ == '__main__':
     parser_routine = subparsers.add_parser('routine', help="每天例行执行")
     parser_routine.set_defaults(action=('routine', routine))
     parser_routine.add_argument('--date', '-d', action='store', help="routine every day", required=True)
+
+
 
     # version
     parser_version = subparsers.add_parser('version', help='print version information')
