@@ -86,7 +86,8 @@ def get(fund_type, date, count):
         sys.exit(1)
     ret = topN.get(fund_type, date, count)
 
-    #print(ret)
+    # insert into table of db
+    db.batch_insert(db.TABLES_LIST_PERCENTAGE[fund_type - 1], ret)
     return ret
 
 # 获取一只基金在一段时间内的涨跌情况
