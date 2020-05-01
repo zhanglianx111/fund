@@ -485,7 +485,7 @@ def get_rise_by_code(fundcode, table_name, start_date, end_date):
 			price_startdate = cur.fetchone()[0]
 
 			# 计算涨幅  format(1.23456, '.4f')
-			range_totol = (float(price_enddate) - float(price_startdate)) / float(priice_startdate)
+			range_totol = (float(price_enddate) - float(price_startdate)) / float(price_startdate)
 			if abs(format(range_totol, '.5f') - 0.00001) <= 0.0001:
 				range_totol = float(0.0)
 
