@@ -197,8 +197,8 @@ if __name__ == '__main__':
     parser_get = subparsers.add_parser("get", help="获取某日或一段时间的某类型前count个基金")
     parser_get.set_defaults(action=('get', get))
     parser_get.add_argument('--type', '-t', action='store', help="type of the fund. \
-        TABLES_LIST = [TALBE_FUNDSLIST, TABLE_FUNDSTODAY, TABLE_STOCK, TABLE_HYDIRD, TABLE_BOND, TABLE_FEEDER, TABLE_TIERED_LEVERAGED] \
-        1: fundstoday 2: stock; 3:hybird; 4: bond; 5: feeder; 6: tieread_leveraaged; 7: qdii", required=True)
+        TABLES_LIST = [TALBE_FUNDSLIST, TABLE_STOCK, TABLES_INDEX, TABLE_HYDIRD, TABLE_BOND, TABLE_BOND_DINGKAI, TABLE_FEEDER, TABLE_TIERED_LEVERAGED, TABLE_QDII, TABLE_FUNDSTODAY] \
+            1: stock; 2:stock_index; 3:hybird; 4: bond; 5: bond_dingkai; 6: feeder; 7: tieread_leveraaged; 8: qdii", required=True)
     parser_get.add_argument('--date', '-d', action='store', help="date to get", required=True)
     parser_get.add_argument('--count', '-cnt', action='store', help="count of the fund for type", required=True)
 
