@@ -215,7 +215,8 @@ if __name__ == '__main__':
     parser_rise.set_defaults(action=('rise_all_by_type', rise_by_all))
     parser_rise.add_argument('--from_date', '-fd', action='store', help="开始日期", required=True)
     parser_rise.add_argument('--to_date', '-td', action='store', help="结束日期")
-    parser_rise.add_argument('--table', '-t', action='store', help="table name. e.g. 1: funds_today 2: funds_stock; 3:funds_hybird; 4: funds_bond; 5: funds_feeder; 6: funds_tiered_leveraged", required=True)
+    parser_rise.add_argument('--table', '-t', action='store', help="table name. e.g. 1: funds_stock 2: funds_index; 3:funds_hybird; 4: funds_bond; 5: funds_bond_dingkai; \
+    6: funds_feeder; 7: funds_tiered_leveraged; 8:funds_qdii", required=True)
 
     # 每天执行一次
     parser_routine = subparsers.add_parser('routine', help="每天例行执行")
