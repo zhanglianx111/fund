@@ -477,12 +477,12 @@ def get_rise_by_code(fundcode, table_name, start_date, end_date):
 			# price_enddate
 			sql = "select PriceToday from %s where FundCode = '%s' and Date = '%s'" % (table_name, fundcode, end_date)
 			cur.execute(sql)
-			price_enddate = cur.fetchone()
+			price_enddate = cur.fetchone()[0]
 
 			# price_startdate
 			sql = "select PriceToday from %s where FundCode = '%s' and Date = '%s'" % (table_name, fundcode, start_date)
 			cur.execute(sql)
-			price_startdate = cur.fetchone()
+			price_startdate = cur.fetchone()[0]
 
 			# 计算涨幅  format(1.23456, '.4f')
 			range_totol = (float(price_enddate) - float(price_startdate)) / float(priice_startdate)
