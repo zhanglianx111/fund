@@ -27,7 +27,7 @@ TABLE_BOND_DINGKAI = 'funds_bond_dingkai' #定开债券
 TABLE_FEEDER = 'funds_feeder' 		# 联接基金
 TABLES_INDEX = 'funds_index'		# 股票指数基金
 TABLE_TIERED_LEVERAGED = 'funds_tiered_leveraged' 	# 分级杠杆基金
-TABLE_QDII = 'funds_dqii'           # QDII基金
+TABLE_QDII = 'funds_qdii'           # QDII基金
 
 # 基金类型-表名 对应列表
 TYPE_LIST = [('股票型', TABLE_STOCK), \
@@ -353,13 +353,14 @@ def get_table_by_fundcode(fundcode):
 			return TABLE_TIERED_LEVERAGED
 		if ftable == '定开债券':
 			return TABLE_BOND_DINGKAI
+                if ftable == 'QDII':
+                        return TABLE_DQII
 		else:
 			return None
 
 def get_fundcode_by_table(table_name):
 	#conn = pymysql.connect(HOST, USER, PASSWD, DB)
 	sql = "select distinct %s from %s" % (FUNDCODE, table_name)
-
 	with conn:
 		cur = conn.cursor()
 		cur.execute(sql)
