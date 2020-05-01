@@ -158,7 +158,7 @@ def batch_insert_percentage(table_name, datas):
 		cur = conn.cursor()
 		try:
 			for d in datas:
-				sql_insert = sql % (table_name, d[0], d[1], d[2], d[3], d[4], d[5])
+				sql_insert = sql % (table_name, d[0], d[1], d[2], d[3], d[4], d[7])
 				cur.execute(sql_insert)
 
 			conn.commit()
