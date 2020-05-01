@@ -490,13 +490,13 @@ def get_rise_by_code(fundcode, table_name, start_date, end_date):
 			else:
 				range_totol = (float(price_enddate) - float(price_startdate)) / float(price_startdate)
 
-			if abs(format(range_totol, '.5f') - 0.00001) <= 0.0001:
+			if abs(float(format(range_totol, '.5f')) - 0.00001) <= 0.0001:
 				range_totol = float(0.0)
 
 		except Exception as err:
 			logger.error(err)
 
-		return (fundcode, format(range_totol, '.4f'), riseCount, downCount, range_max, range_min, rank_totol/length)
+		return (fundcode, float(format(range_totol, '.4f')), riseCount, downCount, range_max, range_min, rank_totol/length)
 
 def get_fundname_by_code(fundcode):
 	#conn = pymysql.connect(HOST, USER, PASSWD, DB)
