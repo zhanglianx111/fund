@@ -490,8 +490,7 @@ def get_rise_by_code(fundcode, table_name, start_date, end_date):
 				range_totol = float(0.0)
 
 		except Exception as err:
-			logg.error(err)
-			print err
+			logger.error(err)
 
 		return (fundcode, format(range_totol, '.4f'), riseCount, downCount, range_max, range_min, rank_totol/length)
 
