@@ -12,10 +12,10 @@ function nextDayOfDay()
 table=$1
 weeks=`expr $2 - 1`
 options=$3
-if [ "X${options}" == "X" ];then
-    echo "need options for grep command"
-    exit 1
-fi
+#if [ "X${options}" == "X" ];then
+#    echo "need options for grep command"
+#    exit 1
+#fi
 
 today=`date +%m.%d`   #今天日期
 weekday=`date +%w`    # 星期几，例如：星期六 weekday=6; 星期日 weekday=0
@@ -44,11 +44,20 @@ do
     friday=`date +%m.%d -d ${friday_tmp}`
     monday=`date +%m.%d -d ${d}`
     echo "${monday} --> ${friday} -----------------------------------------------------------------------------------------------------------------------------------------------"
-    python fund.py rise_all_by_type -t ${table} -fd ${monday} -td ${friday} |grep -E ${options}
+    if [ "X${options}" == "X" ];then
+        python fund.py rise_all_by_type -t ${table} -fd ${monday} -td ${friday}
+    else
+        python fund.py rise_all_by_type -t ${table} -fd ${monday} -td ${friday} |grep -E ${options}
+    fi
     echo
 done
 
 friday=`date +%m.%d -d ${days_list[0]}`
 
     echo "${monday} --> ${friday} -----------------------------------------------------------------------------------------------------------------------------------------------"
-python fund.py rise_all_by_type -t ${table} -fd ${monday} -td ${friday} |grep -E ${options}
+
+    if [ "X${options}" == "X" ];then
+        python fund.py rise_all_by_type -t ${table} -fd ${monday} -td ${friday}
+    else
+        python fund.py rise_all_by_type -t ${table} -fd ${monday} -td ${friday} |grep -E ${options}
+    fi
