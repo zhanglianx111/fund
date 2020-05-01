@@ -82,6 +82,27 @@ def create_database():
 		cur.execute(sql)
 
 
+def create_tables_percentage():
+	sql_show_table = "show tables like %s"
+	sql_create_table = "create table if not exists %s( \
+							FULLNAME VARCHAR(100), \
+							FundCode VARCHAR(30), \
+							Date VARCHAR(30), \
+							PriceToday FLOAT, \
+							RangeToday VARCHAR(30), \
+							RankToday INT, \
+							PRIMARY KEY(FundCode, Date))ENGINE=InnoDB DEFAULT CHARSET=gbk"
+	with conn:
+		cur = conn.cursor()
+	try:
+		for t in TABLES_LIST_PERCENTAGE:
+			sql = sql_create_table % t
+			if cur.execute(sql_show_table, t) == 0:
+				cur.execute(sql)
+
+	except Exception as err:
+		print err
+
 def create_tables():
 	#conn = pymysql.connect(host=HOST, port=PORT, user=USER, password=PASSWD, database=DB)
 
@@ -109,8 +130,7 @@ def create_tables():
 	with conn:
 		cur = conn.cursor()
 		try:
-			LIST = TABLES_LIST + TABLES_LIST_PERCENTAGE
-			for t in LIST:
+			for t in TABLES_LIST:
 				if t == TALBE_FUNDSLIST:
 					sql = sql_create_table_fundslist % t
 				else:
@@ -122,6 +142,32 @@ def create_tables():
 		except Exception as err:
 			print err
 
+
+def batch_insert_percentage(table_name, datas):
+	logger.debug(datas)
+
+	sql = "insert into %s( \
+		FULLNAME, \
+		FUNDCODE, \
+		DATE, \
+		PRICETODAY, \
+		RANGETODAY, \
+		RANKTODAY) value('%s', '%s', '%s', '%s', '%s', '%s') on duplicate key update FUNDCODE=values(FUNDCODE), DATE=values(DATE)"
+
+	with conn:
+		cur = conn.cursor()
+		try:
+			for d in datas:
+				sql_insert = sql % (table_name, d[0], d[1], d[2], d[3], d[4], d[5])
+				cur.execute(sql_insert)
+
+			conn.commit()
+			logger.info('insert date into table[%s] count: %d successfully!', \
+						table_name, len(datas))
+
+		except Exception as err:
+			logger.error(err)
+			conn.rollback()
 
 def batch_insert(table_name, datas):
 	logger.debug(datas)

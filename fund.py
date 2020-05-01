@@ -7,6 +7,7 @@ import get_all_funds
 import topN
 import mail
 from db import TABLES_LIST
+from db import TABLES_LIST_PERCENTAGE
 import db
 import holiday
 
@@ -87,7 +88,9 @@ def get(fund_type, date, count):
     ret = topN.get(fund_type, date, count)
 
     # insert into table of db
-    db.batch_insert(db.TABLES_LIST_PERCENTAGE[fund_type - 1], ret)
+    if int(fund_type) - 1 < len(TABLES_LIST_PERCENTAGE):
+        db.batch_insert_percentage(db.TABLES_LIST_PERCENTAGE[int(fund_type) - 1], ret)
+
     return ret
 
 # 获取一只基金在一段时间内的涨跌情况
@@ -140,9 +143,9 @@ def routine(date):
         if tcount == 0:
             logger.warnning(TABLES_LIST[i+1])
             continue
-        percent20 = int(tcount * config['percent']['percent'])
+        percent = int(tcount * config['percent']['percent'])
 
-        ret = get(i + 1, date, percent20)
+        ret = get(i + 1, date, percent)
         mail_datas[str(i+1)] = ret
 
     # send email
