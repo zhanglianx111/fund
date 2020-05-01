@@ -475,12 +475,12 @@ def get_rise_by_code(fundcode, table_name, start_date, end_date):
 					range_totol = float(0.0)
 				'''
 			# price_enddate
-			sql = "select PriceToday from %s where FundCode = '%s' and Date = '%s'" % (fundcode, end_date)
+			sql = "select PriceToday from %s where FundCode = '%s' and Date = '%s'" % (table_name, fundcode, end_date)
 			cur.execute(sql)
 			price_enddate = cur.fetchone()
 
 			# price_startdate
-			sql = "select PriceToday from %s where FundCode = '%s' and Date = '%s'" % (fundcode, start_date)
+			sql = "select PriceToday from %s where FundCode = '%s' and Date = '%s'" % (table_name, fundcode, start_date)
 			cur.execute(sql)
 			price_startdate = cur.fetchone()
 
