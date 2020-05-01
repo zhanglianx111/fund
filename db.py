@@ -447,7 +447,7 @@ def get_rise_by_code(fundcode, table_name, start_date, end_date):
 			range_max = ()		# 上涨最大信息
 			range_min = ()		# 下跌最大信息
 			rank_avg  = 0		# 平均排名
-			max_range = 0		# 涨幅最大 
+			max_range = 0		# 涨幅最大
 			min_range = 0		# 跌幅最大
 			rank_totol = 0		# rank总和
 
@@ -462,20 +462,37 @@ def get_rise_by_code(fundcode, table_name, start_date, end_date):
 						max_range = rng
 						range_max = rows[i]
 				if rng < 0:
-					downCount+=1				
+					downCount+=1
 					if rng < min_range:
 						min_range = rng
 						range_min = rows[i]
 
 				rank_totol+=rows[i][2]
-
+				# TODO 修改涨幅的计算方法： (price_enddate - price_startdate) / priice_startdate
+				'''
 				range_totol += rng
 				if abs(range_totol - 0.00001) <= 0.0001:
 					range_totol = float(0.0)
+				'''
+			# price_enddate
+			sql = "select PriceToday from %s where FundCode = '%s' and Date = '%s'" % (fundcode, end_date)
+			cur.execute(sql)
+			price_enddate = cur.fetchone()
+
+			# price_startdate
+			sql = "select PriceToday from %s where FundCode = '%s' and Date = '%s'" % (fundcode, start_date)
+			cur.execute(sql)
+			price_startdate = cur.fetchone()
+
+			# 计算涨幅  format(1.23456, '.4f')
+			range_totol = (price_enddate - price_startdate) / priice_startdate
+			if abs(format(range_totol, '.5f') - 0.00001) <= 0.0001:
+				range_totol = float(0.0)
+
 		except Exception as err:
 			print err
 
-		return (fundcode, range_totol, riseCount, downCount, range_max, range_min, rank_totol/length)
+		return (fundcode, format(range_totol, '.4f'), riseCount, downCount, range_max, range_min, rank_totol/length)
 
 def get_fundname_by_code(fundcode):
 	#conn = pymysql.connect(HOST, USER, PASSWD, DB)
