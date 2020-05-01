@@ -486,6 +486,10 @@ def get_fundname_by_code(fundcode):
 		name = cur.fetchone()
 		return name
 
+# 统计一段时间内处于前n%基金的出现的次数
+'''select count(*) as count, `FULLNAME` from funds_index_percentage group by FULLNAME order by count'''
+
+
 if __name__ ==  "__main__":
 	print __name__
 	#t = TALBE_FUNDSLIST
