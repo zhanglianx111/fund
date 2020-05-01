@@ -85,7 +85,7 @@ def create_database():
 def create_tables_percentage():
 	sql_show_table = "show tables like %s"
 	sql_create_table = "create table if not exists %s( \
-							FULLNAME VARCHAR(100), \
+							FullName VARCHAR(100), \
 							FundCode VARCHAR(30), \
 							Date VARCHAR(30), \
 							PriceToday FLOAT, \
