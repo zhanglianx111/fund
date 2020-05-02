@@ -233,7 +233,7 @@ def get_list_count(table_name, date):
 		elif table_name == TABLE_TIERED_LEVERAGED:
 			type1 = '分级杠杆'
 		elif table_name == TABLE_QDII:
-		    type1 = 'QDII'
+			type1 = 'QDII'
 		elif table_name == TABLE_BOND_DINGKAI:
 			type1 = '定开债券'
 		else:
@@ -413,8 +413,8 @@ def get_table_by_fundcode(fundcode):
 			return TABLE_TIERED_LEVERAGED
 		if ftable == '定开债券':
 			return TABLE_BOND_DINGKAI
-                if ftable == 'QDII':
-                        return TABLE_DQII
+		if ftable == 'QDII':
+			return TABLE_DQII
 		else:
 			return None
 
