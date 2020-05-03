@@ -52,12 +52,13 @@ do
     echo
 done
 
-friday=`date +%m.%d -d ${days_list[0]}`
-
+friday_tmp=`nextDayOfDay ${days_list[0]} 4`
+friday=`date +%m.%d -d ${friday_tmp}`
+if [ ${weeks} != 0 ];then
     echo "${monday} --> ${friday} -----------------------------------------------------------------------------------------------------------------------------------------------"
-
     if [ "X${options}" == "X" ];then
         python fund.py rise_all_by_type -t ${table} -fd ${monday} -td ${friday}
     else
         python fund.py rise_all_by_type -t ${table} -fd ${monday} -td ${friday} |grep -E ${options}
     fi
+fi
