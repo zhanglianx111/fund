@@ -121,7 +121,11 @@ def rise_by_all(table, from_date, to_date):
     print '基金总数: ', ret[1]
 
 def routine(date):
+    # 如果是节假日或周末，复制前一天的数据
     if holiday.is_holiday_or_weekend(args.date):
+        dest_date = datetime.date.today()
+        src_date = dest_date - datetime.timedelta(days=1)
+        db.copy(src_date, dest_date)
         sys.exit(1)
 
     # 获取当日的基金情况

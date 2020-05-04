@@ -511,6 +511,22 @@ def get_fundname_by_code(fundcode):
 		name = cur.fetchone()
 		return name
 
+# 复制所有表的src_date记录到dest_date中
+def copy(src_date, dest_date):
+	with conn:
+		cur = conn.cursor()
+		for t in TABLES_LIST[1:]:
+			sql_get = "select * from %s where Date = '%s'" % (t, src_date)
+			cur.execute(sql_get)
+			src_rows = cur.fetchall()
+			list_rows = list(src_rows)
+			list_tmp = []
+			for r in list_rows:
+				r = r[:1] + (dest_date,) + r[2:]
+				list_tmp.append(r)
+			dest_rows = tuple(list_tmp)
+			batch_insert(t, dest_rows)
+
 # 统计一段时间内处于前n%基金的出现的次数
 '''select count(*) as count, `FULLNAME` from funds_index_percentage group by FULLNAME order by count'''
 
