@@ -519,6 +519,8 @@ def copy(src_date, dest_date):
 			sql_get = "select * from %s where Date = '%s'" % (t, src_date)
 			cur.execute(sql_get)
 			src_rows = cur.fetchall()
+			if len(scr_rows) == 0:
+				return
 			list_rows = list(src_rows)
 			list_tmp = []
 			for r in list_rows:
