@@ -396,7 +396,7 @@ def get_table_by_fundcode(fundcode):
 		cur = conn.cursor()
 		cur.execute(sql)
 		atype = cur.fetchone()
-		if atype == None:
+		if atype is None:
 			return None
 
 		ftable = atype[0]
@@ -479,7 +479,7 @@ def get_rise_by_code(fundcode, table_name, start_date, end_date):
 			sql = "select PriceToday from %s where FundCode = '%s' and Date = '%s'" % (table_name, fundcode, end_date)
 			cur.execute(sql)
 			price_enddate = cur.fetchone()
-			if price_enddate == None:
+			if price_enddate is None:
 				return None
 			else:
 				price_e = price_enddate[0]
@@ -488,7 +488,7 @@ def get_rise_by_code(fundcode, table_name, start_date, end_date):
 			sql = "select PriceToday from %s where FundCode = '%s' and Date = '%s'" % (table_name, fundcode, start_date)
 			cur.execute(sql)
 			price_startdate = cur.fetchone()
-			if price_startdate == None:
+			if price_startdate is None:
 				return None
 			else:
 				price_s = price_startdate[0]

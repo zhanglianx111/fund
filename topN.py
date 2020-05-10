@@ -139,7 +139,7 @@ def get(fund_type, date, count):
 
 def get_rise_by_code(fundcode, start_date, end_date):
 	table_name = db.get_table_by_fundcode(fundcode)
-	if table_name == None:
+	if table_name is None:
 		return None
 
 	ret = db.get_rise_by_code(fundcode, table_name, start_date, end_date)

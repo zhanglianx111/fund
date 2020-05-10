@@ -95,12 +95,12 @@ def get(fund_type, date, count):
 
 # 获取一只基金在一段时间内的涨跌情况
 def rise_by_one(fundcode, from_date, to_date):
-    if to_date == None:
+    if to_date is None:
         # 使用当天的日期
         to_date = datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d')
 
     ret = topN.get_rise_by_code(fundcode, from_date, to_date)
-    if ret == None:
+    if ret is None:
         print "未找到基金"
         sys.exit(1)
     else:
@@ -110,7 +110,7 @@ def rise_by_one(fundcode, from_date, to_date):
 
 
 def rise_by_all(table, from_date, to_date, flag):
-    if to_date == None:
+    if to_date is None:
         # 使用当天的日期
         to_date = datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d')
 
@@ -168,7 +168,7 @@ def routine(date):
 # origin_date: %m.%d
 # format: %y-%m-%d
 def format_date(origin_date):
-    if origin_date == None:
+    if origin_date is None:
         return None
 
     list_date = origin_date.split('.')
