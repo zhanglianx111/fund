@@ -65,6 +65,7 @@ RANGEWEEK = 'RangeWeek'		# 每周涨幅
 BUYSTATUS = 'BuyStatus' 	# 申购状态
 SELLSTATUS = 'SellStatus' 	# 赎回状态
 RANKTODAY = 'RankToday' 	# 今日排名
+RANKWEEK = 'RankWeek'		# 本周排名
 
 TABLES_LIST = [TALBE_FUNDSLIST, TABLE_STOCK, TABLES_INDEX, TABLE_HYDIRD, TABLE_BOND, TABLE_BOND_DINGKAI, TABLE_FEEDER, \
 			   TABLE_TIERED_LEVERAGED, TABLE_QDII, TABLE_FUNDSTODAY]
@@ -93,6 +94,7 @@ def create_tables_percentage():
 							FromDate VARCHAR(30), \
 							ToDate VARCHAR(30), \
 							RangeWeek VARCHAR(30), \
+							RandWeek INT, \
 							PRIMARY KEY(FundCode, FromDate))ENGINE=InnoDB DEFAULT CHARSET=gbk"
 	with conn:
 		cur = conn.cursor()
@@ -106,8 +108,6 @@ def create_tables_percentage():
 		print err
 
 def create_tables():
-	#conn = pymysql.connect(host=HOST, port=PORT, user=USER, password=PASSWD, database=DB)
-
 	sql_show_table = "show tables like %s"
 
 	sql_create_table_fundslist = "create table if not exists %s( \
@@ -153,7 +153,7 @@ def batch_insert_percentage(table_name, datas):
 		FUNDCODE, \
 		FROMDATE, \
 		TODATE, \
-		RANGEWEEK) value('%s', '%s', '%s', '%s', '%s') on duplicate key update FUNDCODE=values(FUNDCODE), DATE=values(FROMDATE)"
+		RANGEWEEK) value('%s', '%s', '%s', '%s', '%s') on duplicate key update FUNDCODE=values(FUNDCODE), FROMDATE=values(FROMDATE)"
 
 	with conn:
 		cur = conn.cursor()
@@ -414,7 +414,7 @@ def get_table_by_fundcode(fundcode):
 		if ftable == '定开债券':
 			return TABLE_BOND_DINGKAI
 		if ftable == 'QDII':
-			return TABLE_DQII
+			return TABLE_QDII
 		else:
 			return None
 
@@ -550,7 +550,7 @@ if __name__ ==  "__main__":
 
 	#batch_insert_by_type('2020-02-26')
 	#get_rise_by_code('000082', TABLE_STOCK, '2020-03-09', '2020-03-09')
-
+	#create_tables_percentage()
 
 
 

@@ -130,9 +130,13 @@ def routine(date):
         src_date = dest_date - datetime.timedelta(days=1)
         db.copy(src_date, dest_date)
         # 计算每周各基金涨幅情况 TODO
+        monday, friday = holiday.get_current_week()
+        logger.info("monday = %s, friday = %s", monday, friday)
+        length = len(db.TABLES_LIST) - 1
+        for t in db.TABLES_LIST[1:length]:
+            rise_by_all(t, monday, friday, True)
 
-        rise_by_all()
-        sys.exit(1)
+        sys.exit(0)
 
     # 获取当日的基金情况
     fetchall(date)

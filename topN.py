@@ -202,18 +202,19 @@ def get_rise_by_allcode(table_name, from_date, to_date, flag):
 			if r != None:
 				fname = db.get_fundname_by_code(r[0])
 				t_header.add_row([str(i+1), fname[0], r[0], str(r[1])+'%', r[2], r[3], r[4], r[5], r[6]])
-			i -=1
+			i -= 1
 
 		return (t_header, length)
 	else:
 		datas = []
-		while i >= 0:
-			r = sort_result[i]
+		while j <= length - 1:
+			r = sort_result[j]
 			if r != None:
 				fname = db.get_fundname_by_code(r[0])
 				# '基金名称' '基金代码' '开始日期' '结束日期' '累计涨幅'
-				row = (fname[0], r[0], from_date, to_date, str(r[1])+'%')
+				row = (fname[0], r[0], from_date, to_date, str(r[1])+'%', j+1)
 				datas.append(row)
+			j += 1
 
 		if table_name == db.TABLE_STOCK:
 			table_percentage = db.TABLE_STOCK_PERCENTAGE
@@ -228,7 +229,7 @@ def get_rise_by_allcode(table_name, from_date, to_date, flag):
 		elif table_name == db.TABLE_BOND_DINGKAI:
 			table_percentage = db.TABLE_BOND_DINGKAI_PERCENTAGE
 		elif table_name == db.TABLE_BOND:
-			table_percentage = TABLE_BOND_PERCENTAGE
+			table_percentage = db.TABLE_BOND_PERCENTAGE
 		elif table_name == db.TABLE_FEEDER:
 			table_percentage = db.TABLE_FEEDER_PERCENTAGE
 		else:

@@ -43,6 +43,24 @@ def is_holiday_or_weekend(current_date):
     return False
 
 
+def get_current_week():
+    today = datetime.date.today().weekday()
+    monday, friday = datetime.date.today(), datetime.date.today()
+    one_day = datetime.timedelta(days=1)
+
+    while monday.weekday() != 0:
+        monday -= one_day
+    if today > 5:
+        while friday.weekday() != 4:
+            friday -= one_day
+    else:
+        while friday.weekday() != 4:
+            friday += one_day
+    # 返回当前的星期一和星期天的日期
+    return monday, friday
+
+
+
 if __name__=='__main__':
     print sys.argv[1]
     is_holiday_or_weedday(sys.argv[1])
