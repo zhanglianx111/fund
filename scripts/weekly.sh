@@ -1,4 +1,8 @@
 #!/bin/bash
+##############################################
+# ./scripts/weekly.sh table-name weeks options
+##############################################
+
 function nextDayOfDay()
 {
     start=$1

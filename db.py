@@ -433,8 +433,6 @@ def get_fundcode_by_table(table_name):
 # 数据包括：日期、涨幅、排名
 # return: ('累计涨跌幅度', '涨次数', '跌次数', '最大涨幅', '最大跌幅', '平均排名')
 def get_rise_by_code(fundcode, table_name, start_date, end_date):
-	#conn = pymysql.connect(HOST, USER, PASSWD, DB)
-	 
 	sql = "select %s, %s, %s from %s where FundCode = '%s' and Date >= '%s' and Date <= '%s'" % (DATE, RANGETODAY, RANKTODAY, table_name, fundcode, start_date, end_date)
 	with conn:
 		try:
