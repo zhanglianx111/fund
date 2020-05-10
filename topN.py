@@ -207,6 +207,7 @@ def get_rise_by_allcode(table_name, from_date, to_date, flag):
 		return (t_header, length)
 	else:
 		datas = []
+		j = 0
 		while j <= length - 1:
 			r = sort_result[j]
 			if r != None:

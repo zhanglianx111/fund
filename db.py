@@ -153,13 +153,14 @@ def batch_insert_percentage(table_name, datas):
 		FUNDCODE, \
 		FROMDATE, \
 		TODATE, \
-		RANGEWEEK) value('%s', '%s', '%s', '%s', '%s') on duplicate key update FUNDCODE=values(FUNDCODE), FROMDATE=values(FROMDATE)"
+		RANGEWEEK, \
+		RANKWEEK) value('%s', '%s', '%s', '%s', '%s', '%s') on duplicate key update FUNDCODE=values(FUNDCODE), FROMDATE=values(FROMDATE)"
 
 	with conn:
 		cur = conn.cursor()
 		try:
 			for d in datas:
-				sql_insert = sql % (table_name, d[0], d[1], d[2], d[3], d[4])
+				sql_insert = sql % (table_name, d[0], d[1], d[2], d[3], d[4], d[5])
 				cur.execute(sql_insert)
 
 			conn.commit()
