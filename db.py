@@ -57,8 +57,11 @@ FULLNAME = 'FullName' 		# 基金全名 中文
 TYPE = 'Type' 				# 基金类型
 FULLPINYIN = 'FullPinYin' 	# 基金名全拼
 DATE = 'Date' 				# 日期
+FROMDATE = 'FromDate' 		# 开始日期
+TODATE = 'ToDate'			# 结束日期
 PRICETODAY = 'PriceToday' 	# 当日净值
 RANGETODAY  = 'RangeToday' 	# 当日涨幅
+RANGEWEEK = 'RangeWeek'		# 每周涨幅
 BUYSTATUS = 'BuyStatus' 	# 申购状态
 SELLSTATUS = 'SellStatus' 	# 赎回状态
 RANKTODAY = 'RankToday' 	# 今日排名
@@ -87,11 +90,10 @@ def create_tables_percentage():
 	sql_create_table = "create table if not exists %s( \
 							FullName VARCHAR(100), \
 							FundCode VARCHAR(30), \
-							Date VARCHAR(30), \
-							PriceToday FLOAT, \
-							RangeToday VARCHAR(30), \
-							RankToday INT, \
-							PRIMARY KEY(FundCode, Date))ENGINE=InnoDB DEFAULT CHARSET=gbk"
+							FromDate VARCHAR(30), \
+							ToDate VARCHAR(30), \
+							RangeWeek VARCHAR(30), \
+							PRIMARY KEY(FundCode, FromDate))ENGINE=InnoDB DEFAULT CHARSET=gbk"
 	with conn:
 		cur = conn.cursor()
 	try:
@@ -149,16 +151,15 @@ def batch_insert_percentage(table_name, datas):
 	sql = "insert into %s( \
 		FULLNAME, \
 		FUNDCODE, \
-		DATE, \
-		PRICETODAY, \
-		RANGETODAY, \
-		RANKTODAY) value('%s', '%s', '%s', '%s', '%s', '%s') on duplicate key update FUNDCODE=values(FUNDCODE), DATE=values(DATE)"
+		FROMDATE, \
+		TODATE, \
+		RANGEWEEK) value('%s', '%s', '%s', '%s', '%s') on duplicate key update FUNDCODE=values(FUNDCODE), DATE=values(FROMDATE)"
 
 	with conn:
 		cur = conn.cursor()
 		try:
 			for d in datas:
-				sql_insert = sql % (table_name, d[0], d[1], d[2], d[3], d[4], d[7])
+				sql_insert = sql % (table_name, d[0], d[1], d[2], d[3], d[4])
 				cur.execute(sql_insert)
 
 			conn.commit()
@@ -171,7 +172,6 @@ def batch_insert_percentage(table_name, datas):
 
 def batch_insert(table_name, datas):
 	logger.debug(datas)
-	#conn = pymysql.connect(host=HOST, port=PORT, user=USER, password=PASSWD, database=DB)
 
 	if table_name == TALBE_FUNDSLIST:
 		sql = "insert into %s( \

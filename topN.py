@@ -181,7 +181,7 @@ def QuickSort_for_allcode(myList,start,end):
 
 
 
-def get_rise_by_allcode(table_name, from_date, to_date):
+def get_rise_by_allcode(table_name, from_date, to_date, flag):
 	rise_list = []
 	# 根据表名获取表中基金代码
 	codes = db.get_fundcode_by_table(table_name)
@@ -192,26 +192,30 @@ def get_rise_by_allcode(table_name, from_date, to_date):
 
 	sort_result = QuickSort_for_allcode(rise_list, 0, len(rise_list) -1)
 
-	t_header = PrettyTable(['序号','基金名称', '基金代码','累计涨跌幅度', '涨次数', '跌次数', '最大涨幅信息', '最大跌幅信息', '平均排名'])
 	length = len(sort_result)
 	i = length - 1
-	'''
-	for i in range(length):
-		r = sort_result[i]
-		if r != None:
-			fname = db.get_fundname_by_code(r[0])
-			t_header.add_row([str(i+1), fname[0], r[0], str(r[1])+'%', r[2], r[3], r[4], r[5], r[6]])
-	'''
-	while i >=0:
-		r = sort_result[i]
-		if r != None:
-			fname = db.get_fundname_by_code(r[0])
-			t_header.add_row([str(i+1), fname[0], r[0], str(r[1])+'%', r[2], r[3], r[4], r[5], r[6]])	
-		i -=1	
 
-	return (t_header, length)
+	if flag:
+		t_header = PrettyTable(['序号','基金名称', '基金代码','累计涨跌幅度', '涨次数', '跌次数', '最大涨幅信息', '最大跌幅信息', '平均排名'])
+		while i >=0:
+			r = sort_result[i]
+			if r != None:
+				fname = db.get_fundname_by_code(r[0])
+				t_header.add_row([str(i+1), fname[0], r[0], str(r[1])+'%', r[2], r[3], r[4], r[5], r[6]])
+			i -=1
 
+		return (t_header, length)
+	else:
+		datas = []
+		while i >= 0:
+			r = sort_result[i]
+			if r != None:
+				fname = db.get_fundname_by_code(r[0])
+				# '基金名称' '基金代码' '开始日期' '结束日期' '累计涨幅'
+				row = (fname[0], r[0], from_date, to_date, str(r[1]+'%')
+				datas.append(row)
 
+		db.batch_insert_percentage(table_name, datas)
 
 if __name__ == '__main__':
 
