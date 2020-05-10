@@ -86,11 +86,11 @@ def get(fund_type, date, count):
         print "fund type index error."
         sys.exit(1)
     ret = topN.get(fund_type, date, count)
-
+    '''
     # insert into table of db
     if int(fund_type) - 1 < len(TABLES_LIST_PERCENTAGE):
         db.batch_insert_percentage(db.TABLES_LIST_PERCENTAGE[int(fund_type) - 1], ret)
-
+    '''
     return ret
 
 # 获取一只基金在一段时间内的涨跌情况

@@ -513,6 +513,7 @@ def get_fundname_by_code(fundcode):
 
 # 复制所有表的src_date记录到dest_date中
 def copy(src_date, dest_date):
+	logger.info("start to copy from %s to %s", src_date, dest_date)
 	with conn:
 		cur = conn.cursor()
 		for t in TABLES_LIST[1:]:
