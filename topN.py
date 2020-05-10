@@ -195,7 +195,7 @@ def get_rise_by_allcode(table_name, from_date, to_date, flag):
 	length = len(sort_result)
 	i = length - 1
 
-	if flag:
+	if flag == 0:
 		t_header = PrettyTable(['序号','基金名称', '基金代码','累计涨跌幅度', '涨次数', '跌次数', '最大涨幅信息', '最大跌幅信息', '平均排名'])
 		while i >=0:
 			r = sort_result[i]
@@ -212,10 +212,29 @@ def get_rise_by_allcode(table_name, from_date, to_date, flag):
 			if r != None:
 				fname = db.get_fundname_by_code(r[0])
 				# '基金名称' '基金代码' '开始日期' '结束日期' '累计涨幅'
-				row = (fname[0], r[0], from_date, to_date, str(r[1]+'%')
+				row = (fname[0], r[0], from_date, to_date, str(r[1])+'%')
 				datas.append(row)
 
-		db.batch_insert_percentage(table_name, datas)
+		if table_name == db.TABLE_STOCK:
+			table_percentage = db.TABLE_STOCK_PERCENTAGE
+		elif table_name == db.TABLE_HYDIRD:
+			table_percentage = db.TABLE_HYDIRD_PERCENTAGE
+		elif table_name == db.TABLES_INDEX:
+			table_percentage = db.TABLES_INDEX_PERCENTAGE
+		elif table_name == db.TABLE_QDII:
+			table_percentage = db.TABLE_QDII_PERCENTAGE
+		elif table_name == db.TABLE_TIERED_LEVERAGED:
+			table_percentage = db.TABLE_TIERED_LEVERAGED_PERCENTAGE
+		elif table_name == db.TABLE_BOND_DINGKAI:
+			table_percentage = db.TABLE_BOND_DINGKAI_PERCENTAGE
+		elif table_name == db.TABLE_BOND:
+			table_percentage = TABLE_BOND_PERCENTAGE
+		elif table_name == db.TABLE_FEEDER:
+			table_percentage = db.TABLE_FEEDER_PERCENTAGE
+		else:
+			logger.error("not support table: %s", table_name)
+
+		db.batch_insert_percentage(table_percentage, datas)
 
 if __name__ == '__main__':
 

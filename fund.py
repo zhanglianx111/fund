@@ -114,14 +114,14 @@ def rise_by_all(table, from_date, to_date, flag):
         # 使用当天的日期
         to_date = datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d')
 
-    if flag:
-        ret = topN.get_rise_by_allcode(table, from_date, to_date)
+    if flag == 0:
+        ret = topN.get_rise_by_allcode(table, from_date, to_date, flag)
 
         # 打印表数据
         print ret[0]
         print '基金总数: ', ret[1]
     else:
-        topN.get_rise_by_allcode(table, from_date, to_date)
+        topN.get_rise_by_allcode(table, from_date, to_date, flag)
 
 def routine(date):
     # 如果是节假日或周末，复制前一天的数据
@@ -231,7 +231,7 @@ if __name__ == '__main__':
     parser_rise.add_argument('--to_date', '-td', action='store', help="结束日期")
     parser_rise.add_argument('--table', '-t', action='store', help="table name. e.g. 1: funds_stock 2: funds_index; 3:funds_hybird; 4: funds_bond; 5: funds_bond_dingkai; \
     6: funds_feeder; 7: funds_tiered_leveraged; 8:funds_qdii", required=True)
-    parser_rise.add_argument('--flag', '-f', action='store_false', help="flag=true 代表计算每周涨幅", required=False)
+    parser_rise.add_argument('--flag', '-f', action='store_true', help="flag=true 代表计算每周涨幅", required=False)
 
     # 每天执行一次
     parser_routine = subparsers.add_parser('routine', help="每天例行执行")
@@ -281,7 +281,7 @@ if __name__ == '__main__':
     if name in ['rise_all_by_type']:
         args.from_date = format_date(args.from_date)
         args.to_date = format_date (args.to_date)
-        functor(args.table, args.from_date, args.to_date)
+        functor(args.table, args.from_date, args.to_date, args.flag)
 
     '''
     parser = argparse.ArgumentParser(description="used for test")
