@@ -114,8 +114,8 @@ def main(date_today):
 	'''
 
 	start_time = time.time()
-
-	for t in db.TABLES_LIST[1:]:
+	length = len(db.TABLES_LIST) - 1
+	for t in db.TABLES_LIST[1:length]:
 		today = db.get_funds_today(date_today, t)
 		sort_today = QuickSort(today, 0, len(today) -1)
 		ranklist = ranking(sort_today)
