@@ -56,7 +56,7 @@ def get_current_week():
     else:
         while friday.weekday() != 4:
             friday += one_day
-    # 返回当前的星期一和星期天的日期
+    # 返回当前的星期一和星期五的日期
     return monday, friday
 
 

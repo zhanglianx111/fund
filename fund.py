@@ -126,15 +126,16 @@ def rise_by_all(table, from_date, to_date, flag):
 def routine(date):
     # 如果是节假日或周末，复制前一天的数据
     if holiday.is_holiday_or_weekend(args.date):
-        dest_date = datetime.date.today()
+        dest_date = datetime.date.today() - datetime.timedelta(days=1)
         src_date = dest_date - datetime.timedelta(days=1)
         db.copy(src_date, dest_date)
-        # 计算每周各基金涨幅情况 TODO
-        monday, friday = holiday.get_current_week()
-        logger.info("monday = %s, friday = %s", monday, friday)
-        length = len(db.TABLES_LIST) - 1
-        for t in db.TABLES_LIST[1:length]:
-            rise_by_all(t, monday, friday, True)
+        # 计算每周各基金涨幅情况
+        if datetime.date.today().weekday() == 6:
+            monday, friday = holiday.get_current_week()
+            logger.info("monday = %s, friday = %s", monday, friday)
+            length = len(db.TABLES_LIST) - 1
+            for t in db.TABLES_LIST[1:length]:
+                rise_by_all(t, monday, friday, True)
 
         sys.exit(0)
 
