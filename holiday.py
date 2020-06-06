@@ -50,7 +50,7 @@ def get_current_week():
 
     while monday.weekday() != 0:
         monday -= one_day
-    if today > 5:
+    if today >= 5:
         while friday.weekday() != 4:
             friday -= one_day
     else:
