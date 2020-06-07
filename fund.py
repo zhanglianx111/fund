@@ -65,7 +65,6 @@ def average():
 
 # 更新基金列表
 def update_list():
-    logger.info('========================== %s ========================', date)
     logger.info('start to update all funds list at %s', datetime.datetime.now())
     get_all_funds.main()
     logger.info('upate funds list finish.')
