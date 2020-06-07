@@ -50,7 +50,9 @@ def get_current_week():
 
     while monday.weekday() != 0:
         monday -= one_day
-    pre_friday = (monday - 2*one_day)
+
+    # 上周五的日期
+    pre_friday = (monday - 3*one_day)
     # 本周五日期
     if today >= 5:
         while friday.weekday() != 4:
