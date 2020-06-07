@@ -159,11 +159,11 @@ def routine(date):
 
     # 周六计算本周各基金涨幅情况
     if datetime.date.today().weekday() == 5:
-        monday, friday = holiday.get_current_week()
-        logger.info("monday = %s, friday = %s", monday, friday)
+        pre_friday, friday = holiday.get_current_week()
+        logger.info("pre friday = %s, friday = %s", pre_friday, friday)
         length = len(db.TABLES_LIST) - 1
         for t in db.TABLES_LIST[1:length]:
-            rise_by_all(t, monday, friday, True)
+            rise_by_all(t, pre_friday, friday, True)
 
     # send email
     mail.send_email([count1, count2], mail_datas, date)
