@@ -1,7 +1,9 @@
 # !/usr/bin/python
 # -*- coding:utf-8 -*-
-import pymysql
+
 import sys
+sys.path.insert(0,"/usr/local/lib/python2.7/site-packages")
+import pymysql
 import datetime
 import string
 import logging
@@ -28,6 +30,7 @@ TABLE_FEEDER = 'funds_feeder' 		# 联接基金
 TABLES_INDEX = 'funds_index'		# 股票指数基金
 TABLE_TIERED_LEVERAGED = 'funds_tiered_leveraged' 	# 分级杠杆基金
 TABLE_QDII = 'funds_qdii'           # QDII基金
+TABLE_RANGE_PERIOD = 'funds_range_period' # 记录一段时间内的最大净值，和当前时间的净值做比较，计算涨跌幅
 
 SUFFIX = 'percentage'
 TABLE_STOCK_PERCENTAGE = TABLE_STOCK + "_" + SUFFIX
@@ -66,6 +69,9 @@ BUYSTATUS = 'BuyStatus' 	# 申购状态
 SELLSTATUS = 'SellStatus' 	# 赎回状态
 RANKTODAY = 'RankToday' 	# 今日排名
 RANKWEEK = 'RankWeek'		# 本周排名
+MAXPRICE = 'MaxPrice'		# 最大净值
+RANGEPERIOD = 'RangePeriod' # 周期涨跌幅
+BUYRANGE = 'BuyRange'		# 买入到跌幅值
 
 TABLES_LIST = [TALBE_FUNDSLIST, TABLE_STOCK, TABLES_INDEX, TABLE_HYDIRD, TABLE_BOND, TABLE_BOND_DINGKAI, TABLE_FEEDER, \
 			   TABLE_TIERED_LEVERAGED, TABLE_QDII, TABLE_FUNDSTODAY]
@@ -127,8 +133,12 @@ def create_tables():
 							RankToday INT, \
 							PRIMARY KEY(FundCode, Date))ENGINE=InnoDB DEFAULT CHARSET=gbk"
 
-	#sql_two_key = "alter table %s add primary key(FundCode, Date)"
-
+	sql_create_table_funds_range_period = "create table if not exists %s(\
+										  FundCode VARCHAR(30) PRIMARY KEY, \
+										  MaxPrice FLOAT, \
+										  Date VARCHAR(30), \
+										  RangePeriod VARCHAR(30), \
+										  BuyRange VARCHAR(30))ENGINE=InnoDB DEFAULT CHARSET=gbk"
 	with conn:
 		cur = conn.cursor()
 		try:
@@ -140,6 +150,10 @@ def create_tables():
 
 				if cur.execute(sql_show_table, t) == 0:
 					cur.execute(sql)
+			# 创建周期涨跌幅表
+			if cur.execute(sql_show_table, TABLE_RANGE_PERIOD) == 0:
+				sql = sql_create_table_funds_range_period % TABLE_RANGE_PERIOD
+				cur.execute(sql, TABLE_RANGE_PERIOD)
 
 		except Exception as err:
 			print err
@@ -172,7 +186,7 @@ def batch_insert_percentage(table_name, datas):
 			conn.rollback()
 
 def batch_insert(table_name, datas):
-	logger.debug(datas)
+#	logger.debug(datas)
 
 	if table_name == TALBE_FUNDSLIST:
 		sql = "insert into %s( \
@@ -204,6 +218,30 @@ def batch_insert(table_name, datas):
 				for d in datas:
 					sql_insert = sql % (table_name, d[0], d[1], d[2], d[3], d[4], d[5], d[6])
 					cur.execute(sql_insert)				
+
+			conn.commit()
+			logger.info('insert date into table[%s] count: %d successfully!', \
+						table_name, len(datas))
+
+		except Exception as err:
+			#logger.error(err)
+			conn.rollback()
+
+def batch_insert_period(table_name, datas):
+	print datas
+	sql = "replace into %s( \
+		FUNDCODE, \
+		MAXPRICE, \
+		DATE, \
+		RANGEPERIOD, \
+		BUYRANGE) value('%s', '%s', '%s', '%s', '%s')"
+
+	with conn:
+		cur = conn.cursor()
+		try:
+			for d in datas:
+				sql_insert = sql % (table_name, d[0], d[1], d[2], d[3], d[4])
+				cur.execute(sql_insert)
 
 			conn.commit()
 			logger.info('insert date into table[%s] count: %d successfully!', \
@@ -249,7 +287,8 @@ def get_list_count(table_name, date):
 			count = cur.execute(sql)
 			return count
 		except Exception as err:
-			logger.error(err)
+			#logger.error(err)
+			print err
 
 
 
@@ -261,7 +300,6 @@ def batch_insert_by_type(date):
 		for t in TYPE_LIST:
 			sql = "select funds_today.* from funds_today left join `funds_list` on `funds_today`.FundCode = `funds_list`.FundCode \
 					where `funds_list`.Type = %s and `funds_today`.Date = %s"
-
 			try:
 				cur.execute(sql, (t[0], date))
 				rows = cur.fetchall()
@@ -273,13 +311,14 @@ def batch_insert_by_type(date):
 
 def get_funds_list():
 	sql = "select * from funds_list"
+	fcode_list = []
+
 	with conn:
 		cur = conn.cursor()
 		try:
 			count = cur.execute(sql)
 			allrows = cur.fetchall()
 
-			fcode_list = []
 			for i in range(count):
 				if str(allrows[i][3]) == '货币型' or \
 				str(allrows[i][3]) == '理财型' or \
@@ -289,9 +328,12 @@ def get_funds_list():
 				str(allrows[i][3]) == '其他创新':
 					continue
 				fcode_list.append(allrows[i][0])
-
+				# for dev
+				if i == 200:
+					break
 		except Exception as err:
-			logger.error(err)
+			#logger.error(err)
+			print err
 
 	return fcode_list
 
@@ -299,6 +341,7 @@ def get_funds_list():
 def get_funds_today(date_today, table_name):
 	#conn = pymysql.connect(HOST, USER, PASSWD, DB)
 	sql = "select * from %s where Date = '%s'" % (table_name, date_today)
+	today = []
 
 	with conn:
 		cur = conn.cursor()
@@ -306,16 +349,15 @@ def get_funds_today(date_today, table_name):
 			count = cur.execute(sql)
 			allrows = cur.fetchall()
 			logger.info('get records count: %s on date: %s from table: %s', count, date_today, table_name)
-			today = []
 			for r in allrows:
 				rise = r[3]
 				rise = rise[:rise.index('%')]
-				t = (string.atof(rise), r[0])
+				t = (string.atof(rise), r[0], r[2])
 				today.append(t)
 
 		except Exception as err:
-			logger.error(err)
-
+			#logger.error(err)
+			print err
 	return today
 
 def update_rank(ranklist, date, table_name):
@@ -330,7 +372,7 @@ def update_rank(ranklist, date, table_name):
 			conn.commit()
 
 		except Exception as err:
-			logger.error(err)
+			#logger.error(err)
 			conn.rollback()
 
 # 获取某天前n个涨幅最大的基金
@@ -347,8 +389,8 @@ def get_topn(n, date):
 
 
 		except Exception as err:
-			logger.error(err)
-
+			#logger.error(err)
+			print err
 	return records
 
 # 获取date日涨幅>0或<0的基金数
@@ -365,7 +407,7 @@ def get_greater_zero(flag, date):
 			count = cur.execute(sql, (date,'0.00%'))
 
 		except Exception as err:
-			logger.error(err)
+			#logger.error(err)
 			return -1
 
 		return count
@@ -497,8 +539,8 @@ def get_rise_by_code(fundcode, table_name, start_date, end_date):
 			range_totol = (float(price_e) - float(price_s)) / float(price_s)
 
 		except Exception as err:
-			logger.error(err)
-
+			#logger.error(err)
+			print err
 		return (fundcode, float(format(range_totol, '.4f'))*100, riseCount, downCount, range_max, range_min, rank_totol/length)
 
 def get_fundname_by_code(fundcode):
@@ -512,7 +554,7 @@ def get_fundname_by_code(fundcode):
 
 # 复制所有表的src_date记录到dest_date中
 def copy(src_date, dest_date):
-	logger.info("start to copy from %s to %s", src_date, dest_date)
+	#logger.info("start to copy from %s to %s", src_date, dest_date)
 	with conn:
 		cur = conn.cursor()
 		for t in TABLES_LIST[1:]:
@@ -528,6 +570,19 @@ def copy(src_date, dest_date):
 				list_tmp.append(r)
 			dest_rows = tuple(list_tmp)
 			batch_insert(t, dest_rows)
+
+# 一段时间内的最大净值
+def get_max_price(fund_code, from_date, to_date):
+	with conn:
+		cur = conn.cursor()
+		# 获取从from_date到to_date期间到最大值
+		sql = "select * from funds_today where FundCode = %s and \
+			Date between '%s' and '%s' \
+			order by PriceToday desc limit 1" % (fund_code, from_date, to_date)
+
+		cur.execute(sql)
+		arecord = cur.fetchone()
+		return arecord
 
 # 统计一段时间内处于前n%基金的出现的次数
 '''select count(*) as count, `FULLNAME` from funds_index_percentage group by FULLNAME order by count'''
@@ -550,6 +605,7 @@ if __name__ ==  "__main__":
 	#batch_insert_by_type('2020-02-26')
 	#get_rise_by_code('000082', TABLE_STOCK, '2020-03-09', '2020-03-09')
 	#create_tables_percentage()
+	create_database()
 
 
 

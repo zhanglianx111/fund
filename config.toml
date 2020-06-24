@@ -13,6 +13,9 @@ level = 20 # NOTSET:0 DEBUG:10 INFO:20 WARNING:30 ERROR:40 CRITICAL:50
 [percent]
 percent = 0.2 # 每种基金的前20%
 
+[period]
+months = 2 # 最大跌幅周期，单位：月
+
 [mail]
 server = "smtp.xx.com"
 sender= "user@xx.com"

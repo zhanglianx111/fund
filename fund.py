@@ -10,6 +10,7 @@ from db import TABLES_LIST
 from db import TABLES_LIST_PERCENTAGE
 import db
 import holiday
+import period
 
 import toml
 import logging
@@ -133,7 +134,7 @@ def routine(date):
         sys.exit(0)
 
     # 获取当日的基金情况
-    fetchall(date)
+    today = fetchall(date)
 
     # 单日涨跌基金个数
     # 上涨个数
@@ -163,6 +164,10 @@ def routine(date):
         length = len(db.TABLES_LIST) - 1
         for t in db.TABLES_LIST[1:length]:
             rise_by_all(t, pre_friday, friday, True)
+
+    # 计算一段时间内的涨跌幅
+    from_date = holiday.get_before_month_date(config['period']['months'])
+    period.period_range(from_date, date)
 
     # send email
     mail.send_email([count1, count2], mail_datas, date)

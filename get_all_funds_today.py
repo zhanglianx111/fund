@@ -194,6 +194,9 @@ def main(date):
 if __name__ == "__main__":	
 	reload(sys)
 	sys.setdefaultencoding('utf-8')
+	l = ['2020-06-18', '2020-06-19', '2020-06-20', '2020-06-21', '2020-06-22', '2020-06-23', '2020-06-24', '2020-06-25']
+	for f in l:
+		main(f)
 	'''
 	start_time = time.time()
 	main('2020-02-24')
