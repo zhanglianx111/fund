@@ -63,9 +63,10 @@ def get_current_week():
             friday += one_day
     # 返回当前的上周五和本周五的日期
     return pre_friday, friday
+
 # 计算今天之前n个月之前的日期
 def get_before_month_date(mons):
-    before_today = datetime.date.today() - relativedelta(months=-mons)
+    before_today = datetime.date.today() - relativedelta(months=mons)
     return before_today
 
 if __name__=='__main__':

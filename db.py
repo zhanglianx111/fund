@@ -111,7 +111,7 @@ def create_tables_percentage():
 				cur.execute(sql)
 
 	except Exception as err:
-		print err
+		logger.error(err)
 
 def create_tables():
 	sql_show_table = "show tables like %s"
@@ -153,10 +153,10 @@ def create_tables():
 			# 创建周期涨跌幅表
 			if cur.execute(sql_show_table, TABLE_RANGE_PERIOD) == 0:
 				sql = sql_create_table_funds_range_period % TABLE_RANGE_PERIOD
-				cur.execute(sql, TABLE_RANGE_PERIOD)
+				cur.execute(sql)
 
 		except Exception as err:
-			print err
+			logger.error(err)
 
 
 def batch_insert_percentage(table_name, datas):
@@ -224,11 +224,10 @@ def batch_insert(table_name, datas):
 						table_name, len(datas))
 
 		except Exception as err:
-			#logger.error(err)
+			logger.error(err)
 			conn.rollback()
 
 def batch_insert_period(table_name, datas):
-	print datas
 	sql = "replace into %s( \
 		FUNDCODE, \
 		MAXPRICE, \
@@ -287,8 +286,7 @@ def get_list_count(table_name, date):
 			count = cur.execute(sql)
 			return count
 		except Exception as err:
-			#logger.error(err)
-			print err
+			logger.error(err)
 
 
 
@@ -306,7 +304,7 @@ def batch_insert_by_type(date):
 				batch_insert(t[1], rows)
 			
 			except Exception as err:
-				print err
+				loger.error(err)
 
 
 def get_funds_list():
@@ -332,8 +330,7 @@ def get_funds_list():
 				if i == 200:
 					break
 		except Exception as err:
-			#logger.error(err)
-			print err
+			logger.error(err)
 
 	return fcode_list
 
@@ -356,8 +353,8 @@ def get_funds_today(date_today, table_name):
 				today.append(t)
 
 		except Exception as err:
-			#logger.error(err)
-			print err
+			logger.error(err)
+
 	return today
 
 def update_rank(ranklist, date, table_name):
@@ -372,7 +369,7 @@ def update_rank(ranklist, date, table_name):
 			conn.commit()
 
 		except Exception as err:
-			#logger.error(err)
+			logger.error(err)
 			conn.rollback()
 
 # 获取某天前n个涨幅最大的基金
@@ -389,8 +386,8 @@ def get_topn(n, date):
 
 
 		except Exception as err:
-			#logger.error(err)
-			print err
+			logger.error(err)
+
 	return records
 
 # 获取date日涨幅>0或<0的基金数
@@ -407,7 +404,7 @@ def get_greater_zero(flag, date):
 			count = cur.execute(sql, (date,'0.00%'))
 
 		except Exception as err:
-			#logger.error(err)
+			logger.error(err)
 			return -1
 
 		return count
@@ -539,8 +536,8 @@ def get_rise_by_code(fundcode, table_name, start_date, end_date):
 			range_totol = (float(price_e) - float(price_s)) / float(price_s)
 
 		except Exception as err:
-			#logger.error(err)
-			print err
+			logger.error(err)
+
 		return (fundcode, float(format(range_totol, '.4f'))*100, riseCount, downCount, range_max, range_min, rank_totol/length)
 
 def get_fundname_by_code(fundcode):

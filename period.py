@@ -5,8 +5,8 @@ import db
 import holiday
 
 def period_range(from_date, today):
-    datas = []
     for t in [db.TABLE_STOCK, db.TABLES_INDEX, db.TABLE_HYDIRD]:
+        datas = []
         funds = db.get_funds_today(today, t)
         for f in funds:
             today_price = f[2]
@@ -25,8 +25,8 @@ def period_range(from_date, today):
 
             datas.append((code, max_price, max_price_date, r, ""))
 
-    # 批量更新funds_range_period表数据
-    db.batch_insert_period(db.TABLE_RANGE_PERIOD, datas)
+        # 批量更新funds_range_period表数据
+        db.batch_insert_period(db.TABLE_RANGE_PERIOD, datas)
 
 if __name__ == "__main__":
     today = '2020-04-16'
