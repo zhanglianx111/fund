@@ -33,6 +33,8 @@ config.toml
 test.py
 thread.py
 thread1.py
+scripts/run_mysql.sh
+
 
 
 # PyInstaller
