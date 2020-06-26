@@ -21,7 +21,7 @@ def period_range(from_date, today):
             if max_price == float(0):
                 r = "%.2f%%" % (today_price * 100)
             else:
-                r = "%.2f%%" % ((float(today_price) - float(max_price)) / float(max_price) * 100)
+                r = "%.2f%" % ((float(today_price) - float(max_price)) / float(max_price))
 
             datas.append((code, max_price, max_price_date, r, ""))
 

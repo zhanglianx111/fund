@@ -133,12 +133,12 @@ def create_tables():
 							RankToday INT, \
 							PRIMARY KEY(FundCode, Date))ENGINE=InnoDB DEFAULT CHARSET=gbk"
 
-	sql_create_table_funds_range_period = "create table if not exists %s(\
+	sql_create_table_funds_range_period = "create table if not exists %s( \
 										  FundCode VARCHAR(30) PRIMARY KEY, \
 										  MaxPrice FLOAT, \
 										  Date VARCHAR(30), \
-										  RangePeriod VARCHAR(30), \
-										  BuyRange VARCHAR(30))ENGINE=InnoDB DEFAULT CHARSET=gbk"
+										  RangePeriod FLOAT , \
+										  BuyRange FLOAT)ENGINE=InnoDB DEFAULT CHARSET=gbk"
 	with conn:
 		cur = conn.cursor()
 		try:
