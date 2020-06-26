@@ -19,11 +19,11 @@ def period_range(from_date, today):
 
             # 计算涨幅
             if max_price == float(0):
-                r = "%.2f%%" % (today_price * 100)
+                break # 忽略价格为0的情况
             else:
-                r = "%.2f%" % ((float(today_price) - float(max_price)) / float(max_price))
+                r = (float(today_price) - float(max_price)) / float(max_price) * 100
 
-            datas.append((code, max_price, max_price_date, r, ""))
+            datas.append((code, max_price, max_price_date, r, 0))
 
         # 批量更新funds_range_period表数据
         db.batch_insert_period(db.TABLE_RANGE_PERIOD, datas)
