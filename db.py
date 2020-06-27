@@ -230,16 +230,17 @@ def batch_insert(table_name, datas):
 def batch_insert_period(table_name, datas):
 	sql = "replace into %s( \
 		FUNDCODE, \
+		FULLNAME, \
 		MAXPRICE, \
 		DATE, \
 		RANGEPERIOD, \
-		BUYRANGE) value('%s', '%s', '%s', '%.3f', '%.2g')"
+		BUYRANGE) value('%s', '%s', '%.4f', '%s', '%.3f', '%.2g')"
 
 	with conn:
 		cur = conn.cursor()
 		try:
 			for d in datas:
-				sql_insert = sql % (table_name, d[0], d[1], d[2], d[3], d[4])
+				sql_insert = sql % (table_name, d[0], d[1], d[2], d[3], d[4], d[5])
 				cur.execute(sql_insert)
 
 			conn.commit()
