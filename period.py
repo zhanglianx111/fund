@@ -19,7 +19,7 @@ def period_range(from_date, today):
 
             # 计算涨幅
             if max_price == float(0):
-                break # 忽略价格为0的情况
+                continue # 忽略价格为0的情况
             else:
                 r = (float(today_price) - float(max_price)) / float(max_price) * 100
 
