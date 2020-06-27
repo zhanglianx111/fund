@@ -11,7 +11,7 @@ def period_range(from_date, today):
         for f in funds:
             today_price = f[2]
             code = f[1]
-            fund_name = db.get_fundname_by_code(code)
+            fund_name = db.get_fundname_by_code(code)[0]
 
             # 查表获取一段时间内的最大值
             max_price_record = db.get_max_price(code, from_date, today)

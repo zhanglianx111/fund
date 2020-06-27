@@ -234,7 +234,7 @@ def batch_insert_period(table_name, datas):
 		MAXPRICE, \
 		DATE, \
 		RANGEPERIOD, \
-		BUYRANGE) value('%s', '%s', '%.4f', '%s', '%.3f', '%.2g')"
+		BUYRANGE) value('%s', '%s', '%f', '%s', '%.3f', '%.2g')"
 
 	with conn:
 		cur = conn.cursor()
