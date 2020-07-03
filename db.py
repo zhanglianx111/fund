@@ -327,9 +327,7 @@ def get_funds_list():
 				str(allrows[i][3]) == '其他创新':
 					continue
 				fcode_list.append(allrows[i][0])
-				# for dev
-				if i == 200:
-					break
+
 		except Exception as err:
 			logger.error(err)
 
