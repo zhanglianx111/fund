@@ -147,6 +147,7 @@ def routine(date):
 
     # 获取排名
     mail_datas = {}
+    period_datas = {}
     for i in range(len(TABLES_LIST[1:])):
         tcount = db.get_list_count(TABLES_LIST[i+1], date)
         if tcount == 0:
@@ -167,7 +168,8 @@ def routine(date):
 
     # 计算一段时间内的涨跌幅
     from_date = holiday.get_before_month_date(config['period']['months'])
-    period.period_range(from_date, date)
+    period_datas[str(1)] = period.period_range(from_date, date)
+    mail.send_email([len(period_datas), len(period_datas)], period_datas, date)
 
     # send email
     mail.send_email([count1, count2], mail_datas, date)

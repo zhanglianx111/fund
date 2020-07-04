@@ -5,6 +5,7 @@ import db
 import holiday
 
 def period_range(from_date, today):
+    email_datas = []
     for t in [db.TABLE_STOCK, db.TABLES_INDEX, db.TABLE_HYDIRD]:
         datas = []
         funds = db.get_funds_today(today, t)
@@ -23,11 +24,14 @@ def period_range(from_date, today):
                 continue # 忽略价格为0的情况
             else:
                 r = (float(today_price) - float(max_price)) / float(max_price) * 100
-
-            datas.append((code, fund_name, max_price, max_price_date, r, 0))
+            row = (code, fund_name, max_price, max_price_date, r, 0)
+            datas.append(row)
+            if r < float(-5.0):
+                email_datas.append(row)
 
         # 批量更新funds_range_period表数据
         db.batch_insert_period(db.TABLE_RANGE_PERIOD, datas)
+        return email_datas
 
 if __name__ == "__main__":
     today = '2020-04-16'
