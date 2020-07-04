@@ -31,7 +31,7 @@ def period_range(from_date, today):
 
         # 批量更新funds_range_period表数据
         db.batch_insert_period(db.TABLE_RANGE_PERIOD, datas)
-        return email_datas
+    return email_datas
 
 if __name__ == "__main__":
     today = '2020-04-16'
