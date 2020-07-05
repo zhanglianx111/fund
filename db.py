@@ -580,6 +580,15 @@ def get_max_price(fund_code, from_date, to_date):
 		arecord = cur.fetchone()
 		return arecord
 
+# 按字段排序
+def get_limit(table_name, field, limit):
+	with conn:
+		cur = conn.cursor()
+		sql = "select * from %s  where `%s` < %s order by %s" % (table_name, field, limit, field)
+		cur.execute(sql)
+		rst = cur.fetchall()
+		return rst
+
 # 统计一段时间内处于前n%基金的出现的次数
 '''select count(*) as count, `FULLNAME` from funds_index_percentage group by FULLNAME order by count'''
 

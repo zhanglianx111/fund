@@ -26,11 +26,12 @@ def period_range(from_date, today):
                 r = (float(today_price) - float(max_price)) / float(max_price) * 100
             row = (code, fund_name, max_price, max_price_date, r, 0)
             datas.append(row)
-            if r < float(-5.0):
-                email_datas.append((fund_name, code, max_price_date, max_price, round(r, 2), 0))
-
         # 批量更新funds_range_period表数据
         db.batch_insert_period(db.TABLE_RANGE_PERIOD, datas)
+
+        limits = db.get_limit(db.TABLE_RANGE_PERIOD, "RangePeriod", "-5")
+        for l in limits:
+            email_datas.append((l[1], l[0], l[3], l[2], l[4], 0))
     return email_datas
 
 if __name__ == "__main__":
