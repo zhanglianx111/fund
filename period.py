@@ -29,9 +29,9 @@ def period_range(from_date, today):
         # 批量更新funds_range_period表数据
         db.batch_insert_period(db.TABLE_RANGE_PERIOD, datas)
 
-        limits = db.get_limit(db.TABLE_RANGE_PERIOD, "RangePeriod", "-5")
-        for l in limits:
-            email_datas.append((l[1], l[0], l[3], l[2], l[4], 0))
+    limits = db.get_limit(db.TABLE_RANGE_PERIOD, "RangePeriod", "-5")
+    for l in limits:
+        email_datas.append((l[1], l[0], l[3], l[2], l[4], 0))
     return email_datas
 
 if __name__ == "__main__":
