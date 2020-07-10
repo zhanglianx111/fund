@@ -148,7 +148,8 @@ def routine(date):
     # 获取排名
     mail_datas = {}
     period_datas = {}
-    for i in range(len(TABLES_LIST[1:])):
+    length = len(db.TABLES_LIST) - 1
+    for i in range(len(TABLES_LIST[1:length-1])):
         tcount = db.get_list_count(TABLES_LIST[i+1], date)
         if tcount == 0:
             logger.warning(TABLES_LIST[i+1])
@@ -162,7 +163,6 @@ def routine(date):
     if datetime.date.today().weekday() == 5:
         pre_friday, friday = holiday.get_current_week()
         logger.info("pre friday = %s, friday = %s", pre_friday, friday)
-        length = len(db.TABLES_LIST) - 1
         for t in db.TABLES_LIST[1:length]:
             rise_by_all(t, pre_friday, friday, True)
 
