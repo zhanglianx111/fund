@@ -16,6 +16,9 @@ percent = 0.2 # 每种基金的前20%
 [period]
 months = 2 # 最大跌幅周期，单位：月
 
+[value]
+max = -5
+
 [mail]
 server = "smtp.xx.com"
 sender= "user@xx.com"
