@@ -3,6 +3,7 @@
 
 import db
 import holiday
+import datetime
 
 def period_range(from_date, today):
     email_datas = []
@@ -31,7 +32,9 @@ def period_range(from_date, today):
 
     limits = db.get_limit(db.TABLE_RANGE_PERIOD, "RangePeriod", "-5")
     for l in limits:
-        email_datas.append((l[1], l[0], l[3], l[2], l[4], 0))
+        # 最高点距离当天的天数
+        days = (datetime.datetime.today() - datetime.datetime.strptime(l[3], "%Y-%m-%d")).days
+        email_datas.append((l[1], l[0], l[3], l[2], l[4], days))
     return email_datas
 
 if __name__ == "__main__":
