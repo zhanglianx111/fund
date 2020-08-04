@@ -30,7 +30,7 @@ def period_range(from_date, today):
         # 批量更新funds_range_period表数据
         db.batch_insert_period(db.TABLE_RANGE_PERIOD, datas)
 
-    limits = db.get_limit(db.TABLE_RANGE_PERIOD, "RangePeriod", config.value.max)
+    limits = db.get_limit(db.TABLE_RANGE_PERIOD, "RangePeriod", config['value']['max'])
     for l in limits:
         # 最高点距离当天的天数
         days = (datetime.datetime.today() - datetime.datetime.strptime(l[3], "%Y-%m-%d")).days
