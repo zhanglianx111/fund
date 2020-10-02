@@ -5,9 +5,6 @@
 ---------------------------------------------------------------------------------
 readme
 
-1 真funds db
-真mysql真真
-
-2 真db.py真真table
-真python db.py
+1 create funds db and tables
+python db.py
 
