@@ -305,13 +305,12 @@ def batch_insert_by_type(date):
 				batch_insert(t[1], rows)
 			
 			except Exception as err:
-				loger.error(err)
+				logger.error(err)
 
 
 def get_funds_list():
 	sql = "select * from funds_list"
 	fcode_list = []
-
 	with conn:
 		cur = conn.cursor()
 		try:
@@ -550,7 +549,7 @@ def get_fundname_by_code(fundcode):
 
 # 复制所有表的src_date记录到dest_date中
 def copy(src_date, dest_date):
-	#logger.info("start to copy from %s to %s", src_date, dest_date)
+	logger.info("start to copy from %s to %s", src_date, dest_date)
 	with conn:
 		cur = conn.cursor()
 		for t in TABLES_LIST[1:]:
@@ -609,9 +608,9 @@ if __name__ ==  "__main__":
 
 	#batch_insert_by_type('2020-02-26')
 	#get_rise_by_code('000082', TABLE_STOCK, '2020-03-09', '2020-03-09')
-	#create_tables_percentage()
 	create_database()
-
+	create_tables_percentage()
+	create_tables()
 
 
 
