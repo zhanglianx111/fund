@@ -63,6 +63,7 @@ DATE = 'Date' 				# 日期
 FROMDATE = 'FromDate' 		# 开始日期
 TODATE = 'ToDate'			# 结束日期
 PRICETODAY = 'PriceToday' 	# 当日净值
+PRICEALLDAY = 'PriceAllDay'	# 累计净值
 RANGETODAY  = 'RangeToday' 	# 当日涨幅
 RANGEWEEK = 'RangeWeek'		# 每周涨幅
 BUYSTATUS = 'BuyStatus' 	# 申购状态
@@ -127,6 +128,7 @@ def create_tables():
 							FundCode VARCHAR(30), \
 							Date VARCHAR(30), \
 							PriceToday FLOAT, \
+							PriceAllDay FLOAT, \
 							RangeToday VARCHAR(30), \
 							BuyStatus VARCHAR(30), \
 							SellStatus VARCHAR(30), \

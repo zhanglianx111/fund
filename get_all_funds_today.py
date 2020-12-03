@@ -13,7 +13,7 @@ import threading
 import time
 
 logger = logging.getLogger('main.get_all_funds_today')
-
+#               净值日期	   单位净值	  累计净值	 日增长率	申购状态	赎回状态
 empty_entry = ('0000-00-00', '0.0000', '0.0000', '0.00%', '开放申购', '开放赎回')
 
 # 每个线程获取500基金情况
@@ -115,7 +115,7 @@ def fetch(sub_funds_list, date):
 				continue
 			logger.info("fetch again fund code: %s successfully", ffailed)
 
-			t = (ffailed, date, convert_str(e[1]), e[3], e[4], e[5], int(0))
+			t = (ffailed, date, convert_str(e[1]), convert_str(e[2]), e[3], e[4], e[5], int(0))
 			list_funds_info.append(t)
 			fundcodes_failed.remove(ffailed)
 			time.sleep(SLEEP_TIME)
