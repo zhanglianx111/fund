@@ -202,10 +202,11 @@ def batch_insert(table_name, datas):
 			FUNDCODE, \
 			DATE, \
 			PRICETODAY, \
+			PRICEALLDAY, \
 			RANGETODAY, \
 			BUYSTATUS, \
 			SELLSTATUS, \
-			RANKTODAY) value('%s', '%s', '%s', '%s', '%s', '%s', '%s') on duplicate key update FUNDCODE=values(FUNDCODE), DATE=values(DATE)"
+			RANKTODAY) value('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s') on duplicate key update FUNDCODE=values(FUNDCODE), DATE=values(DATE)"
 
 	with conn:
 		cur = conn.cursor()
@@ -218,7 +219,7 @@ def batch_insert(table_name, datas):
 					cur.execute(sql_insert)
 			else:
 				for d in datas:
-					sql_insert = sql % (table_name, d[0], d[1], d[2], d[3], d[4], d[5], d[6])
+					sql_insert = sql % (table_name, d[0], d[1], d[2], d[3], d[4], d[5], d[6], d[7])
 					cur.execute(sql_insert)				
 
 			conn.commit()
@@ -231,8 +232,8 @@ def batch_insert(table_name, datas):
 
 def batch_insert_period(table_name, datas):
 	sql = "replace into %s( \
-		FUNDCODE, \
 		FULLNAME, \
+		FUNDCODE, \
 		MAXPRICE, \
 		DATE, \
 		RANGEPERIOD, \
@@ -347,9 +348,9 @@ def get_funds_today(date_today, table_name):
 			allrows = cur.fetchall()
 			logger.info('get records count: %s on date: %s from table: %s', count, date_today, table_name)
 			for r in allrows:
-				rise = r[3]
+				rise = r[4]
 				rise = rise[:rise.index('%')]
-				t = (string.atof(rise), r[0], r[2])
+				t = (string.atof(rise), r[0], r[2], r[3])
 				today.append(t)
 
 		except Exception as err:
@@ -575,7 +576,7 @@ def get_max_price(fund_code, from_date, to_date):
 		# 获取从from_date到to_date期间到最大值
 		sql = "select * from funds_today where FundCode = %s and \
 			Date between '%s' and '%s' \
-			order by PriceToday desc limit 1" % (fund_code, from_date, to_date)
+			order by PriceAllDay desc limit 1" % (fund_code, from_date, to_date)
 
 		cur.execute(sql)
 		arecord = cur.fetchone()

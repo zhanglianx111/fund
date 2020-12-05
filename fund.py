@@ -169,10 +169,10 @@ def routine(date):
     # 计算一段时间内的涨跌幅
     from_date = holiday.get_before_month_date(config['period']['months'])
     period_datas[str(1)] = period.period_range(from_date, date)
-    mail.send_email([0, len(period_datas[str(1)])], period_datas, date)
+    mail.send_email("基金period", [0, len(period_datas[str(1)])], period_datas, date)
 
     # send email
-    mail.send_email([count1, count2], mail_datas, date)
+    mail.send_email("基金daily", [count1, count2], mail_datas, date)
 
 # origin_date: %m.%d
 # format: %y-%m-%d

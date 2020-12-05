@@ -100,7 +100,7 @@ def fetch(sub_funds_list, date):
 			fundcodes_failed.append(fcode)
 			continue
 
-		t = (fcode, date, convert_str(e[1]), e[3], e[4], e[5], int(0))
+		t = (fcode, date, convert_str(e[1]), convert_str(e[2]), e[3], e[4], e[5], int(0))
 		list_funds_info.append(t)
 		time.sleep(SLEEP_TIME)
 

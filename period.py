@@ -4,6 +4,9 @@
 import db
 import holiday
 import datetime
+import toml
+
+config = toml.load('config.toml')
 
 def period_range(from_date, today):
     email_datas = []
@@ -11,13 +14,13 @@ def period_range(from_date, today):
         datas = []
         funds = db.get_funds_today(today, t)
         for f in funds:
-            today_price = f[2]
+            today_price = f[3] # 当日的累计净值
             code = f[1]
             fund_name = db.get_fundname_by_code(code)[0]
 
             # 查表获取一段时间内的最大值
             max_price_record = db.get_max_price(code, from_date, today)
-            max_price = max_price_record[2]
+            max_price = max_price_record[3]
             max_price_date = max_price_record[1]
 
             # 计算涨幅
@@ -25,7 +28,7 @@ def period_range(from_date, today):
                 continue # 忽略价格为0的情况
             else:
                 r = (float(today_price) - float(max_price)) / float(max_price) * 100
-            row = (code, fund_name, max_price, max_price_date, r, 0)
+            row = (fund_name, code, max_price, max_price_date, r, 0)
             datas.append(row)
         # 批量更新funds_range_period表数据
         db.batch_insert_period(db.TABLE_RANGE_PERIOD, datas)
