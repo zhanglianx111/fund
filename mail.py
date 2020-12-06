@@ -91,7 +91,7 @@ def format_datas(counts, fund_datas):
             if len(f) == 6:
                 pm.append(f[5])
             else:
-                pm.append(f[7])
+                pm.append(f[8])
 
         datas['基金名称'] = jjmc
         datas['基金代码'] = jjdm
