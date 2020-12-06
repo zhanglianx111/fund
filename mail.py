@@ -87,9 +87,9 @@ def format_datas(counts, fund_datas):
             jjdm.append(f[1])
             rq.append(f[2])
             jz.append(f[3])
-            zf.append(f[4])
-            if len(f) == 6:
-                pm.append(f[5])
+            zf.append(f[5])
+            if len(f) == 7:
+                pm.append(f[6])
             else:
                 pm.append(f[8])
 
