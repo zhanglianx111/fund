@@ -138,5 +138,6 @@ CREATE TABLE If Not Exists `funds_manager` (
     `CompanyName` VARCHAR(30),
     `Funds` VARCHAR(600),
     `FundNames` VARCHAR(600),
+    `Focus` Int DEFAULT 0,
     PRIMARY KEY(Id)
 ) ENGINE=InnoDB DEFAULT CHARSET=gbk;
