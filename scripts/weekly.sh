@@ -47,7 +47,7 @@ do
     friday_tmp=`nextDayOfDay ${d} 4`
     friday=`date +%m.%d -d ${friday_tmp}`
     monday=`date +%m.%d -d ${d}`
-    echo "${monday} --> ${friday} -----------------------------------------------------------------------------------------------------------------------------------------------"
+    echo "week ${monday} --> ${friday} -----------------------------------------------------------------------------------------------------------------------------------------------"
     if [ "X${options}" == "X" ];then
         python fund.py rise_all_by_type -t ${table} -fd ${monday} -td ${friday}
     else
@@ -59,7 +59,7 @@ done
 friday_tmp=`nextDayOfDay ${days_list[0]} 4`
 friday=`date +%m.%d -d ${friday_tmp}`
 if [ ${weeks} != 0 ];then
-    echo "${monday} --> ${friday} -----------------------------------------------------------------------------------------------------------------------------------------------"
+    echo "week ${monday} --> ${friday} -----------------------------------------------------------------------------------------------------------------------------------------------"
     if [ "X${options}" == "X" ];then
         python fund.py rise_all_by_type -t ${table} -fd ${monday} -td ${friday}
     else
