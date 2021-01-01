@@ -36,26 +36,25 @@ def send_email(title, funds_totol, datas, date):
     # 邮件添加的头尾信息等
     msg_root['From'] = config['mail']['sender']
     msg_root['To'] = receiver
-
-    # 邮件的主题，显示在接收邮件的预览页面，以日期为邮件主题
-    #subject = get_all_funds_today.getYesterday()
-    subject = title + " " + date + " " + str(funds_totol[0]) + " " + str(funds_totol[1])
-    msg_root['subject'] = Header(subject, 'utf-8')
-
-    '''
-    # 构造文本内容
-    text_info = message
-    text_sub = MIMEText(text_info, 'plain', 'utf-8')
-    msg_root.attach(text_sub)
-    '''
-
-    html_data = format_datas(funds_totol, datas)
-    msg_root.attach(html_data)
-    #message = format_datas(datas)
-    # 把构造的内容写到邮件体中
-    #msg_root.attach(message)
-
     try:
+    	# 邮件的主题，显示在接收邮件的预览页面，以日期为邮件主题
+    	#subject = get_all_funds_today.getYesterday()
+    	subject = title + " " + date + " " + str(funds_totol[0]) + " " + str(funds_totol[1])
+    	msg_root['subject'] = Header(subject, 'utf-8')
+
+    	'''
+    	# 构造文本内容
+   	text_info = message
+   	text_sub = MIMEText(text_info, 'plain', 'utf-8')
+   	msg_root.attach(text_sub)
+   	'''
+
+    	html_data = format_datas(funds_totol, datas)
+  	msg_root.attach(html_data)
+    	#message = format_datas(datas)
+    	# 把构造的内容写到邮件体中
+    	#msg_root.attach(message)
+
         s = smtplib.SMTP()
         s.connect(config['mail']['server'])
         s.login(sender, sender_pass)
@@ -66,7 +65,7 @@ def send_email(title, funds_totol, datas, date):
         logger.error('sendemail failed, the reason: %s', e)
         return
 
-    logger.info("mail sended ok at %s" % date)
+    logger.info("mail %s sended ok at %s", title, date)
 
 def format_datas(counts, fund_datas):
     msg = '<span>上涨基金数: %s</span>' % counts[0] + '<br>'
@@ -85,11 +84,17 @@ def format_datas(counts, fund_datas):
         for f in fund_datas[str(i+1)]:
             jjmc.append(f[0])
             jjdm.append(f[1])
-            rq.append(f[2])
-            jz.append(f[3])
-            zf.append(f[5])
-            if len(f) == 7:
-                pm.append(f[6])
+            if len(f) == 6:
+		rq.append(f[2])
+                jz.append(f[3])
+                zf.append(f[4])
+            else:
+                rq.append(f[2])
+            	jz.append(f[3])
+            	zf.append(f[5])
+
+            if len(f) == 6:
+                pm.append(f[5])
             else:
                 pm.append(f[8])
 
