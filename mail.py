@@ -44,13 +44,13 @@ def send_email(title, funds_totol, datas, date):
 
     	'''
     	# 构造文本内容
-   	text_info = message
-   	text_sub = MIMEText(text_info, 'plain', 'utf-8')
-   	msg_root.attach(text_sub)
-   	'''
+        text_info = message
+        text_sub = MIMEText(text_info, 'plain', 'utf-8')
+        msg_root.attach(text_sub)
+        '''
 
     	html_data = format_datas(funds_totol, datas)
-  	msg_root.attach(html_data)
+  	    msg_root.attach(html_data)
     	#message = format_datas(datas)
     	# 把构造的内容写到邮件体中
     	#msg_root.attach(message)
@@ -85,7 +85,7 @@ def format_datas(counts, fund_datas):
             jjmc.append(f[0])
             jjdm.append(f[1])
             if len(f) == 6:
-		rq.append(f[2])
+                rq.append(f[2])
                 jz.append(f[3])
                 zf.append(f[4])
             else:
