@@ -40,8 +40,25 @@ def period_range(from_date, today):
         email_datas.append((l[1], l[0], l[3], l[2], l[4], days))
     return email_datas
 
+
+def period_range_by_managers(from_date, today):
+    email_datas = []
+    funds = db.get_managers_funds()
+    for f in funds:
+        for ff in f:
+            fff = ff.split(',')
+            for code in fff:
+                fundinfo = db.get_period_for_managers(code)
+                days = (datetime.datetime.today() - datetime.datetime.strptime(fundinfo[3], "%Y-%m-%d")).days
+                email_datas.append((fundinfo[1], fundinfo[0], fundinfo[3], fundinfo[2], fundinfo[4], days))
+
+    return email_datas
+
 if __name__ == "__main__":
+    '''
     today = '2020-04-16'
     from_date = holiday.get_before_month_date(2)
     from_date = '2020-03-11'
     period_range(from_date, today)
+    '''
+    period_range_by_managers('2020-11-30', '2020-12-30')
