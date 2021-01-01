@@ -591,6 +591,16 @@ def get_limit(table_name, field, limit):
 		rst = cur.fetchall()
 		return rst
 
+
+def get_period_for_managers(code):
+	with conn:
+		cur = conn.cursor()
+		sql =  "select * from funds_range_period where FundCode = %s" % code
+		cur.execute(sql)
+		rst = cur.fetchone()
+		return  rst
+
+
 # 统计一段时间内处于前n%基金的出现的次数
 '''select count(*) as count, `FULLNAME` from funds_index_percentage group by FULLNAME order by count'''
 
@@ -621,14 +631,14 @@ def get_managers_funds():
 	with conn:
 		cur = conn.cursor()
 		# select funds_manager.`Funds` from funds_manager where funds_manager.`Funds` = 1
-		sql = "select funds_manager.`Funds` from funds_manager where funds_manager.`Funds` = 1"
+		sql = "select funds_manager.`Funds` from funds_manager where funds_manager.`Focus` = 1"
 		try:
 			cur.execute(sql)
 			funds_list = cur.fetchall()
-			print funds_list
 
 		except Exception as err:
 			logger.error(err)
+	return funds_list
 
 
 if __name__ ==  "__main__":

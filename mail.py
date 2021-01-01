@@ -37,23 +37,23 @@ def send_email(title, funds_totol, datas, date):
     msg_root['From'] = config['mail']['sender']
     msg_root['To'] = receiver
     try:
-    	# 邮件的主题，显示在接收邮件的预览页面，以日期为邮件主题
-    	#subject = get_all_funds_today.getYesterday()
-    	subject = title + " " + date + " " + str(funds_totol[0]) + " " + str(funds_totol[1])
-    	msg_root['subject'] = Header(subject, 'utf-8')
+        # 邮件的主题，显示在接收邮件的预览页面，以日期为邮件主题
+        #subject = get_all_funds_today.getYesterday()
+        subject = title + " " + date + " " + str(funds_totol[0]) + " " + str(funds_totol[1])
+        msg_root['subject'] = Header(subject, 'utf-8')
 
-    	'''
-    	# 构造文本内容
+        '''
+        # 构造文本内容
         text_info = message
         text_sub = MIMEText(text_info, 'plain', 'utf-8')
         msg_root.attach(text_sub)
         '''
 
-    	html_data = format_datas(funds_totol, datas)
+        html_data = format_datas(funds_totol, datas)
   	    msg_root.attach(html_data)
-    	#message = format_datas(datas)
-    	# 把构造的内容写到邮件体中
-    	#msg_root.attach(message)
+        #message = format_datas(datas)
+        # 把构造的内容写到邮件体中
+        #msg_root.attach(message)
 
         s = smtplib.SMTP()
         s.connect(config['mail']['server'])
