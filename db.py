@@ -604,7 +604,7 @@ def batch_insert_managers(managers):
 		CompanyId, \
 		CompanyName, \
 		Funds, \
-		FundNames) value('%s', '%s', '%s', '%s', '%s', '%s')"
+		FundNames) value('%s', '%s', '%s', '%s', '%s', '%s') on duplicate key update Id=values(Id) "
 		try:
 			for d in managers:
 				sql_insert = sql % ("funds_manager", d[0], d[1], d[2], d[3], d[4], d[5])
@@ -626,7 +626,7 @@ def get_managers_funds():
 			cur.execute(sql)
 			funds_list = cur.fetchall()
 			print funds_list
-			
+
 		except Exception as err:
 			logger.error(err)
 

@@ -55,8 +55,7 @@ def get_totalinfo():
 			info.append(list(name[i],fund[i])) #managername 
 		return info
  '''
-
-pages = get_pages_number()
-for i in range(pages):
-	get_singlepage_namenum(i + 1)
-	#get_totalinfo()
+def update_managers():
+	pages = get_pages_number()
+	for i in range(pages):
+		get_singlepage_namenum(i + 1)
