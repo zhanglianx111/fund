@@ -155,6 +155,7 @@ def routine(date):
     # 获取排名
     mail_datas = {}
     period_datas = {}
+    perid_manages_datas{}
     length = len(db.TABLES_LIST) - 1
     for i in range(len(TABLES_LIST[1:length-1])):
         tcount = db.get_list_count(TABLES_LIST[i+1], date)
@@ -178,7 +179,11 @@ def routine(date):
     period_datas[str(1)] = period.period_range(from_date, date)
     mail.send_email("基金period", [0, len(period_datas[str(1)])], period_datas, date)
 
-    # send email
+    # 基金经理阶段涨跌幅
+    perid_manages_datas[str(1)] = period.period_range_by_managers(from_date, date)
+    mail.send_email("基金经理period", [0, len(perid_manages_datas[str(1)])], perid_manages_datas, date)
+    
+     # send email
     mail.send_email("基金daily", [count1, count2], mail_datas, date)
 
 # origin_date: %m.%d

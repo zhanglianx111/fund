@@ -35,27 +35,16 @@ def get_pages_number():
 	return pages
 
 
-'''
-def get_totalinfo():
-	#开始二次爬虫。
-	for unitnamenum in get_singlepage_namenum(page):
-		print unitnamenum
-		res = requests.get('http://fund.eastmoney.com/manager/{unitnamenum}.html')			
-		res.encoding = ('utf8') #解决乱码
-		#text=res.text.encode('ISO-8859-1').decode('gb18030') #另一种解决乱码的方式
-		soupunit = BeautifulSoup(res.text,"lxml")
-		name=[]	
-		fund=[]
-		for unitfund in soupunit.find_all("tbody")[1].find_all("tr"):
-			name.extend((listhtmltext)['data'][i][1]) #managername 
-			for unitfund_info in unitfund.find_all("td")[0]:
-				fund.extend(unitfund_info.text.replace("\n","").replace("\t","")) #fundcode
-		info=[]
-		for i in range(0,len(fund)):
-			info.append(list(name[i],fund[i])) #managername 
-		return info
- '''
 def update_managers():
 	pages = get_pages_number()
 	for i in range(pages):
 		get_singlepage_namenum(i + 1)
+
+
+if __name__ == '__main__':
+	funds = db.get_managers_funds()
+	for f in funds:
+		for ff in f:
+			fff = ff.split(',')
+			for f4 in fff:
+				print f4
