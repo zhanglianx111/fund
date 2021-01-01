@@ -4,6 +4,7 @@
 
 import get_all_funds_today
 import get_all_funds
+import fund_manager
 import topN
 import mail
 from db import TABLES_LIST
@@ -69,6 +70,12 @@ def update_list():
     logger.info('start to update all funds list at %s', datetime.datetime.now())
     get_all_funds.main()
     logger.info('upate funds list finish.')
+
+# update managers list
+def update_managers():
+    logger.info('start to update all fund managers list at %s', datetime.datetime.now())
+    fund_manager.update_managers()
+    logger.info('upate fund manager list finish.')
 
 # print version information
 def version():
@@ -160,11 +167,11 @@ def routine(date):
         mail_datas[str(i+1)] = ret
 
     # 周六计算本周各基金涨幅情况
-    if datetime.date.today().weekday() == 5:
-        pre_friday, friday = holiday.get_current_week()
-        logger.info("pre friday = %s, friday = %s", pre_friday, friday)
-        for t in db.TABLES_LIST[1:length]:
-            rise_by_all(t, pre_friday, friday, True)
+    #if datetime.date.today().weekday() == 5:
+    #    pre_friday, friday = holiday.get_current_week()
+    #    logger.info("pre friday = %s, friday = %s", pre_friday, friday)
+    #    for t in db.TABLES_LIST[1:length]:
+    #        rise_by_all(t, pre_friday, friday, True)
 
     # 计算一段时间内的涨跌幅
     from_date = holiday.get_before_month_date(config['period']['months'])
@@ -214,6 +221,9 @@ if __name__ == '__main__':
     parser_update_funds_list = subparsers.add_parser('update_list', help='update funds list')
     parser_update_funds_list.set_defaults(action=('update_list', update_list))
 
+    # updata fund managers
+    parser_update_funds_managers = subparsers.add_parser('update_managers', help='update funds managers list')
+    parser_update_funds_managers.set_defaults(action=('update_managers', update_managers))
     # 
     parser_range = subparsers.add_parser("range", help='range > 0 for range < 0')
     parser_range.set_defaults(action=('range', range_for_date))
@@ -262,7 +272,8 @@ if __name__ == '__main__':
     logger.debug(args)
     (name, functor) = args.action
 
-    if name != 'version' and name != 'update_list' and name != 'rise_by_one' and name != 'rise_all_by_type':
+    #if name != 'version' and name != 'update_list' and name != 'rise_by_one' and name != 'rise_all_by_type':
+    if name not in ['version', 'update_list', 'update_managers', 'rise_by_one', 'rise_all_by_type']:
         args.date = format_date(args.date)
 
     if name in ['topn']:
@@ -271,7 +282,7 @@ if __name__ == '__main__':
     if name in ['fetchall']:
         functor(args.date)
     
-    if name in ['update_list']:
+    if name in ['update_list', 'update_managers']:
         functor()
 
     if name in ['version']:

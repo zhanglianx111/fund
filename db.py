@@ -232,8 +232,8 @@ def batch_insert(table_name, datas):
 
 def batch_insert_period(table_name, datas):
 	sql = "replace into %s( \
-		FULLNAME, \
 		FUNDCODE, \
+		FULLNAME, \
 		MAXPRICE, \
 		DATE, \
 		RANGEPERIOD, \
@@ -593,6 +593,42 @@ def get_limit(table_name, field, limit):
 
 # 统计一段时间内处于前n%基金的出现的次数
 '''select count(*) as count, `FULLNAME` from funds_index_percentage group by FULLNAME order by count'''
+
+def batch_insert_managers(managers):
+	print len(managers)
+	with conn:
+		cur = conn.cursor()
+		sql = "insert into %s( \
+		Id, \
+		Name, \
+		CompanyId, \
+		CompanyName, \
+		Funds, \
+		FundNames) value('%s', '%s', '%s', '%s', '%s', '%s') on duplicate key update Id=values(Id) "
+		try:
+			for d in managers:
+				sql_insert = sql % ("funds_manager", d[0], d[1], d[2], d[3], d[4], d[5])
+				cur.execute(sql_insert)			
+
+			conn.commit()
+			logger.info('insert date into table[funds_manager] count: %d successfully!', len(managers))
+
+		except Exception as err:
+			logger.error(err)
+			conn.rollback()		
+
+def get_managers_funds():
+	with conn:
+		cur = conn.cursor()
+		# select funds_manager.`Funds` from funds_manager where funds_manager.`Funds` = 1
+		sql = "select funds_manager.`Funds` from funds_manager where funds_manager.`Funds` = 1"
+		try:
+			cur.execute(sql)
+			funds_list = cur.fetchall()
+			print funds_list
+
+		except Exception as err:
+			logger.error(err)
 
 
 if __name__ ==  "__main__":

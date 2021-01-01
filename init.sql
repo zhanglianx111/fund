@@ -123,8 +123,21 @@ CREATE TABLE If Not Exists `funds_qdii` (
 
 CREATE TABLE If Not Exists `funds_range_period` (
     `FundCode` VARCHAR(30) PRIMARY KEY,
+    `FullName` VARCHAR(30),
     `MaxPrice` FLOAT,
     `Date` VARCHAR(30),
     `RangePeriod` FLOAT,
     `BuyRange` FLOAT
+) ENGINE=InnoDB DEFAULT CHARSET=gbk;
+
+
+CREATE TABLE If Not Exists `funds_manager` (
+    `Id` VARCHAR(30),
+    `Name` VARCHAR(30),
+    `CompanyId` VARCHAR(30),
+    `CompanyName` VARCHAR(30),
+    `Funds` VARCHAR(600),
+    `FundNames` VARCHAR(600),
+    `Focus` Int DEFAULT 0,
+    PRIMARY KEY(Id)
 ) ENGINE=InnoDB DEFAULT CHARSET=gbk;

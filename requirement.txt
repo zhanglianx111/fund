@@ -1,4 +1,6 @@
 pymysql==0.9.3
+requests
 toml
 PrettyTable
 python-dateutil
+BeautifulSoup4
