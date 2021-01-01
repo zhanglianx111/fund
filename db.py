@@ -617,6 +617,19 @@ def batch_insert_managers(managers):
 			logger.error(err)
 			conn.rollback()		
 
+def get_managers_funds():
+	with conn:
+		cur = conn.cursor()
+		# select funds_manager.`Funds` from funds_manager where funds_manager.`Funds` = 1
+		sql = "select funds_manager.`Funds` from funds_manager where funds_manager.`Funds` = 1"
+		try:
+			cur.execute(sql)
+			funds_list = cur.fetchall()
+			print funds_list
+			
+		except Exception as err:
+			logger.error(err)
+
 
 if __name__ ==  "__main__":
 	print __name__
