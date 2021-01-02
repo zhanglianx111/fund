@@ -155,7 +155,7 @@ def routine(date):
     # 获取排名
     mail_datas = {}
     period_datas = {}
-    perid_manages_datas{}
+    perid_manages_datas = {}
     length = len(db.TABLES_LIST) - 1
     for i in range(len(TABLES_LIST[1:length-1])):
         tcount = db.get_list_count(TABLES_LIST[i+1], date)
@@ -168,11 +168,11 @@ def routine(date):
         mail_datas[str(i+1)] = ret
 
     # 周六计算本周各基金涨幅情况
-    #if datetime.date.today().weekday() == 5:
-    #    pre_friday, friday = holiday.get_current_week()
-    #    logger.info("pre friday = %s, friday = %s", pre_friday, friday)
-    #    for t in db.TABLES_LIST[1:length]:
-    #        rise_by_all(t, pre_friday, friday, True)
+    if datetime.date.today().weekday() == 5:
+        pre_friday, friday = holiday.get_current_week()
+        logger.info("pre friday = %s, friday = %s", pre_friday, friday)
+        for t in db.TABLES_LIST[1:length]:
+            rise_by_all(t, pre_friday, friday, True)
 
     # 计算一段时间内的涨跌幅
     from_date = holiday.get_before_month_date(config['period']['months'])
