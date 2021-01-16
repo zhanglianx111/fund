@@ -1,4 +1,4 @@
 # m h  dom mon dow   command
 12 8 * * * cd /home/zlx/fund && ./scripts/routine.sh > /dev/null 2>&1
 0 5 * * 6 cd /home/zlx/fund && python fund.py update_list > /dev/null 2>&1
-10 5 ** 6 cd /home/zlx/fund && python fund.py update_managers > /dev/null 2>&1
+10 5 * * 6 cd /home/zlx/fund && python fund.py update_managers > /dev/null 2>&1
