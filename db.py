@@ -243,6 +243,7 @@ def batch_insert_period(table_name, datas):
 		cur = conn.cursor()
 		try:
 			for d in datas:
+				logger.info(d)
 				sql_insert = sql % (table_name, d[0], d[1], d[2], d[3], d[4], d[5])
 				cur.execute(sql_insert)
 
@@ -495,6 +496,8 @@ def get_rise_by_code(fundcode, table_name, start_date, end_date):
 				return None
 			for i in range(length):
 				rng = float(str(rows[i][1]).split('%')[0])
+				if rng is None:
+					continue
 				if rng > 0:
 					riseCount+=1
 					if rng > max_range:
@@ -530,7 +533,6 @@ def get_rise_by_code(fundcode, table_name, start_date, end_date):
 				return None
 			else:
 				price_s = price_startdate[0]
-
 			if price_s == 0 or price_e == 0:
 				return None
 
@@ -595,7 +597,7 @@ def get_limit(table_name, field, limit):
 def get_period_for_managers(code):
 	with conn:
 		cur = conn.cursor()
-		sql =  "select * from funds_range_period where FundCode = %s" % code
+		sql =  "select * from funds_range_period where FundCode = '%s'" % code
 		cur.execute(sql)
 		rst = cur.fetchone()
 		return  rst

@@ -5,10 +5,14 @@ import db
 import holiday
 import datetime
 import toml
+import logging
+import mail
 
 config = toml.load('config.toml')
+#logger = logging.getLogger('main.period')
 
 def period_range(from_date, today):
+    #logger.info("%s, %s", from_date, today)
     email_datas = []
     for t in [db.TABLE_STOCK, db.TABLES_INDEX, db.TABLE_HYDIRD]:
         datas = []
@@ -22,13 +26,13 @@ def period_range(from_date, today):
             max_price_record = db.get_max_price(code, from_date, today)
             max_price = max_price_record[3]
             max_price_date = max_price_record[1]
-
+            #logger.info(max_price_record)
             # 计算涨幅
             if max_price == float(0) or today_price == float(0):
                 continue # 忽略价格为0的情况
             else:
                 r = (float(today_price) - float(max_price)) / float(max_price) * 100
-            row = (fund_name, code, max_price, max_price_date, r, 0)
+            row = (code, fund_name, max_price, max_price_date, r, 0)
             datas.append(row)
         # 批量更新funds_range_period表数据
         db.batch_insert_period(db.TABLE_RANGE_PERIOD, datas)
@@ -48,10 +52,10 @@ def period_range_by_managers(from_date, today):
         for ff in f:
             fff = ff.split(',')
             for code in fff:
-                fundinfo = db.get_period_for_managers(code)
-                days = (datetime.datetime.today() - datetime.datetime.strptime(fundinfo[3], "%Y-%m-%d")).days
-                email_datas.append((fundinfo[1], fundinfo[0], fundinfo[3], fundinfo[2], fundinfo[4], days))
-
+               	fundinfo = db.get_period_for_managers(code)
+		if fundinfo is not None:
+       	      		days = (datetime.datetime.today() - datetime.datetime.strptime(fundinfo[3], "%Y-%m-%d")).days
+                	email_datas.append((fundinfo[1], fundinfo[0], fundinfo[3], fundinfo[2], fundinfo[4], days))
     return email_datas
 
 if __name__ == "__main__":
@@ -61,4 +65,6 @@ if __name__ == "__main__":
     from_date = '2020-03-11'
     period_range(from_date, today)
     '''
-    period_range_by_managers('2020-11-30', '2020-12-30')
+    d= {}
+    d[str(1)] = period_range_by_managers('2020-11-15', '2021-01-14')
+    mail.send_email("基金经理period", [0, len(d)], d, '2021-01-14')

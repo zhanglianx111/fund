@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-
-import get_all_funds_today
+import get_all_funds_once_time
 import get_all_funds
 import fund_manager
 import topN
@@ -58,8 +57,8 @@ def topn(date):
 def fetchall(date):
     logger.info('========================== %s ========================', date)
     logger.info('fetch the fund net value of the date: %s', date)
-    ret = get_all_funds_today.main(date)
-    print ret
+    ret = get_all_funds_once_time.get_all_funds_datas(date)
+    return ret
 
 # 计算最近n天的排名平均值
 def average():
@@ -139,7 +138,7 @@ def routine(date):
 
 
         sys.exit(0)
-
+    
     # 获取当日的基金情况
     today = fetchall(date)
 
@@ -151,11 +150,10 @@ def routine(date):
 
     # 排名
     topn(date)
-
+    
     # 获取排名
     mail_datas = {}
     period_datas = {}
-    perid_manages_datas{}
     length = len(db.TABLES_LIST) - 1
     for i in range(len(TABLES_LIST[1:length-1])):
         tcount = db.get_list_count(TABLES_LIST[i+1], date)
@@ -166,7 +164,7 @@ def routine(date):
 
         ret = get(i + 1, date, percent)
         mail_datas[str(i+1)] = ret
-
+    logger.info("%d", len(mail_datas[str(1)]))
     # 周六计算本周各基金涨幅情况
     #if datetime.date.today().weekday() == 5:
     #    pre_friday, friday = holiday.get_current_week()
@@ -176,14 +174,18 @@ def routine(date):
 
     # 计算一段时间内的涨跌幅
     from_date = holiday.get_before_month_date(config['period']['months'])
+    logger.info("%s %s", from_date, date)
     period_datas[str(1)] = period.period_range(from_date, date)
+    logger.info("%d", len(period_datas[str(1)]))
     mail.send_email("基金period", [0, len(period_datas[str(1)])], period_datas, date)
-
-    # 基金经理阶段涨跌幅
-    perid_manages_datas[str(1)] = period.period_range_by_managers(from_date, date)
-    mail.send_email("基金经理period", [0, len(perid_manages_datas[str(1)])], perid_manages_datas, date)
     
-     # send email
+    # 基金经理阶段涨跌幅
+    period_manages_datas={}
+    period_manages_datas[str(1)] = period.period_range_by_managers(from_date, date)
+    logger.info(period_manages_datas[str(1)]) 
+    mail.send_email("基金经理period", [0, len(period_manages_datas[str(1)])], period_manages_datas, date)
+    
+    # send email
     mail.send_email("基金daily", [count1, count2], mail_datas, date)
 
 # origin_date: %m.%d
