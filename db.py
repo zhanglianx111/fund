@@ -497,9 +497,16 @@ def get_rise_by_code(fundcode, table_name, start_date, end_date):
             if length == 0:
                 return None
             for i in range(length):
-                rng = float(str(rows[i][1]).split('%')[0])
+                if rows[i][1] == "%" or rows[i][1] == "":
+                    continue
+                if "%" not in rows[i][1]:
+                    rng = float(str(rows[i][1]))
+                else:
+                    rng = float(str(rows[i][1]).split('%')[0])
+
                 if rng is None:
                     continue
+
                 if rng > 0:
                     riseCount+=1
                     if rng > max_range:
