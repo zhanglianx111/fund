@@ -48,6 +48,7 @@ TYPE_LIST = [('股票型', TABLE_STOCK), \
                  ('混合型', TABLE_HYDIRD), \
                  ('债券型', TABLE_BOND), \
                  ('联接基金', TABLE_FEEDER) \
+                 ('联接基金', TABLE_FEEDER) \
             ]
 
 # 表字段名
