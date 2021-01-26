@@ -22,7 +22,6 @@ from email.mime.multipart import MIMEMultipart
 logger = logging.getLogger('main.mail')
 
 def send_email(title, funds_totol, datas, date):
-    print "--", datas
     config = toml.load('config.toml')
 
     sender = config['mail']['sender'] # 发送者邮箱地址
@@ -83,7 +82,6 @@ def format_datas(counts, fund_datas):
         datas = {'基金名称': [], '基金代码': [], '日期': [], '净值': [], '涨幅': [], '排名': []}
 
         for f in fund_datas[str(i+1)]:
-            print "====", f
             jjmc.append(f[0])
             jjdm.append(f[1])
             if len(f) == 6:

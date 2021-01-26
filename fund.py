@@ -165,24 +165,26 @@ def routine(date):
         ret = get(i + 1, date, percent)
         mail_datas[str(i+1)] = ret
     logger.info("%d", len(mail_datas[str(1)]))
+    '''
     # 周六计算本周各基金涨幅情况
     if datetime.date.today().weekday() == 5:
         pre_friday, friday = holiday.get_current_week()
         logger.info("pre friday = %s, friday = %s", pre_friday, friday)
         for t in db.TABLES_LIST[1:length]:
             rise_by_all(t, pre_friday, friday, True)
+    '''
 
     # 计算一段时间内的涨跌幅
     from_date = holiday.get_before_month_date(config['period']['months'])
-    logger.info("%s %s", from_date, date)
+    #logger.info("%s %s", from_date, date)
     period_datas[str(1)] = period.period_range(from_date, date)
-    logger.info("%d", len(period_datas[str(1)]))
+    #logger.info("%d", len(period_datas[str(1)]))
     mail.send_email("基金period", [0, len(period_datas[str(1)])], period_datas, date)
     
     # 基金经理阶段涨跌幅
     period_manages_datas={}
     period_manages_datas[str(1)] = period.period_range_by_managers(from_date, date)
-    logger.info(period_manages_datas[str(1)]) 
+    #logger.info(period_manages_datas[str(1)]) 
     mail.send_email("基金经理period", [0, len(period_manages_datas[str(1)])], period_manages_datas, date)
     
     # send email

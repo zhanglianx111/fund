@@ -216,7 +216,6 @@ def batch_insert(table_name, datas):
                     cur.execute(sql_insert)
             elif len(datas[0]) == 8:
                 for d in datas:
-                    logger.info(d)
                     if d[3] != "%":
                         sql_insert = sql % (table_name, d[0], d[1], float(d[2]), float(d[3]), d[4],
                                 d[5], d[6], int(d[7]))

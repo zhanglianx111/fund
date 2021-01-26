@@ -56,19 +56,17 @@ def get_all_funds_datas(date):
         all_funds.append(fund)
     '''
     for data in datas_map['datas']:
-        if len(data[4]) != 0:
-            fund = (data[0], yesterday, data[3], data[4], data[8], data[9], data[10], 0)
+        if len(data[4]) != 0 and data[8] != "":
+            fund = (data[0], yesterday, data[3], data[4], data[8]+"%", data[9], data[10], 0)
             all_funds.append(fund)
-        else:
-            print "===========", data
 
     #print all_funds
     db.batch_insert(db.TABLE_FUNDSTODAY, all_funds)
     db.batch_insert_by_type(yesterday)
 
-	# to send message
-	message = "fetch funds at %s successfully! 总共：%s 个基金" % (yesterday, len(list_result[0]))
-	return message
+    # to send message
+    message = "fetch funds at %s successfully! 总共：%s 个基金" % (yesterday, len(all_funds))
+    return message
 
 
 if __name__ == '__main__':
