@@ -15,7 +15,7 @@ from datetime import timedelta, datetime
 config = toml.load('config.toml')
 
 
-logger = logging.getLogger("main")
+logger = logging.getLogger("main.get_all_funds_once_time")
 logger.setLevel(level = config['log']['level'])
 
 # 日志回滚handler

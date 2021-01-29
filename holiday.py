@@ -4,7 +4,7 @@ import sys
 import logging
 from dateutil.relativedelta import relativedelta
 
-logger = logging.getLogger('main.db')
+logger = logging.getLogger('main.holiday')
 
 
 '''以下是统计2019年and2020年节假日'''
