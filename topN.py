@@ -116,6 +116,7 @@ def main(date_today):
 	start_time = time.time()
 	length = len(db.TABLES_LIST) - 1
 	for t in db.TABLES_LIST[1:length]:
+            if t == db.TABLE_STOCK or t == db.TABLES_INDEX or t == db.TABLE_HYDIRD:
 		today = db.get_funds_today(date_today, t)
 		sort_today = QuickSort(today, 0, len(today) -1)
 		ranklist = ranking(sort_today)
